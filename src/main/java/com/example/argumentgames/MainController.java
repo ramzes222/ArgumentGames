@@ -30,6 +30,8 @@ public class MainController {
 
     public void initialize() {
         graph = new Graph(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+
+        graph.addShape(graphPane);
     }
 
     @FXML
@@ -41,14 +43,14 @@ public class MainController {
 
     @FXML
     protected void test() {
-        if (graph.getNode("A") == null) {
-            graph.addNode("A", graphPane);
-            graph.addNode("B", graphPane);
-            graph.addArrow(graph.getNode("A"), graph.getNode("B"), graphPane);
-        }
-
-        GraphNode n = graph.getNode("A");
-        System.out.println("XProp: " + n.getCenterXProperty().doubleValue() + "    YProp: " + n.getCenterYProperty().doubleValue());
-        System.out.println("X: " + n.getStack().getLayoutX() + "    Y: " + n.getStack().getLayoutY());
+        graph.turnToA(graphPane);
+//        if (graph.getNode("A") == null) {
+//            graph.addNode("A", graphPane);
+//            graph.addNode("B", graphPane);
+//            graph.addArrow(graph.getNode("A"), graph.getNode("B"), graphPane);
+//        }
+//        GraphNode n = graph.getNode("A");
+//        System.out.println("XProp: " + n.getCenterXProperty().doubleValue() + "    YProp: " + n.getCenterYProperty().doubleValue());
+//        System.out.println("X: " + n.getStack().getLayoutX() + "    Y: " + n.getStack().getLayoutY());
     }
 }

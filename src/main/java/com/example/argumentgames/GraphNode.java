@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GraphNode {
@@ -13,6 +15,7 @@ public class GraphNode {
     private StackPane stack = new StackPane();
     private double radius = 45;
     private Circle circle;
+    private ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
 
     public GraphNode(String n) {
         name = n;
@@ -47,5 +50,9 @@ public class GraphNode {
 
     public StackPane getStack() {
         return stack;
+    }
+
+    public void addArrow(GraphArrow arr) {
+        connectedArrows.add(arr);
     }
 }

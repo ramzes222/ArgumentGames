@@ -13,38 +13,60 @@ import javafx.scene.text.Text;
 public class GraphArrow {
 
     private GraphNode startNode, endNode;
-    private Node controlNode;
+    private Circle controlNode;
     private QuadCurve curve;
     private Polygon arrow;
+    private double dragOriginX, dragOriginY;
 
     public GraphArrow(GraphNode a, GraphNode b) {
         startNode = a;
         endNode = b;
-        double[] shape = new double[] { 0,0,10,15,-10,15 };
-        arrow = new Polygon(shape);
-        arrow.setFill(Color.PALEGOLDENROD);
 
         //create Control Node
-        Circle controlNode = new Circle();
+        controlNode = new Circle();
         controlNode.setRadius(20);
         controlNode.setFill(Color.AZURE);
         controlNode.setLayoutX(100);
         controlNode.setLayoutY(200);
         controlNode.setTranslateX(-20);
         controlNode.setTranslateY(-20);
+        controlNode.setVisible(false);
+
+        //make the Control Node draggable
+        controlNode.setOnMousePressed(e -> {
+            controlNode.toFront();
+            dragOriginX = e.getSceneX() - controlNode.getLayoutX();
+            dragOriginY = e.getSceneY() - controlNode.getLayoutY();
+        });
+        controlNode.setOnMouseDragged(e -> {
+            double newX = e.getSceneX() - dragOriginX;
+            controlNode.setLayoutX(newX);
+            double newY = e.getSceneY() - dragOriginY;
+            controlNode.setLayoutY(newY);
+        });
 
         curve = new QuadCurve();
         curve.startXProperty().bind(startNode.getCenterXProperty());
         curve.startYProperty().bind(startNode.getCenterYProperty());
         curve.endXProperty().bind(endNode.getCenterXProperty());
         curve.endYProperty().bind(endNode.getCenterYProperty());
-
-        curve.setControlX(controlNode.getLayoutX());
-        curve.setControlY(controlNode.getLayoutY());
+        curve.controlXProperty().bind(controlNode.layoutXProperty());
+        curve.controlYProperty().bind(controlNode.layoutYProperty());
         curve.setStroke(Color.FORESTGREEN);
         curve.setStrokeWidth(4);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
         curve.setFill(Color.TRANSPARENT);
+    }
+
+    public void selectArrow() {
+        curve.setStroke(Color.YELLOW);
+        controlNode.setVisible(true);
+        controlNode.toFront();
+    }
+
+    public void deselectArrow() {
+        curve.setStroke(Color.FORESTGREEN);
+        controlNode.setVisible(false);
     }
 
     public void moveArrowPoint(int startOrEnd, Double xTrans, Double yTrans) {
@@ -54,8 +76,20 @@ public class GraphArrow {
         } else {
             curve.setEndX(xTrans);
             curve.setEndY(yTrans);
+            arrow.setLayoutY(yTrans);
+            arrow.setLayoutX(xTrans);
         }
+        rotateArrowShape();
+    }
 
+    private void rotateArrowShape() {
+        double x_diff = controlNode.getLayoutX() - curve.getEndX();
+        double y_diff = curve.getEndY() - controlNode.getLayoutY();
+        if (x_diff == 0) x_diff = 1;
+        double tan = y_diff / x_diff;
+        double degree = -Math.toDegrees(Math.atan(tan));
+        if (x_diff < 0) degree = degree + 180;
+        arrow.setRotate(degree);
     }
 
     // Determines if the arrow is connected to a node

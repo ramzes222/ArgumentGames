@@ -22,6 +22,8 @@ public class Graph {
     private ArrayList<GraphNode> nodes = new ArrayList<>();
     private ArrayList<GraphArrow> arrows = new ArrayList<>();
 
+    Polygon arrow;
+
     public Graph(Double width, Double height) {
         this.width = width;
         this.height = height;
@@ -53,6 +55,8 @@ public class Graph {
         GraphArrow arrow = new GraphArrow(a, b);
         graphPane.getChildren().addAll(arrow.getNodes());
         arrows.add(arrow);
+        a.addArrow(arrow);
+        b.addArrow(arrow);
     }
 
     private void makeDraggable(GraphNode gNode) {
@@ -63,17 +67,37 @@ public class Graph {
             dragOriginY = e.getSceneY() - node.getLayoutY();
         });
         node.setOnMouseDragged(e -> {
-            Double newX = e.getSceneX() - dragOriginX;
+            double newX = e.getSceneX() - dragOriginX;
             gNode.getCenterXProperty().set(newX);
             node.setLayoutX(newX);
-            Double newY = e.getSceneY() - dragOriginY;
+            double newY = e.getSceneY() - dragOriginY;
             gNode.getCenterYProperty().set(newY);
             node.setLayoutY(newY);
-//            for (GraphArrow ar: arrows
-//                 ) {
-//                int conType = ar.getConnectionType(node);
-//                if (conType!=-1) ar.moveArrowPoint(conType, dragOriginX+transX, dragOriginY+transY);
-//            }
         });
+    }
+
+    public void addShape(Pane graphpane) {
+        addNode("test", graphpane);
+
+        double[] shape = new double[] { 0,0,-25,10,-25,-10 };
+        arrow = new Polygon(shape);
+        arrow.setFill(Color.BLACK);
+        arrow.setLayoutX(300);
+        arrow.setLayoutY(300);
+        arrow.setId("arr");
+        graphpane.getChildren().addAll(arrow);
+    }
+
+    public void turnToA(Pane graphPane) {
+        GraphNode n = getNode("test");
+
+        double x_diff = n.getCenterXProperty().get() - arrow.getLayoutX();
+        double y_diff = arrow.getLayoutY() - n.getCenterYProperty().get();
+        if (x_diff == 0) x_diff = 1;
+        double tan = y_diff / x_diff;
+        double degree = -Math.toDegrees(Math.atan(tan));
+        if (x_diff < 0) degree = degree + 180;
+        System.out.println("x, y diffs: " + x_diff + " " + y_diff + "    tan: " + tan + "       atan: " + Math.atan(tan) + "       deg: " + degree);
+        arrow.setRotate(degree);
     }
 }
