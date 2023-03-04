@@ -15,6 +15,11 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 
 public class MainController {
+    enum InteractMode {
+        SELECT_MODE,
+        MOVE_MODE,
+        PAN_MODE
+    }
     @FXML
     private Label welcomeText;
     @FXML
@@ -29,9 +34,17 @@ public class MainController {
     }
 
     public void initialize() {
-        graph = new Graph(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+        graph = new Graph(graphPane);
 
-        graph.addShape(graphPane);
+        // Testing setup
+        graph.addNode("A", graphPane);
+        graph.addNode("B", graphPane);
+        graph.addArrow(graph.getNode("A"), graph.getNode("B"), graphPane);
+    }
+
+    @FXML
+    protected void selectMode() {
+        graph.setInteractMode(InteractMode.SELECT_MODE);
     }
 
     @FXML
@@ -43,14 +56,16 @@ public class MainController {
 
     @FXML
     protected void test() {
-        graph.turnToA(graphPane);
-//        if (graph.getNode("A") == null) {
-//            graph.addNode("A", graphPane);
-//            graph.addNode("B", graphPane);
-//            graph.addArrow(graph.getNode("A"), graph.getNode("B"), graphPane);
-//        }
-//        GraphNode n = graph.getNode("A");
-//        System.out.println("XProp: " + n.getCenterXProperty().doubleValue() + "    YProp: " + n.getCenterYProperty().doubleValue());
-//        System.out.println("X: " + n.getStack().getLayoutX() + "    Y: " + n.getStack().getLayoutY());
+        final Rectangle outputClip = new Rectangle();
+        //outputClip.setArcWidth(arc);
+        //outputClip.setArcHeight(arc);
+        outputClip.setWidth(graphPane.getWidth());
+        outputClip.setHeight(graphPane.getHeight());
+        graphPane.setClip(outputClip);
+
+        graphPane.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            outputClip.setWidth(newValue.getWidth());
+            outputClip.setHeight(newValue.getHeight());
+        });
     }
 }

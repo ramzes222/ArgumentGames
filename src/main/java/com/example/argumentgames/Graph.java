@@ -3,76 +3,116 @@ import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import javafx.scene.text.Text;
 
 public class Graph {
+    @FXML
+    private Button selectButton;
 
     private double dragOriginX = 0;
     private double dragOriginY = 0;
     private double width, height;
-    private ArrayList<GraphNode> nodes = new ArrayList<>();
+    private ArrayList<GraphCircle> nodes = new ArrayList<>();
     private ArrayList<GraphArrow> arrows = new ArrayList<>();
+    private GraphNode selected = null;
+    private MainController.InteractMode interactMode = MainController.InteractMode.SELECT_MODE;
 
     Polygon arrow;
 
-    public Graph(Double width, Double height) {
-        this.width = width;
-        this.height = height;
+    public Graph(Pane graphPane) {
+        this.width = graphPane.getPrefWidth();
+        this.height = graphPane.getPrefHeight();
+
+        RadioButton radioButton=new RadioButton("Radio");
+        radioButton.getStyleClass().remove("radio-button");
+        radioButton.getStyleClass().add("toggle-button");
+        graphPane.getChildren().add(radioButton);
+    }
+
+    public void setInteractMode(MainController.InteractMode m) {
+        if (m == MainController.InteractMode.SELECT_MODE) {
+            interactMode = m;
+        }
     }
 
     public void addNode(String name, Pane graphPane) {
-        GraphNode n = new GraphNode(name);
-        StackPane stack = n.getStack();
+        GraphCircle n = new GraphCircle(name);
         Random rand = new Random(System.currentTimeMillis());
         //stack.setLayoutX(rand.nextDouble(500));
         //stack.setLayoutY(rand.nextDouble(200));
-        stack.setLayoutX(0);
-        stack.setLayoutY(0);
+        n.setLayoutX(200);
+        n.setLayoutY(100);
         makeDraggable(n);
-        graphPane.getChildren().add(stack);
+        graphPane.getChildren().add(n);
+
+        // Implement selection
+        n.setOnMouseClicked(e -> {
+            if (interactMode == MainController.InteractMode.SELECT_MODE) {
+                if (selected == n) {
+                    selected.deselect();
+                    selected = null;
+                } else {
+                    if (selected != null) selected.deselect();
+                    selected = n;
+                    selected.select();
+                }
+            }
+        });
 
         nodes.add(n);
     }
 
-    public GraphNode getNode(String name) {
-        for (GraphNode n:
+    public GraphCircle getNode(String name) {
+        for (GraphCircle n:
              nodes) {
             if (n.getName().equals(name)) return n;
         }
         return null;
     }
 
-    public void addArrow(GraphNode a, GraphNode b, Pane graphPane) {
+    public void addArrow(GraphCircle a, GraphCircle b, Pane graphPane) {
         GraphArrow arrow = new GraphArrow(a, b);
-        graphPane.getChildren().addAll(arrow.getNodes());
+        graphPane.getChildren().addAll(arrow, arrow.getArrowTip());
         arrows.add(arrow);
+        arrow.setOnMouseClicked(e -> {
+            if (interactMode == MainController.InteractMode.SELECT_MODE) {
+                if (selected == arrow) {
+                    selected.deselect();
+                    selected = null;
+                } else {
+                    if (selected != null) selected.deselect();
+                    selected = arrow;
+                    selected.select();
+                }
+            }
+        });
         a.addArrow(arrow);
         b.addArrow(arrow);
     }
 
-    private void makeDraggable(GraphNode gNode) {
-        Node node = gNode.getStack();
+    private void makeDraggable(GraphCircle node) {
         node.setOnMousePressed(e -> {
-            node.toFront();
-            dragOriginX = e.getSceneX() - node.getLayoutX();
-            dragOriginY = e.getSceneY() - node.getLayoutY();
+            if (interactMode == MainController.InteractMode.MOVE_MODE) {
+                node.toFront();
+                dragOriginX = e.getSceneX() - node.getLayoutX();
+                dragOriginY = e.getSceneY() - node.getLayoutY();
+            }
         });
         node.setOnMouseDragged(e -> {
-            double newX = e.getSceneX() - dragOriginX;
-            gNode.getCenterXProperty().set(newX);
-            node.setLayoutX(newX);
-            double newY = e.getSceneY() - dragOriginY;
-            gNode.getCenterYProperty().set(newY);
-            node.setLayoutY(newY);
+            if (interactMode == MainController.InteractMode.MOVE_MODE) {
+                double newX = e.getSceneX() - dragOriginX;
+                node.getCenterXProperty().set(newX);
+                node.setLayoutX(newX);
+                double newY = e.getSceneY() - dragOriginY;
+                node.getCenterYProperty().set(newY);
+                node.setLayoutY(newY);
+                node.rotateArrows();
+            }
         });
     }
 
@@ -89,7 +129,7 @@ public class Graph {
     }
 
     public void turnToA(Pane graphPane) {
-        GraphNode n = getNode("test");
+        GraphCircle n = getNode("test");
 
         double x_diff = n.getCenterXProperty().get() - arrow.getLayoutX();
         double y_diff = arrow.getLayoutY() - n.getCenterYProperty().get();
