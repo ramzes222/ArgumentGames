@@ -1,10 +1,16 @@
 package com.example.argumentgames;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -28,10 +34,32 @@ public class Graph {
         this.width = graphPane.getPrefWidth();
         this.height = graphPane.getPrefHeight();
 
-        RadioButton radioButton=new RadioButton("Radio");
-        radioButton.getStyleClass().remove("radio-button");
-        radioButton.getStyleClass().add("toggle-button");
-        graphPane.getChildren().add(radioButton);
+        // Construct the menu Bar
+        // Select, Move mode buttons
+        ToggleGroup modeToggleGroup = new ToggleGroup();
+        RadioButton selectModeButton = new RadioButton("selectModeButton");
+        selectModeButton.getStyleClass().remove("radio-button");
+        selectModeButton.getStyleClass().add("toggle-button");
+        selectModeButton.setToggleGroup(modeToggleGroup);
+        System.out.println(System.getProperty("user.dir"));
+        Image selectIcon = new Image(getClass().getResourceAsStream("img\\Select.png"));
+        ImageView selectImage = new ImageView(selectIcon);
+        selectImage.setLayoutX(600);
+        selectImage.setLayoutY(400);
+        selectImage.prefHeight(400);
+        selectImage.prefWidth(400);
+        selectImage.setVisible(true);
+        graphPane.getChildren().add(selectImage);
+        selectModeButton.setGraphic(selectImage);
+
+        RadioButton moveModeButton = new RadioButton("moveModeButton");
+        moveModeButton.getStyleClass().remove("radio-button");
+        moveModeButton.getStyleClass().add("toggle-button");
+        moveModeButton.setToggleGroup(modeToggleGroup);
+
+
+        HBox menuHBox = new HBox(selectModeButton, moveModeButton);
+        graphPane.getChildren().add(menuHBox);
     }
 
     public void setInteractMode(MainController.InteractMode m) {
