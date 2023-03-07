@@ -5,9 +5,7 @@ import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -47,31 +45,49 @@ public class Graph {
         }
     }
 
-    public void addNode(String name, Pane graphPane) {
-        GraphCircle n = new GraphCircle(name);
-        Random rand = new Random(System.currentTimeMillis());
-        //stack.setLayoutX(rand.nextDouble(500));
-        //stack.setLayoutY(rand.nextDouble(200));
-        n.setLayoutX(200);
-        n.setLayoutY(100);
-        makeDraggable(n);
-        graphPane.getChildren().add(n);
+    public void addNode() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Add new node");
+        //dialog.setHeaderText("Look, a Text Input Dialog");
+        dialog.setContentText("Please enter the name of the new node:");
 
-        // Implement selection
-        n.setOnMouseClicked(e -> {
-            if (interactMode == InteractMode.SELECT_MODE) {
-                if (selected == n) {
-                    selected.deselect();
-                    selected = null;
-                } else {
-                    if (selected != null) selected.deselect();
-                    selected = n;
-                    selected.select();
-                }
+        Optional<String> newName = dialog.showAndWait();
+
+        newName.ifPresent(name -> {
+            // Check if the name is unique among existing nodes
+            Boolean unique = true;
+            for (GraphCircle c: nodes) { if (c.getName().equals(name)) {unique = false; break;}}
+
+            if (unique) {
+                GraphCircle n = new GraphCircle(name);
+                n.setLayoutX(200);
+                n.setLayoutY(100);
+                makeDraggable(n);
+                graphPane.getChildren().add(n);
+                // Implement selection
+                n.setOnMouseClicked(e -> {
+                    if (interactMode == InteractMode.SELECT_MODE) {
+                        if (selected == n) {
+                            selected.deselect();
+                            selected = null;
+                        } else {
+                            if (selected != null) selected.deselect();
+                            selected = n;
+                            selected.select();
+                        }
+                    }
+                });
+                nodes.add(n);
+
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Node already exists");
+                alert.setContentText("There already exists a node with name " + name + "!");
+                alert.showAndWait();
             }
         });
 
-        nodes.add(n);
+
     }
 
     public GraphCircle getNode(String name) {

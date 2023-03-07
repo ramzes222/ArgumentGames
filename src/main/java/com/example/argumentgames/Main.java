@@ -18,6 +18,7 @@ public class Main extends Application {
 
             stage.setScene(scene);
             stage.show();
+            stage.setMaximized(true);
         }
         catch (Exception e)
         {

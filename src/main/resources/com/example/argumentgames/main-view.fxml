@@ -7,10 +7,10 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.argumentgames.MainController">
    <children>
-      <HBox prefHeight="56.0" prefWidth="700.0" />
-      <HBox prefHeight="469.0" prefWidth="700.0">
+      <HBox minHeight="30.0" prefHeight="40.0" prefWidth="700.0" />
+      <GridPane maxHeight="Infinity">
          <children>
-            <VBox fx:id="leftGraphBox" prefHeight="468.0" prefWidth="312.0">
+            <VBox fx:id="leftGraphBox" prefHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">
                <HBox prefHeight="37.0" prefWidth="298.0">
                   <children>
                      <RadioButton fx:id="leftSelectButton" mnemonicParsing="false" styleClass="toggle-button">
@@ -34,17 +34,43 @@
                            </ImageView>
                         </graphic>
                         <HBox.margin>
-                           <Insets left="4.0" />
+                           <Insets left="5.0" />
                         </HBox.margin>
                      </RadioButton>
+                     <Separator orientation="VERTICAL" prefHeight="200.0">
+                        <HBox.margin>
+                           <Insets left="8.0" right="6.0" />
+                        </HBox.margin></Separator>
+                     <Button fx:id="leftAddNodeButton" mnemonicParsing="false" onAction="#addNodeButtonPress">
+                        <graphic>
+                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/New Node.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
+                     <Button fx:id="leftAddEdgeButton" disable="true" mnemonicParsing="false" onAction="#addEdgeButtonPress">
+                        <graphic>
+                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/New Edge.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </Button>
                   </children></HBox>
-               <Pane fx:id="leftGraphPane" prefHeight="468.0" prefWidth="88.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin></Pane>
+                  </VBox.margin>
+               </Pane>
             </VBox>
-            <Pane fx:id="centerPane" prefHeight="468.0" prefWidth="88.0" />
-            <VBox fx:id="rightGraphBox" prefHeight="468.0" prefWidth="340.0">
+            <Pane fx:id="centerPane" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <VBox fx:id="rightGraphBox" GridPane.columnIndex="2" GridPane.rowIndex="0">
                <HBox prefHeight="37.0" prefWidth="298.0">
                   <children>
                      <RadioButton fx:id="rightSelectButton" mnemonicParsing="false" styleClass="toggle-button">
@@ -72,12 +98,21 @@
                         </HBox.margin>
                      </RadioButton>
                   </children></HBox>
-               <Pane fx:id="rightGraphPane" prefHeight="468.0" prefWidth="88.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin></Pane>
+                  </VBox.margin>
+               </Pane>
             </VBox>
          </children>
-      </HBox>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0" prefWidth="80.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="2000.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
    </children>
 </VBox>
