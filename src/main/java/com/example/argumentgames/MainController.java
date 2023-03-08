@@ -51,6 +51,6 @@ public class MainController {
 
     @FXML
     protected void addEdgeButtonPress() {
-        frameworkGraph.addNode();
+        frameworkGraph.beginAddEdge();
     }
 }

@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.util.Pair;
 
 public class Graph {
     private double width, height, dragOriginY = 0, dragOriginX = 0;
@@ -44,6 +45,9 @@ public class Graph {
                 break;
         }
     }
+
+    private double heightInBounds(double y) { return Math.min( Math.max(0, y), this.height); }
+    private double widthInBounds(double x) { return Math.min( Math.max(0, x), this.width); }
 
     public void addNode() {
         TextInputDialog dialog = new TextInputDialog();
@@ -86,8 +90,6 @@ public class Graph {
                 alert.showAndWait();
             }
         });
-
-
     }
 
     public GraphCircle getNode(String name) {
@@ -98,7 +100,25 @@ public class Graph {
         return null;
     }
 
-    public void addArrow(GraphCircle a, GraphCircle b, Pane graphPane) {
+    public void beginAddEdge() {
+        // Check which Node is currently selected
+        // It will be the origin of the edge
+        if (selected != null && selected.getClass() == GraphCircle.class) {
+            GraphCircle fromNode = (GraphCircle) selected;
+
+            // Add arrow for visuals
+            MouseArrow newEdgeMouseArrow = new MouseArrow(fromNode.getLayoutX(), fromNode.getLayoutY(), graphPane);
+        } else {
+            // This should be prevented by other functions, but
+            // just in case show a warning
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("No node selected");
+            alert.setContentText("To add an arrow you must select a node first!");
+            alert.showAndWait();
+        }
+    }
+
+    public void addArrow(GraphCircle a, GraphCircle b) {
         GraphArrow arrow = new GraphArrow(a, b);
         graphPane.getChildren().addAll(arrow, arrow.getArrowTip());
         arrows.add(arrow);

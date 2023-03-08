@@ -50,7 +50,7 @@
                            </ImageView>
                         </graphic>
                      </Button>
-                     <Button fx:id="leftAddEdgeButton" disable="true" mnemonicParsing="false" onAction="#addEdgeButtonPress">
+                     <Button fx:id="leftAddEdgeButton" mnemonicParsing="false" onAction="#addEdgeButtonPress">
                         <graphic>
                            <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
                               <image>
