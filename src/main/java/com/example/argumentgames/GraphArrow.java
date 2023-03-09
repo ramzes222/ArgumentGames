@@ -18,14 +18,10 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         startNode = a;
         endNode = b;
 
-        //create Control Node
+        //create Control Node at halfway point
         controlNode = new Circle();
         controlNode.setRadius(20);
         controlNode.setFill(Color.AZURE);
-        controlNode.setLayoutX(100);
-        controlNode.setLayoutY(200);
-        controlNode.setTranslateX(-20);
-        controlNode.setTranslateY(-20);
         controlNode.setVisible(false);
 
         //make the Control Node draggable
@@ -55,7 +51,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         toBack();
 
         // Setup the arrow tip
-        double[] shape = new double[] { 20,0,70,20,70,-20 };
+        double[] shape = new double[] { 20,0,60,20,60,-20 };
         arrow = new Polygon(shape);
         arrow.setFill(Color.FORESTGREEN);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
@@ -64,9 +60,12 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         arrowRotate = new Rotate( 0, 0, 0 );
         arrow.getTransforms().add(arrowRotate);
 
-        // Put the connected nodes back in front
-        a.toFront();
-        b.toBack();
+        // Place the control point halfway between the nodes
+        controlNode.setLayoutX( (startXProperty().get() + endXProperty().get()) / 2 );
+        controlNode.setLayoutY( (startYProperty().get() + endYProperty().get()) / 2 );
+
+        // Rotate the arrow tip
+        rotateArrowShape();
     }
 
     public void select() {
@@ -85,9 +84,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         double y_diff = getEndY() - controlNode.getLayoutY();
         if (x_diff == 0) x_diff = 1;
         double tan = y_diff / x_diff;
-        // double tan = 2.0 *
         double degree = -Math.toDegrees(Math.atan(tan));
-        System.out.println("Tan: " + tan + "   Degree: " + degree);
         if (x_diff < 0) degree = degree + 180;
         arrowRotate.setAngle(degree);
     }

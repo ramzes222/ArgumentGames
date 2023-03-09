@@ -41,7 +41,7 @@
                         <HBox.margin>
                            <Insets left="8.0" right="6.0" />
                         </HBox.margin></Separator>
-                     <Button fx:id="leftAddNodeButton" mnemonicParsing="false" onAction="#addNodeButtonPress">
+                     <Button fx:id="leftAddNodeButton" mnemonicParsing="false">
                         <graphic>
                            <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -50,7 +50,7 @@
                            </ImageView>
                         </graphic>
                      </Button>
-                     <Button fx:id="leftAddEdgeButton" mnemonicParsing="false" onAction="#addEdgeButtonPress">
+                     <Button fx:id="leftAddEdgeButton" mnemonicParsing="false">
                         <graphic>
                            <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
                               <image>

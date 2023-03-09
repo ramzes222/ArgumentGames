@@ -12,11 +12,14 @@ public class MouseArrow {
     private final Line arrowLine;
     private final Polygon arrowPointer;
     private final Rotate arrowRotate;
+    private Pane graphPane;
 
     public MouseArrow(double originX, double originY, Pane graphPane) {
+        this.graphPane = graphPane;
         arrowLine = new Line(originX, originY, originX, originY);
         arrowLine.setStroke(new Color(0.3,0.3,0.3,0.3));
         arrowLine.setStrokeWidth(5);
+        arrowLine.setMouseTransparent(true);
 
         // Build the pointing shape
         double[] shape = new double[] { 0,0,50,20,50,-20 };
@@ -26,6 +29,7 @@ public class MouseArrow {
         arrowPointer.layoutYProperty().bind(arrowLine.endYProperty());
         arrowRotate = new Rotate( 0, 0, 0 );
         arrowPointer.getTransforms().add(arrowRotate);
+        arrowPointer.setMouseTransparent(true);
 
         // Add elements to the Pane
         graphPane.getChildren().addAll(arrowLine, arrowPointer);
@@ -48,4 +52,6 @@ public class MouseArrow {
             arrowRotate.setAngle(degree);
         });
     }
+
+    public void delete() { graphPane.getChildren().removeAll(arrowLine, arrowPointer); }
 }

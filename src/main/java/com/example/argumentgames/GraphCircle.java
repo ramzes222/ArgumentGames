@@ -22,7 +22,8 @@ public class GraphCircle extends StackPane implements GraphNode {
         Random rand = new Random(System.currentTimeMillis());
         circle = new Circle();
         circle.setRadius(radius);
-        circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
+        //circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
+        circle.setFill( Color.CORNSILK );
         circle.setStrokeWidth(5);
 
         Text text = new Text(name);
@@ -33,30 +34,22 @@ public class GraphCircle extends StackPane implements GraphNode {
         setTranslateY(-radius);
         getChildren().addAll(circle,text);
     }
+
+    public void highlight() { circle.setStroke(Color.YELLOW); }
+    public void dehighlight() { circle.setStroke(Color.TRANSPARENT); }
     public void select() {
-        circle.setStroke(Color.YELLOW);
+        highlight();
     }
-
     public void deselect() {
-        circle.setStroke(Color.TRANSPARENT);
+        dehighlight();
     }
-
     public String getName() { return name; }
-    public double[] getMiddle() {
-        double[] coordinates = new double[2];
-        coordinates[0] = getLayoutX() + (radius/2);
-        coordinates[1] = getLayoutY() + (radius/2);
-        return coordinates;
-    }
+
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
 
     public void rotateArrows() {
-        for (GraphArrow arrow: connectedArrows
-             ) {
-            arrow.rotateArrowShape();
-        }
-
+        for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); }
     }
 }
