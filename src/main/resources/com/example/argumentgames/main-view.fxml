@@ -62,6 +62,18 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </Button>
+                     <Button fx:id="leftTestButton" onAction="#testAction" mnemonicParsing="false">
+                        <graphic>
+                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/MoveCamera.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </Button>
                   </children></HBox>
                <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
                   <VBox.margin>

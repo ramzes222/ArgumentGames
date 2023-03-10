@@ -11,12 +11,13 @@ import java.util.Random;
 
 public class GraphCircle extends StackPane implements GraphNode {
     private final String name;
-    private final double radius = 45;
+    private double radius;
     private final Circle circle;
     private final ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
 
-    public GraphCircle(String n) {
+    public GraphCircle(String n, double radius) {
         super();
+        this.radius = radius;
         name = n;
 
         Random rand = new Random(System.currentTimeMillis());
@@ -25,9 +26,8 @@ public class GraphCircle extends StackPane implements GraphNode {
         //circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
         circle.setFill( Color.CORNSILK );
         circle.setStrokeWidth(5);
-
         Text text = new Text(name);
-
+        //
         // Prepare the stack (self)
         setId(name);
         setTranslateX(-radius);
@@ -35,21 +35,23 @@ public class GraphCircle extends StackPane implements GraphNode {
         getChildren().addAll(circle,text);
     }
 
+    public void setRadius(double r) {
+        this.radius = r;
+        setTranslateX(-radius);
+        setTranslateY(-radius);
+        circle.setRadius(radius);
+        if (r < 10) { circle.setStrokeWidth(2); }
+    }
+
     public void highlight(Color c) { circle.setStroke(c); }
     public void dehighlight() { circle.setStroke(Color.TRANSPARENT); }
-    public void select() {
-        highlight(Color.YELLOW);
-    }
-    public void deselect() {
-        dehighlight();
-    }
-    public String getName() { return name; }
+    public void select() { highlight(Color.YELLOW); }
+    public void deselect() { dehighlight(); }
 
+    public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
+    public void rotateArrows() { for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }
+
+    public String getName() { return name; }
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
-    public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
-
-    public void rotateArrows() {
-        for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); }
-    }
 }

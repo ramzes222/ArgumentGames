@@ -26,4 +26,8 @@ public class MainController {
         // Construct the menu Bar
 
     }
+
+    @FXML
+    public void testAction() {
+    }
 }

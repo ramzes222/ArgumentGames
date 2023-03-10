@@ -1,18 +1,15 @@
 package com.example.argumentgames;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
 public class GraphArrow extends QuadCurve implements GraphNode {
 
-    private GraphCircle startNode, endNode;
-    private Circle controlPoint;
-    private Polygon arrow;
+    private final GraphCircle startNode, endNode;
+    private final Circle controlPoint;
+    private final Polygon arrow;
     private double dragOriginX, dragOriginY;
-    private Rotate arrowRotate;
+    private final Rotate arrowRotate;
 
     public GraphArrow(GraphCircle a, GraphCircle b) {
         startNode = a;
@@ -21,8 +18,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         //create Control Node at halfway point
         controlPoint = new Circle();
         controlPoint.setRadius(10);
-        //controlPoint.setTranslateX(-10);
-        //controlPoint.setTranslateY(-10);
         controlPoint.setFill(Color.ALICEBLUE);
         controlPoint.setVisible(false);
 
@@ -85,11 +80,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     public void rotateArrowShape() {
         double x_diff = controlPoint.getLayoutX() - getEndX();
         double y_diff = getEndY() - controlPoint.getLayoutY();
-        if (x_diff == 0) x_diff = 1;
-        double tan = y_diff / x_diff;
-        double degree = -Math.toDegrees(Math.atan(tan));
-        if (x_diff < 0) degree = degree + 180;
-        arrowRotate.setAngle(degree);
+        arrowRotate.setAngle( -GeometricHelper.x_y_toAngle(x_diff, y_diff) );
     }
 
     // Determines if the arrow is connected to a node
