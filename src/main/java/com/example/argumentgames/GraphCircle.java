@@ -35,10 +35,10 @@ public class GraphCircle extends StackPane implements GraphNode {
         getChildren().addAll(circle,text);
     }
 
-    public void highlight() { circle.setStroke(Color.YELLOW); }
+    public void highlight(Color c) { circle.setStroke(c); }
     public void dehighlight() { circle.setStroke(Color.TRANSPARENT); }
     public void select() {
-        highlight();
+        highlight(Color.YELLOW);
     }
     public void deselect() {
         dehighlight();

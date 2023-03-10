@@ -192,7 +192,7 @@ public class Graph {
         if (selected != null && selected.getClass() == GraphCircle.class) {
             // Remember origin node and style it
             GraphCircle fromNode = (GraphCircle) selected;
-            fromNode.highlight();
+            fromNode.highlight(Color.LAWNGREEN);
             selected = null;
             //
             // Add arrow for visuals
@@ -201,7 +201,7 @@ public class Graph {
             //
             // Add event to all nodes
             System.out.println("b");
-            for (GraphCircle toNode: nodes) { toNode.setOnMouseClicked(e -> { addArrow(fromNode, toNode); endAddEdgeEvent(newEdgeMouseArrow); }); }
+            for (GraphCircle toNode: nodes) { toNode.setOnMouseClicked(e -> { addArrow(fromNode, toNode); endAddEdgeEvent(newEdgeMouseArrow); fromNode.dehighlight(); }); }
         } else {
             // This should be prevented by other functions, but
             // just in case show a warning
@@ -230,20 +230,21 @@ public class Graph {
             alert.showAndWait();
         } else {
             GraphArrow arrow = new GraphArrow(a, b);
-            graphPane.getChildren().addAll(arrow, arrow.getArrowTip());
+            graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
             arrows.add(arrow);
-//            arrow.setOnMouseClicked(e -> {
-//                if (interactMode == InteractMode.SELECT_MODE) {
-//                    if (selected == arrow) {
-//                        selected.deselect();
-//                        selected = null;
-//                    } else {
-//                        if (selected != null) selected.deselect();
-//                        selected = arrow;
-//                        selected.select();
-//                    }
-//                }
-//            });
+            arrow.setOnMouseClicked(e -> {
+                // OLD CONDITION: interactMode == InteractMode.SELECT_MODE
+                if (true) {
+                    if (selected == arrow) {
+                        selected.deselect();
+                        selected = null;
+                    } else {
+                        if (selected != null) selected.deselect();
+                        selected = arrow;
+                        selected.select();
+                    }
+                }
+            });
             // Save arrow reference in the connected nodes
             a.addArrow(arrow);
             b.addArrow(arrow);

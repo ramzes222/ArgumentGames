@@ -9,7 +9,7 @@ import javafx.scene.transform.Rotate;
 public class GraphArrow extends QuadCurve implements GraphNode {
 
     private GraphCircle startNode, endNode;
-    private Circle controlNode;
+    private Circle controlPoint;
     private Polygon arrow;
     private double dragOriginX, dragOriginY;
     private Rotate arrowRotate;
@@ -19,22 +19,23 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         endNode = b;
 
         //create Control Node at halfway point
-        controlNode = new Circle();
-        controlNode.setRadius(20);
-        controlNode.setFill(Color.AZURE);
-        controlNode.setVisible(false);
+        controlPoint = new Circle();
+        controlPoint.setRadius(10);
+        controlPoint.setFill(Color.ALICEBLUE);
+        controlPoint.setVisible(false);
 
         //make the Control Node draggable
-        controlNode.setOnMousePressed(e -> {
-            controlNode.toFront();
-            dragOriginX = e.getSceneX() - controlNode.getLayoutX();
-            dragOriginY = e.getSceneY() - controlNode.getLayoutY();
+        controlPoint.setOnMousePressed(e -> {
+            controlPoint.toFront();
+            dragOriginX = e.getSceneX() - controlPoint.getLayoutX();
+            dragOriginY = e.getSceneY() - controlPoint.getLayoutY();
         });
-        controlNode.setOnMouseDragged(e -> {
+        controlPoint.setOnMouseDragged(e -> {
             double newX = e.getSceneX() - dragOriginX;
-            controlNode.setLayoutX(newX);
+            controlPoint.setLayoutX(newX);
             double newY = e.getSceneY() - dragOriginY;
-            controlNode.setLayoutY(newY);
+            controlPoint.setLayoutY(newY);
+            rotateArrowShape();
         });
 
         // Setup the curve
@@ -42,8 +43,8 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         startYProperty().bind(startNode.layoutYProperty());
         endXProperty().bind(endNode.layoutXProperty());
         endYProperty().bind(endNode.layoutYProperty());
-        controlXProperty().bind(controlNode.layoutXProperty());
-        controlYProperty().bind(controlNode.layoutYProperty());
+        controlXProperty().bind(controlPoint.layoutXProperty());
+        controlYProperty().bind(controlPoint.layoutYProperty());
         setStroke(Color.FORESTGREEN);
         setStrokeWidth(4);
         setStrokeLineCap(StrokeLineCap.ROUND);
@@ -61,8 +62,8 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         arrow.getTransforms().add(arrowRotate);
 
         // Place the control point halfway between the nodes
-        controlNode.setLayoutX( (startXProperty().get() + endXProperty().get()) / 2 );
-        controlNode.setLayoutY( (startYProperty().get() + endYProperty().get()) / 2 );
+        controlPoint.setLayoutX( (startXProperty().get() + endXProperty().get()) / 2 );
+        controlPoint.setLayoutY( (startYProperty().get() + endYProperty().get()) / 2 );
 
         // Rotate the arrow tip
         rotateArrowShape();
@@ -70,18 +71,18 @@ public class GraphArrow extends QuadCurve implements GraphNode {
 
     public void select() {
         setStroke(Color.YELLOW);
-        controlNode.setVisible(true);
-        controlNode.toFront();
+        controlPoint.setVisible(true);
+        controlPoint.toFront();
     }
 
     public void deselect() {
         setStroke(Color.FORESTGREEN);
-        controlNode.setVisible(false);
+        controlPoint.setVisible(false);
     }
 
     public void rotateArrowShape() {
-        double x_diff = controlNode.getLayoutX() - getEndX();
-        double y_diff = getEndY() - controlNode.getLayoutY();
+        double x_diff = controlPoint.getLayoutX() - getEndX();
+        double y_diff = getEndY() - controlPoint.getLayoutY();
         if (x_diff == 0) x_diff = 1;
         double tan = y_diff / x_diff;
         double degree = -Math.toDegrees(Math.atan(tan));
@@ -99,4 +100,5 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     }
 
     public Polygon getArrowTip() { return arrow; }
+    public Circle getControlPoint() { return controlPoint; }
 }
