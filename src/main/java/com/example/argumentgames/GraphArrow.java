@@ -21,6 +21,8 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         //create Control Node at halfway point
         controlPoint = new Circle();
         controlPoint.setRadius(10);
+        //controlPoint.setTranslateX(-10);
+        //controlPoint.setTranslateY(-10);
         controlPoint.setFill(Color.ALICEBLUE);
         controlPoint.setVisible(false);
 

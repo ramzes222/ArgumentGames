@@ -3,11 +3,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -23,6 +26,7 @@ public class Graph {
     private GraphNode selected = null;
     private Pane graphPane;
     private ToggleGroup tg = new ToggleGroup();
+    private EventHandler<MouseEvent> graphWideEvent;
     enum InteractMode {
         SELECT_MODE,
         MOVE_MODE,
@@ -74,6 +78,8 @@ public class Graph {
 
     public void setInteractMode(InteractMode m) {
         switch (m) {
+            //
+            //
             case SELECT_MODE -> {
                 interactMode = m;
                 setDisableButtons(false);
@@ -94,7 +100,21 @@ public class Graph {
                         }
                     });
                 }
+                for (GraphArrow a : arrows) {
+                    a.setOnMouseClicked(e -> {
+                        if (selected == a) {
+                            selected.deselect();
+                            selected = null;
+                        } else {
+                            if (selected != null) selected.deselect();
+                            selected = a;
+                            selected.select();
+                        }
+                    });
+                }
             }
+            //
+            //
             case MOVE_MODE -> {
                 interactMode = m;
                 if (this.addEdgeButton != null) {
@@ -110,6 +130,8 @@ public class Graph {
                     makeDraggable(n);
                 }
             }
+            //
+            //
             case SPECIAL_MODE -> {
                 interactMode = m;
                 if (selected != null) {
@@ -199,9 +221,19 @@ public class Graph {
             MouseArrow newEdgeMouseArrow = new MouseArrow(fromNode.getLayoutX(), fromNode.getLayoutY(), graphPane);
             setInteractMode(InteractMode.SPECIAL_MODE);
             //
+            // Add cancel even when right-clicking
+            graphWideEvent = e -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    endAddEdgeEvent(newEdgeMouseArrow);
+                    fromNode.dehighlight();
+                    graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);}
+            };
+            graphPane.addEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
+            //
             // Add event to all nodes
-            System.out.println("b");
-            for (GraphCircle toNode: nodes) { toNode.setOnMouseClicked(e -> { addArrow(fromNode, toNode); endAddEdgeEvent(newEdgeMouseArrow); fromNode.dehighlight(); }); }
+            for (GraphCircle toNode: nodes) { toNode.setOnMouseClicked(e -> { if (e.getButton() == MouseButton.PRIMARY) { addArrow(fromNode, toNode); endAddEdgeEvent(newEdgeMouseArrow); fromNode.dehighlight();
+                graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent); }}); }
+
         } else {
             // This should be prevented by other functions, but
             // just in case show a warning
@@ -213,7 +245,7 @@ public class Graph {
     }
 
     private void endAddEdgeEvent(MouseArrow mArrow) {
-        // Perform cleanup after manual Add Edge has been completed
+        // Perform cleanup after manual Add Edge has been completed or cancelled
         setInteractMode(InteractMode.SELECT_MODE);
         mArrow.delete();
         mArrow = null;
