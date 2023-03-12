@@ -56,6 +56,10 @@ public class Graph {
         this.addGArrowButton.setOnAction(e-> { beginAddGArrow(); });
     }
 
+    private void generateFromFramework(Framework framework) {
+        ArrayList<FrameworkArgument> argList = framework.getArguments();
+        for (FrameworkArgument arg : argList) { addGCircle();}
+    }
     private void setUpInteractModeButton(RadioButton b, InteractMode i) {
         b.getStyleClass().remove("radio-button");
         b.setToggleGroup(this.tg);
@@ -64,7 +68,7 @@ public class Graph {
         });
     }
 
-    public void setInteractMode(InteractMode m) {
+    private void setInteractMode(InteractMode m) {
         switch (m) {
             //
             //
