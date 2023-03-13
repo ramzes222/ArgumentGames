@@ -8,7 +8,7 @@ import javafx.scene.control.Dialog;
 
 public class MainController {
     @FXML
-    RadioButton leftSelectButton, leftMoveButton, rightSelectButton, rightMoveButton;
+    RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
     Button leftAddNodeButton, leftAddEdgeButton;
     @FXML
@@ -20,8 +20,8 @@ public class MainController {
 
     public void initialize() {
         // Set up the two Graphs
-        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftAddNodeButton, leftAddEdgeButton);
-        gameGraph = new Graph(rightGraphPane, rightSelectButton, rightMoveButton);
+        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton);
+        gameGraph = new Graph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton);
 
         // Construct the menu Bar
 

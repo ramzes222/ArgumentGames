@@ -15,7 +15,7 @@
                   <children>
                      <RadioButton fx:id="leftSelectButton" mnemonicParsing="false" styleClass="toggle-button">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/Select.png" />
                               </image>
@@ -27,9 +27,21 @@
                      </RadioButton>
                      <RadioButton fx:id="leftMoveButton" mnemonicParsing="false" styleClass="toggle-button">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
-                                 <Image url="@img/Move.png" />
+                                 <Image url="@img/MoveNodes.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </RadioButton>
+                     <RadioButton fx:id="leftPanButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <graphic>
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/MoveCamera.png" />
                               </image>
                            </ImageView>
                         </graphic>
@@ -43,7 +55,7 @@
                         </HBox.margin></Separator>
                      <Button fx:id="leftAddNodeButton" mnemonicParsing="false">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/New Node.png" />
                               </image>
@@ -52,7 +64,7 @@
                      </Button>
                      <Button fx:id="leftAddEdgeButton" mnemonicParsing="false">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/New Edge.png" />
                               </image>
@@ -62,9 +74,9 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </Button>
-                     <Button fx:id="leftTestButton" onAction="#testAction" mnemonicParsing="false">
+                     <Button fx:id="leftTestButton" mnemonicParsing="false" onAction="#testAction">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/MoveCamera.png" />
                               </image>
@@ -75,11 +87,14 @@
                         </HBox.margin>
                      </Button>
                   </children></HBox>
-               <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+                  <children>
+                     <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" />
+                  </children>
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </VBox.margin>
-               </Pane>
+               </StackPane>
             </VBox>
             <Pane fx:id="centerPane" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <VBox fx:id="rightGraphBox" GridPane.columnIndex="2" GridPane.rowIndex="0">
@@ -87,7 +102,7 @@
                   <children>
                      <RadioButton fx:id="rightSelectButton" mnemonicParsing="false" styleClass="toggle-button">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/Select.png" />
                               </image>
@@ -99,7 +114,7 @@
                      </RadioButton>
                      <RadioButton fx:id="rightMoveButton" mnemonicParsing="false" styleClass="toggle-button">
                         <graphic>
-                           <ImageView fitHeight="26.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@img/Move.png" />
                               </image>
@@ -107,6 +122,18 @@
                         </graphic>
                         <HBox.margin>
                            <Insets left="4.0" />
+                        </HBox.margin>
+                     </RadioButton>
+                     <RadioButton fx:id="rightPanButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <graphic>
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/MoveCamera.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
                         </HBox.margin>
                      </RadioButton>
                   </children></HBox>

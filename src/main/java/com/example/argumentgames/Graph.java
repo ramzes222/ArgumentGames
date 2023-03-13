@@ -7,12 +7,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Graph {
     private final double moveAwayStep = 10;
     private double dragOriginY = 0, dragOriginX = 0, gCircleRadius = 45;
     private Button addGCircleButton = null, addGArrowButton = null;
-    private final RadioButton setSelectModeButton, setMoveModeButton;
+    private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<GraphCircle> gCircles = new ArrayList<>();
     private final ArrayList<GraphArrow> gArrows = new ArrayList<>();
     private GraphNode selected = null;
@@ -22,26 +23,30 @@ public class Graph {
     enum InteractMode {
         SELECT_MODE,
         MOVE_MODE,
-        //PAN_MODE,
+        PAN_MODE,
         SPECIAL_MODE
     }
     private InteractMode interactMode = InteractMode.SELECT_MODE;
 
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton) {
+    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton) {
         // Save variables
         this.graphPane = graphPane;
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
+        this.setPanModeButton = setPanModeButton;
         //
         // Setup interact mode buttons
         setUpInteractModeButton(setMoveModeButton, InteractMode.MOVE_MODE);
         setUpInteractModeButton(setSelectModeButton, InteractMode.SELECT_MODE);
+        setUpInteractModeButton(setPanModeButton, InteractMode.PAN_MODE);
         this.setSelectModeButton.fire();
+        setUpClip();
     }
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, Button addGCircleButton, Button addGArrowButton) {
+    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton) {
         // Save variables
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
+        this.setPanModeButton = setPanModeButton;
         this.graphPane = graphPane;
         this.addGCircleButton = addGCircleButton;
         this.addGArrowButton = addGArrowButton;
@@ -49,16 +54,30 @@ public class Graph {
         // Setup interact mode buttons
         setUpInteractModeButton(setMoveModeButton, InteractMode.MOVE_MODE);
         setUpInteractModeButton(setSelectModeButton, InteractMode.SELECT_MODE);
+        setUpInteractModeButton(setPanModeButton, InteractMode.PAN_MODE);
         this.setSelectModeButton.fire();
         //
         // Setup control buttons
-        this.addGCircleButton.setOnAction(e-> { addGCircle(); });
-        this.addGArrowButton.setOnAction(e-> { beginAddGArrow(); });
+        this.addGCircleButton.setOnAction(e-> { beginManualAddGCircle(); });
+        this.addGArrowButton.setOnAction(e-> { beginManualAddGArrow(); });
+        setUpClip();
     }
 
+    private void setUpClip() {
+        final Rectangle outputClip = new Rectangle();
+        outputClip.setArcWidth(5);
+        outputClip.setArcHeight(5);
+        outputClip.setWidth(graphPane.getWidth());
+        outputClip.setHeight(graphPane.getHeight());
+        graphPane.setClip(outputClip);
+        graphPane.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            outputClip.setWidth(newValue.getWidth());
+            outputClip.setHeight(newValue.getHeight());
+        });
+    }
     private void generateFromFramework(Framework framework) {
         ArrayList<FrameworkArgument> argList = framework.getArguments();
-        for (FrameworkArgument arg : argList) { addGCircle();}
+        for (FrameworkArgument arg : argList) { addGCircle(arg.getName());}
     }
     private void setUpInteractModeButton(RadioButton b, InteractMode i) {
         b.getStyleClass().remove("radio-button");
@@ -70,13 +89,13 @@ public class Graph {
 
     private void setInteractMode(InteractMode m) {
         switch (m) {
-            //
-            //
             case SELECT_MODE -> {
+                graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
                 interactMode = m;
                 setDisableButtons(false);
                 // Implement selection
                 for (GraphCircle n : gCircles) {
+                    n.setMouseTransparent(false);
                     n.setOnMouseDragged(null);
                     n.setOnMousePressed(null);
                     n.setOnMouseClicked(e -> {
@@ -91,6 +110,7 @@ public class Graph {
                     });
                 }
                 for (GraphArrow a : gArrows) {
+                    a.setMouseTransparent(false);
                     a.setOnMouseClicked(e -> {
                         if (selected == a) {
                             selected.deselect();
@@ -106,6 +126,7 @@ public class Graph {
             //
             //
             case MOVE_MODE -> {
+                graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
                 interactMode = m;
                 if (this.addGArrowButton != null) {
                     this.addGArrowButton.setDisable(true);
@@ -116,13 +137,60 @@ public class Graph {
                 }
                 // Turn off other events, then make draggable
                 for (GraphCircle n : gCircles) {
+                    n.setMouseTransparent(false);
                     n.setOnMouseClicked(null);
                     makeDraggable(n);
+                }
+                // For arrows, keep behaviour from selecting them
+                for (GraphArrow a : gArrows) {
+                    a.setMouseTransparent(false);
+                    a.setOnMouseClicked(e -> {
+                        if (selected == a) {
+                            selected.deselect();
+                            selected = null;
+                        } else {
+                            if (selected != null) selected.deselect();
+                            selected = a;
+                            selected.select();
+                        }
+                    });
                 }
             }
             //
             //
+            case PAN_MODE -> {
+                // Make nodes and arrows transparent - only clicks on the Pane matter
+                interactMode = m;
+                if (this.addGArrowButton != null) {
+                    this.addGArrowButton.setDisable(true);
+                }
+                if (selected != null) {
+                    selected.deselect();
+                    selected = null;
+                }
+                for (GraphCircle c: gCircles) { c.setMouseTransparent(true); }
+                for (GraphArrow a: gArrows) { a.setMouseTransparent(true); }
+                graphPane.setOnMousePressed(e -> {
+                    if (interactMode == InteractMode.PAN_MODE) {
+                        dragOriginX = e.getSceneX();
+                        dragOriginY = e.getSceneY();
+                    }
+                });
+                graphPane.setOnMouseDragged(e -> {
+                    if (interactMode == InteractMode.PAN_MODE) {
+                        double xDrag = e.getSceneX() - dragOriginX;
+                        double yDrag = e.getSceneY() - dragOriginY;
+                        dragOriginX = e.getSceneX();
+                        dragOriginY = e.getSceneY();
+                        for (GraphArrow a: gArrows) { a.translateControlPointXY(xDrag, yDrag); }
+                        for (GraphCircle c: gCircles) { c.translateXY(xDrag, yDrag); System.out.println("d"); }
+                    }
+                });
+            }
+            //
+            //
             case SPECIAL_MODE -> {
+                graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
                 interactMode = m;
                 if (selected != null) {
                     selected.deselect();
@@ -131,11 +199,13 @@ public class Graph {
                 setDisableButtons(true);
                 // Disable all GCircle/edge click events
                 for (GraphCircle n : gCircles) {
+                    n.setMouseTransparent(false);
                     n.setOnMouseClicked(null);
                     n.setOnMouseDragged(null);
                     n.setOnMousePressed(null);
                 }
                 for (GraphArrow a : gArrows) {
+                    a.setMouseTransparent(false);
                     a.setOnMouseClicked(null);
                     a.setOnMouseDragged(null);
                     a.setOnMousePressed(null);
@@ -144,17 +214,16 @@ public class Graph {
         }
     }
 
+    // Sets all control buttons to disabled (or enabled, as the parameter)
     private void setDisableButtons(boolean b) {
         setSelectModeButton.setDisable(b);
         setMoveModeButton.setDisable(b);
+        setPanModeButton.setDisable(b);
         if (addGArrowButton != null) addGArrowButton.setDisable(b);
         if (addGCircleButton != null) addGCircleButton.setDisable(b);
     }
 
-    //private double heightInBounds(double y) { return Math.min( Math.max(0, y), this.height); }
-    //private double widthInBounds(double x) { return Math.min( Math.max(0, x), this.width); }
-
-    public void addGCircle() {
+    public void beginManualAddGCircle() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add new node");
         dialog.setContentText("Please enter the name of the new node:");
@@ -162,28 +231,14 @@ public class Graph {
         newName.ifPresent(name -> {
             // Check if the name is unique among existing GCircles
             boolean unique = true;
-            for (GraphCircle c: gCircles) { if (c.getName().equals(name)) {unique = false; break;}}
+            for (GraphCircle c : gCircles) {
+                if (c.getName().equals(name)) {
+                    unique = false;
+                    break;
+                }
+            }
             if (unique) {
-                GraphCircle n = new GraphCircle(name, 45);
-                n.setLayoutX(50);
-                n.setLayoutY(50);
-                // Implement selection
-                if (interactMode == InteractMode.SELECT_MODE) {
-                    n.setOnMouseClicked(e -> {
-                        if (selected == n) {
-                            selected.deselect();
-                            selected = null;
-                        } else {
-                            if (selected != null) selected.deselect();
-                            selected = n;
-                            selected.select();
-                        }
-                    });}
-                graphPane.getChildren().add(n);
-                gCircles.add(n);
-                //
-                // Move the new node to an empty space
-                moveNode(n);
+                addGCircle(name);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Node already exists");
@@ -191,6 +246,29 @@ public class Graph {
                 alert.showAndWait();
             }
         });
+    }
+
+    private void addGCircle(String name) {
+        GraphCircle n = new GraphCircle(name, 45);
+        n.setLayoutX(50);
+        n.setLayoutY(50);
+        // Implement selection
+        if (interactMode == InteractMode.SELECT_MODE) {
+            n.setOnMouseClicked(e -> {
+                if (selected == n) {
+                    selected.deselect();
+                    selected = null;
+                } else {
+                    if (selected != null) selected.deselect();
+                    selected = n;
+                    selected.select();
+                }
+            });}
+        graphPane.getChildren().add(n);
+        gCircles.add(n);
+        //
+        // Move the new node to an empty space
+        moveNode(n);
     }
 
     public GraphCircle getGCircle(String name) {
@@ -278,7 +356,7 @@ public class Graph {
         return closestGCircle;
     }
 
-    public void beginAddGArrow() {
+    public void beginManualAddGArrow() {
         // Check which Node (GCircle) is currently selected
         // It will be the origin of the edge
         if (selected != null && selected.getClass() == GraphCircle.class) {
