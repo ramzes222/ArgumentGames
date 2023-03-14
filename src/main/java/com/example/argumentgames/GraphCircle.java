@@ -36,7 +36,6 @@ public class GraphCircle extends StackPane implements GraphNode {
     }
 
     public void translateXY(double xDiff, double yDiff) {
-        System.out.println(name + " x,y: " + xDiff + ", " + yDiff);
         double newY = yDiff + getLayoutY();
         double newX = xDiff + getLayoutX();
         getCenterYProperty().add(yDiff); getCenterXProperty().add(xDiff);

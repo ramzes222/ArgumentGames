@@ -10,7 +10,7 @@ public class MainController {
     @FXML
     RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
-    Button leftAddNodeButton, leftAddEdgeButton;
+    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
 
@@ -20,7 +20,7 @@ public class MainController {
 
     public void initialize() {
         // Set up the two Graphs
-        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton);
+        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftCleanupButton);
         gameGraph = new Graph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton);
 
         // Construct the menu Bar
