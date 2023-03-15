@@ -14,14 +14,15 @@ public class MainController {
     @FXML
     Pane leftGraphPane, rightGraphPane;
 
-    Graph frameworkGraph, gameGraph;
+    Graph frameworkGraph;
+    TreeGraph gameTree;
     public MainController() {
     }
 
     public void initialize() {
         // Set up the two Graphs
         frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftCleanupButton);
-        gameGraph = new Graph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton);
+        gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton);
 
         // Construct the menu Bar
 

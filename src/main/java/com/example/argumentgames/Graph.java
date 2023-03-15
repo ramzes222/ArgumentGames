@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 public class Graph {
     private final double moveAwayStep = 10;
     private double dragOriginY = 0, dragOriginX = 0, gCircleRadius = 45;
-    private Button addGCircleButton = null, addGArrowButton = null, cleanupButton = null;
+    private final Button addGCircleButton, addGArrowButton, cleanupButton;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<GraphCircle> gCircles = new ArrayList<>();
     private final ArrayList<GraphArrow> gArrows = new ArrayList<>();
@@ -28,20 +28,6 @@ public class Graph {
     }
     private InteractMode interactMode = InteractMode.SELECT_MODE;
 
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton) {
-        // Save variables
-        this.graphPane = graphPane;
-        this.setSelectModeButton = setSelectModeButton;
-        this.setMoveModeButton = setMoveModeButton;
-        this.setPanModeButton = setPanModeButton;
-        //
-        // Setup interact mode buttons
-        setUpInteractModeButton(setMoveModeButton, InteractMode.MOVE_MODE);
-        setUpInteractModeButton(setSelectModeButton, InteractMode.SELECT_MODE);
-        setUpInteractModeButton(setPanModeButton, InteractMode.PAN_MODE);
-        this.setSelectModeButton.fire();
-        setUpClip();
-    }
     public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button cleanupButton) {
         // Save variables
         this.setSelectModeButton = setSelectModeButton;
@@ -221,10 +207,13 @@ public class Graph {
         setSelectModeButton.setDisable(b);
         setMoveModeButton.setDisable(b);
         setPanModeButton.setDisable(b);
-        if (addGArrowButton != null) addGArrowButton.setDisable(b);
-        if (addGCircleButton != null) addGCircleButton.setDisable(b);
+        addGArrowButton.setDisable(b);
+        addGCircleButton.setDisable(b);
+        cleanupButton.setDisable(b);
     }
 
+    // Ran when clicking AddCircle Button
+    // Begins the process of manually adding a new Argument to the graph (represented as gCircle)
     public void beginManualAddGCircle() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add new node");
@@ -250,6 +239,8 @@ public class Graph {
         });
     }
 
+    // Adds a new gCircle to the graph under the specified name
+    // Only adds the visual representation of an argument - does not affect the framework
     private void addGCircle(String name) {
         GraphCircle n = new GraphCircle(name, 45);
         n.setLayoutX(50);
