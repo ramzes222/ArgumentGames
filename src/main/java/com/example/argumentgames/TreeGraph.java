@@ -12,8 +12,9 @@ import java.util.ArrayList;
 
 public class TreeGraph {
     private final double moveAwayStep = 10;
-    private double dragOriginY = 0, dragOriginX = 0, gCircleRadius = 45;
+    private double dragOriginY = 0, dragOriginX = 0, tCircleRadius = 30;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
+    private final Button buildTreeButton;
     private final ArrayList<TreeCircle> tCircles = new ArrayList<>();
     private final ArrayList<TreeArrow> tArrows = new ArrayList<>();
     private TreeCircle selected = null;
@@ -26,20 +27,30 @@ public class TreeGraph {
         PAN_MODE,
         SPECIAL_MODE
     }
-    private Graph.InteractMode interactMode = Graph.InteractMode.SELECT_MODE;
+    private TreeGraph.InteractMode interactMode = TreeGraph.InteractMode.SELECT_MODE;
 
-    public TreeGraph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton) {
+    public TreeGraph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton,
+                     RadioButton setPanModeButton, Button buildTreeButton) {
         // Save variables
         this.treePane = graphPane;
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
         this.setPanModeButton = setPanModeButton;
+        this.buildTreeButton = buildTreeButton;
         //
         // Setup interact mode buttons
-        setUpInteractModeButton(setMoveModeButton, Graph.InteractMode.MOVE_MODE);
-        setUpInteractModeButton(setSelectModeButton, Graph.InteractMode.SELECT_MODE);
-        setUpInteractModeButton(setPanModeButton, Graph.InteractMode.PAN_MODE);
+        setUpInteractModeButton(setMoveModeButton, TreeGraph.InteractMode.MOVE_MODE);
+        setUpInteractModeButton(setSelectModeButton, TreeGraph.InteractMode.SELECT_MODE);
+        setUpInteractModeButton(setPanModeButton, TreeGraph.InteractMode.PAN_MODE);
         this.setSelectModeButton.fire();
+        // Setup other buttons
+        this.buildTreeButton.setOnAction(e-> {
+            TreeArgument arg = new TreeArgument("a", null);
+            TreeArgument child1 = new TreeArgument("b", arg);
+            TreeArgument child2 = new TreeArgument("c", arg);
+            TreeArgument child3 = new TreeArgument("d", child1);
+            buildTree(arg);
+        });
         setUpClip();
     }
 
@@ -60,7 +71,7 @@ public class TreeGraph {
 
     // Performs basic setup for buttons that change the interact mode
     // Changes their appearance, sets action, and assigns toggle group
-    private void setUpInteractModeButton(RadioButton b, Graph.InteractMode i) {
+    private void setUpInteractModeButton(RadioButton b, TreeGraph.InteractMode i) {
         b.getStyleClass().remove("radio-button");
         b.setToggleGroup(this.tg);
         b.setOnAction(e -> {
@@ -69,7 +80,7 @@ public class TreeGraph {
     }
 
     // Changes the interact mode for the tree
-    private void setInteractMode(Graph.InteractMode m) {
+    private void setInteractMode(TreeGraph.InteractMode m) {
         switch (m) {
             // SELECT MODE
             // Allows user to click on Nodes to select them
@@ -122,18 +133,17 @@ public class TreeGraph {
                 }
                 for (TreeCircle c: tCircles) { c.setMouseTransparent(true); }
                 treePane.setOnMousePressed(e -> {
-                    if (interactMode == Graph.InteractMode.PAN_MODE) {
+                    if (interactMode == TreeGraph.InteractMode.PAN_MODE) {
                         dragOriginX = e.getSceneX();
                         dragOriginY = e.getSceneY();
                     }
                 });
                 treePane.setOnMouseDragged(e -> {
-                    if (interactMode == Graph.InteractMode.PAN_MODE) {
+                    if (interactMode == TreeGraph.InteractMode.PAN_MODE) {
                         double xDrag = e.getSceneX() - dragOriginX;
                         double yDrag = e.getSceneY() - dragOriginY;
                         dragOriginX = e.getSceneX();
                         dragOriginY = e.getSceneY();
-                        for (TreeArrow a: tArrows) { a.translateControlPointXY(xDrag, yDrag); }
                         for (TreeCircle c: tCircles) { c.translateXY(xDrag, yDrag); }
                     }
                 });
@@ -169,14 +179,14 @@ public class TreeGraph {
     // Adds the events that allow the provided Circle to be dragged around by the user
     private void makeDraggable(TreeCircle node) {
         node.setOnMousePressed(e -> {
-            if (interactMode == Graph.InteractMode.MOVE_MODE) {
+            if (interactMode == TreeGraph.InteractMode.MOVE_MODE) {
                 node.toFront();
                 dragOriginX = e.getSceneX() - node.getLayoutX();
                 dragOriginY = e.getSceneY() - node.getLayoutY();
             }
         });
         node.setOnMouseDragged(e -> {
-            if (interactMode == Graph.InteractMode.MOVE_MODE) {
+            if (interactMode == TreeGraph.InteractMode.MOVE_MODE) {
                 double newX = e.getSceneX() - dragOriginX;
                 node.getCenterXProperty().set(newX);
                 node.setLayoutX(newX);
@@ -197,12 +207,12 @@ public class TreeGraph {
 
     // Adds a new tCircle to the tree under the specified name
     // Only adds the visual representation of an argument - does not affect the underlying game tree
-    private void addGCircle(String name) {
-        GraphCircle n = new GraphCircle(name, 45);
+    private TreeCircle addGCircle(String name) {
+        TreeCircle n = new TreeCircle(name, 45);
         n.setLayoutX(50);
         n.setLayoutY(50);
         // Implement selection
-        if (interactMode == Graph.InteractMode.SELECT_MODE) {
+        if (interactMode == TreeGraph.InteractMode.SELECT_MODE) {
             n.setOnMouseClicked(e -> {
                 if (selected == n) {
                     selected.deselect();
@@ -216,14 +226,36 @@ public class TreeGraph {
         treePane.getChildren().add(n);
         tCircles.add(n);
         //
-        // Move the new node to an empty space
-        moveNode(n);
+        // Return the newly created circle
+        return n;
     }
 
     // Rebuilds the tree, only moving the existing nodes
-    private void buildTree(TreeNode root) {
+    private void buildTree(TreeArgument root) {
         if (root == null) { return; }
-
-
+        double middleX = treePane.getWidth()/2;
+        double yLevel = tCircleRadius;
+        double yDistance = 3*tCircleRadius, xDistance = 3*tCircleRadius;
+        // Create the root
+        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius); treePane.getChildren().add(rootCircle);
+        rootCircle.moveToXY(middleX, yLevel);
+        // Get the list of children of root
+        ArrayList<TreeArgument> nextLayer = root.getChildren();
+        //
+        // Iterate over tree levels
+        while (!nextLayer.isEmpty()) {
+            ArrayList<TreeArgument> nextChildren = new ArrayList<>();
+            // Set the new x and y values
+            yLevel += yDistance;
+            double itemCount = nextLayer.size();
+            double xPos = middleX - ((itemCount-1)/2)*xDistance;
+            for (TreeArgument a: nextLayer) {
+                TreeCircle newCircle = new TreeCircle(a, tCircleRadius); treePane.getChildren().add(newCircle);
+                newCircle.moveToXY(xPos, yLevel);
+                xPos += xDistance;
+                nextChildren.addAll(a.getChildren());
+            }
+            nextLayer = nextChildren;
+        }
     }
 }

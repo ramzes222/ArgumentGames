@@ -140,12 +140,27 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </RadioButton>
+                     <Button fx:id="rightBuildTreeButton" mnemonicParsing="false">
+                        <graphic>
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/BuildTree.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </Button>
                   </children></HBox>
-               <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+                  <children>
+                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0"/>
+                  </children>
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </VBox.margin>
-               </Pane>
+               </StackPane>
             </VBox>
          </children>
          <columnConstraints>
