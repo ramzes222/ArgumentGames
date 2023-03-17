@@ -27,7 +27,7 @@ public class TreeArrow extends Line {
         toBack();
 
         // Setup the arrow tip
-        double[] shape = new double[] { 20,0,60,20,60,-20 };
+        double[] shape = new double[] { 15,0,40,15,40,-15 };
         arrow = new Polygon(shape);
         arrow.setFill(Color.FORESTGREEN);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
@@ -35,6 +35,10 @@ public class TreeArrow extends Line {
         arrow.toBack();
         arrowRotate = new Rotate( 0, 0, 0 );
         arrow.getTransforms().add(arrowRotate);
+
+        // Save self to nodes
+        a.addArrow(this);
+        b.addArrow(this);
 
         // Rotate the arrow tip
         rotateArrowShape();

@@ -20,6 +20,8 @@ public class TreeGraph {
     private TreeCircle selected = null;
     private final Pane treePane;
     private final ToggleGroup tg = new ToggleGroup();
+
+    private TreeArgument root;
     private EventHandler<MouseEvent> graphWideEvent;
     enum InteractMode {
         SELECT_MODE,
@@ -45,13 +47,23 @@ public class TreeGraph {
         this.setSelectModeButton.fire();
         // Setup other buttons
         this.buildTreeButton.setOnAction(e-> {
-            TreeArgument arg = new TreeArgument("a", null);
-            TreeArgument child1 = new TreeArgument("b", arg);
-            TreeArgument child2 = new TreeArgument("c", arg);
+            clear();
+            root = new TreeArgument("a", null);
+            TreeArgument child1 = new TreeArgument("b", root);
+            TreeArgument child2 = new TreeArgument("c", root);
             TreeArgument child3 = new TreeArgument("d", child1);
-            buildTree(arg);
+            buildTree(root);
         });
         setUpClip();
+    }
+
+    // Clears the graph of all tCircles and tArrows
+    private void clear() {
+        treePane.getChildren().clear();
+        if (root!=null) root.clearVisualTCircles();
+        tCircles.clear();
+        tArrows.clear();
+        selected = null;
     }
 
     // Creates a boundary for the area
@@ -205,31 +217,6 @@ public class TreeGraph {
         setPanModeButton.setDisable(b);
     }
 
-    // Adds a new tCircle to the tree under the specified name
-    // Only adds the visual representation of an argument - does not affect the underlying game tree
-    private TreeCircle addGCircle(String name) {
-        TreeCircle n = new TreeCircle(name, 45);
-        n.setLayoutX(50);
-        n.setLayoutY(50);
-        // Implement selection
-        if (interactMode == TreeGraph.InteractMode.SELECT_MODE) {
-            n.setOnMouseClicked(e -> {
-                if (selected == n) {
-                    selected.deselect();
-                    selected = null;
-                } else {
-                    if (selected != null) selected.deselect();
-                    selected = n;
-                    selected.select();
-                }
-            });}
-        treePane.getChildren().add(n);
-        tCircles.add(n);
-        //
-        // Return the newly created circle
-        return n;
-    }
-
     // Takes the specified bound, assigns totalPositions spots inside it, equal distance from each other
     // Returns the value of the specified position
     // Ex. For bounds [50, 100] and 1 totalPositions, position 1, it will return 75
@@ -242,19 +229,17 @@ public class TreeGraph {
     // Places the children of the root
     // Places them within the area between xLeft and xRight, at yLevel
     private void buildBranch(TreeArgument root, double yLevel, double xLeft, double xRight) {
-        System.out.println(root.getName());
         ArrayList<TreeArgument> children = root.getChildren();
         if (children.isEmpty()) return;
         double distance = (xRight - xLeft) / root.getWidth();
-        System.out.println("Root:" + root.getName() + " children:" + children.size() + " width: " + root.getWidth());
         if (children.size() == root.getWidth()) {
             // Special case - all width slots are taken, so treat each node as width 1
-            System.out.println("Special case");
             double currX = xLeft;
             for (TreeArgument arg: children) {
                 // Create the node
-                TreeCircle newCircle = new TreeCircle(arg, tCircleRadius); treePane.getChildren().add(newCircle);
-                newCircle.moveToXY(currX + (distance/2), yLevel);
+                // NEW CIRCLE
+                addTCircle(arg, currX + (distance/2),
+                        yLevel, root.getVisualTCircle());
                 // If it's a branch, build the subtree
                 if (!arg.isLeaf()) buildBranch(arg, yLevel + (tCircleRadius * 3), currX, currX + distance);
                 // Increase the currLeftX
@@ -279,8 +264,9 @@ public class TreeGraph {
                     int totalPositions = width; if (width%2 == 0) totalPositions -= 1;
                     // Position is the middle number among all positions
                     int position = (int) Math.ceil(width/2.0);
-                    TreeCircle branchCircle = new TreeCircle(arg, tCircleRadius); treePane.getChildren().add(branchCircle);
-                    branchCircle.moveToXY(getEvenDivision(currLeftX, currRightX, position, totalPositions), yLevel);
+                    // NEW CIRCLE
+                    addTCircle(arg, getEvenDivision(currLeftX, currRightX, position, totalPositions),
+                            yLevel, root.getVisualTCircle());
                     // Build the subtree of this branch
                     buildBranch(arg, yLevel + (tCircleRadius * 3), currLeftX, currRightX);
                     // Save the empty slots
@@ -293,10 +279,25 @@ public class TreeGraph {
             // We have placed all branches - time for slotting leaves into the saved empty slots
             for (TreeArgument leaf: leaves) {
                 double xSlot = emptySpots.remove(0);
-                TreeCircle leafCircle = new TreeCircle(leaf, tCircleRadius); treePane.getChildren().add(leafCircle);
-                leafCircle.moveToXY(xSlot, yLevel);
+                // NEW CIRCLE
+                addTCircle(leaf, xSlot,
+                        yLevel, root.getVisualTCircle());
             }
         }
+    }
+
+    private void addTCircle(TreeArgument arg, double x, double y, TreeCircle parent) {
+        TreeCircle newCircle = new TreeCircle(arg, tCircleRadius);
+        treePane.getChildren().add(newCircle); tCircles.add(newCircle);
+        newCircle.moveToXY(x, y);
+        //
+        // Create the arrow pointing from parent to self
+        if (parent != null) {
+            TreeArrow arrow = new TreeArrow(parent, newCircle);
+            treePane.getChildren().addAll(arrow, arrow.getArrowTip()); tArrows.add(arrow);
+            arrow.toBack(); arrow.getArrowTip().toBack();
+        }
+        newCircle.toFront();
     }
 
     private void buildTree(TreeArgument root) {
@@ -305,7 +306,8 @@ public class TreeGraph {
         double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
                 yLevel = tCircleRadius;
         // Create the root
-        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius); treePane.getChildren().add(rootCircle);
+        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius);
+        treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
         rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
         // Build the branch from the root
         buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);

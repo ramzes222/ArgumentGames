@@ -35,6 +35,7 @@ public class TreeCircle extends StackPane {
     public TreeCircle(TreeArgument a, double radius) {
         super();
         this.radius = radius;
+        a.setVisualTCircle(this);
         name = a.getName();
         circle = new Circle();
         circle.setRadius(radius);

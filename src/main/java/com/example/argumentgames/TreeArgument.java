@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class TreeArgument {
     private final String name;
     private final TreeArgument parent;
+    private TreeCircle visualTCircle = null;
     private final ArrayList<TreeArgument> children = new ArrayList<>();
     private int width;
 
@@ -29,10 +30,20 @@ public class TreeArgument {
         width = Math.max(nonLeafChildSum, children.size());
     }
 
+    // Clears the visualTCircles for self and all children
+    // Via recurrence, clears the whole tree
+    public void clearVisualTCircles() {
+        visualTCircle = null;
+        for (TreeArgument child: children) {child.clearVisualTCircles();}
+    }
+
+    public void setVisualTCircle(TreeCircle c) {visualTCircle = c;}
+    public TreeCircle getVisualTCircle() {return visualTCircle;}
     public void addChild(TreeArgument t) { children.add(t); }
 
     public ArrayList<TreeArgument> getChildren() { return children; }
     public String getName() {return name; }
+    public TreeArgument getParent() {return parent; }
     public int getWidth() { return width; }
     public boolean isLeaf() { return children.size() == 0; }
 }
