@@ -6,10 +6,10 @@ import java.util.ArrayList;
 // Used in game trees
 // Can only attack one other argument (parent in tree)
 public class TreeArgument {
-    String name;
-    TreeArgument parent;
-    ArrayList<TreeArgument> children = new ArrayList<>();
-    int width;
+    private final String name;
+    private final TreeArgument parent;
+    private final ArrayList<TreeArgument> children = new ArrayList<>();
+    private int width;
 
     public TreeArgument(String name, TreeArgument parent) {
         this.parent = parent;
@@ -20,14 +20,16 @@ public class TreeArgument {
 
     public void updateWidth() {
         int nonLeafChildSum = 0;
-        for (TreeArgument arg: children) {
-            if (!arg.isLeaf()) { nonLeafChildSum += arg.getWidth(); }
+        for (TreeArgument child: children) {
+            // Tell child to update themselves
+            child.updateWidth();
+            // Then sum it
+            if (!child.isLeaf()) { nonLeafChildSum += child.getWidth(); }
         }
-        int newWidth = Math.max(nonLeafChildSum, children.size());
-        if (newWidth != width) { width = newWidth; if (parent != null) parent.updateWidth(); }
+        width = Math.max(nonLeafChildSum, children.size());
     }
 
-    public void addChild(TreeArgument t) { children.add(t); updateWidth(); }
+    public void addChild(TreeArgument t) { children.add(t); }
 
     public ArrayList<TreeArgument> getChildren() { return children; }
     public String getName() {return name; }

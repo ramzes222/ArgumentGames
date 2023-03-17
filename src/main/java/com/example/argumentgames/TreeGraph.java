@@ -230,8 +230,89 @@ public class TreeGraph {
         return n;
     }
 
-    // Rebuilds the tree, only moving the existing nodes
+    // Takes the specified bound, assigns totalPositions spots inside it, equal distance from each other
+    // Returns the value of the specified position
+    // Ex. For bounds [50, 100] and 1 totalPositions, position 1, it will return 75
+    private double getEvenDivision(double leftBound, double rightBound, int position, int totalPositions) {
+        double length = rightBound - leftBound;
+        double distanceBetween = length / (totalPositions + 1);
+        return leftBound + (position * distanceBetween);
+    }
+
+    // Places the children of the root
+    // Places them within the area between xLeft and xRight, at yLevel
+    private void buildBranch(TreeArgument root, double yLevel, double xLeft, double xRight) {
+        System.out.println(root.getName());
+        ArrayList<TreeArgument> children = root.getChildren();
+        if (children.isEmpty()) return;
+        double distance = (xRight - xLeft) / root.getWidth();
+        System.out.println("Root:" + root.getName() + " children:" + children.size() + " width: " + root.getWidth());
+        if (children.size() == root.getWidth()) {
+            // Special case - all width slots are taken, so treat each node as width 1
+            System.out.println("Special case");
+            double currX = xLeft;
+            for (TreeArgument arg: children) {
+                // Create the node
+                TreeCircle newCircle = new TreeCircle(arg, tCircleRadius); treePane.getChildren().add(newCircle);
+                newCircle.moveToXY(currX + (distance/2), yLevel);
+                // If it's a branch, build the subtree
+                if (!arg.isLeaf()) buildBranch(arg, yLevel + (tCircleRadius * 3), currX, currX + distance);
+                // Increase the currLeftX
+                currX += distance;
+            }
+        } else {
+            /* For each child:
+                Step 1: Take the first argument. If it's a leaf, save it in a collection and move on
+                Step 2: If it's not a leaf, take its width and place it in its "box"
+                Step 3: Save the locations of free spaces - leaves will slot into them later
+             */
+            double currRightX = xLeft, currLeftX = xLeft;
+            ArrayList<TreeArgument> leaves = new ArrayList<>();
+            ArrayList<Double> emptySpots = new ArrayList<Double>();
+            for (TreeArgument arg: children) {
+                if (arg.isLeaf()) {leaves.add(arg); }
+                else {
+                    int width = arg.getWidth();
+                    // Create the node
+                    currRightX += distance * width;
+                    // TotalPositions is the width rounded down to an odd number
+                    int totalPositions = width; if (width%2 == 0) totalPositions -= 1;
+                    // Position is the middle number among all positions
+                    int position = (int) Math.ceil(width/2.0);
+                    TreeCircle branchCircle = new TreeCircle(arg, tCircleRadius); treePane.getChildren().add(branchCircle);
+                    branchCircle.moveToXY(getEvenDivision(currLeftX, currRightX, position, totalPositions), yLevel);
+                    // Build the subtree of this branch
+                    buildBranch(arg, yLevel + (tCircleRadius * 3), currLeftX, currRightX);
+                    // Save the empty slots
+                    for (int i = 1; i <= totalPositions; i++) {
+                        if (i != position) emptySpots.add( getEvenDivision(currLeftX, currRightX, i, totalPositions) );
+                    }
+                    currLeftX += distance*width;
+                }
+            }
+            // We have placed all branches - time for slotting leaves into the saved empty slots
+            for (TreeArgument leaf: leaves) {
+                double xSlot = emptySpots.remove(0);
+                TreeCircle leafCircle = new TreeCircle(leaf, tCircleRadius); treePane.getChildren().add(leafCircle);
+                leafCircle.moveToXY(xSlot, yLevel);
+            }
+        }
+    }
+
     private void buildTree(TreeArgument root) {
+        if (root == null) return;
+        root.updateWidth();
+        double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
+                yLevel = tCircleRadius;
+        // Create the root
+        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius); treePane.getChildren().add(rootCircle);
+        rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
+        // Build the branch from the root
+        buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
+    }
+
+    // Rebuilds the tree, only moving the existing nodes
+    private void buildTreeOld(TreeArgument root) {
         if (root == null) { return; }
         double middleX = treePane.getWidth()/2;
         double yLevel = tCircleRadius;
