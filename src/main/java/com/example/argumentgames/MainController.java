@@ -39,7 +39,7 @@ public class MainController {
 
         } else {
             FrameworkArgument rootOfTree = currentFramework.getArgumentByName(rootName);
-            TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, true);
+            TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, false);
             gameTree.buildTree(gameTreeRoot);
         }
     }
