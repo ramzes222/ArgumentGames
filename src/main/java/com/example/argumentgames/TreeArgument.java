@@ -10,11 +10,13 @@ public class TreeArgument {
     private final TreeArgument parent;
     private TreeCircle visualTCircle = null;
     private final ArrayList<TreeArgument> children = new ArrayList<>();
+    private ArrayList<TreeArgument> pastInBranch = new ArrayList<>();
     private int width;
 
     public TreeArgument(String name, TreeArgument parent) {
         this.parent = parent;
-        if (parent != null) parent.addChild(this);
+        if (parent != null) { parent.addChild(this);
+            pastInBranch.addAll(parent.getPastInBranch()); pastInBranch.add(parent);}
         this.name = name;
         width = 1;
     }
@@ -42,6 +44,13 @@ public class TreeArgument {
     public void addChild(TreeArgument t) { children.add(t); }
 
     public ArrayList<TreeArgument> getChildren() { return children; }
+    public ArrayList<TreeArgument> getPastInBranch() { return pastInBranch; }
+    public boolean pastInBranchIncludes(String name) {
+        for (TreeArgument arg : pastInBranch) {
+            if ( arg.getName().equals(name) ) return true;
+        }
+        return false;
+    }
     public String getName() {return name; }
     public TreeArgument getParent() {return parent; }
     public int getWidth() { return width; }

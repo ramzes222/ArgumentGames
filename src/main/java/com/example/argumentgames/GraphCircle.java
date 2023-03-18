@@ -62,4 +62,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     public String getName() { return name; }
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
+
+    @Override
+    public boolean isCircle() { return true; }
 }

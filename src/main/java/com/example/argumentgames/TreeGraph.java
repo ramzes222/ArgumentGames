@@ -49,9 +49,13 @@ public class TreeGraph {
         this.buildTreeButton.setOnAction(e-> {
             clear();
             root = new TreeArgument("a", null);
-            TreeArgument child1 = new TreeArgument("b", root);
-            TreeArgument child2 = new TreeArgument("c", root);
-            TreeArgument child3 = new TreeArgument("d", child1);
+            TreeArgument b1 = new TreeArgument("b1", root);
+            TreeArgument b2 = new TreeArgument("b2", root);
+            TreeArgument b3 = new TreeArgument("b3", root);
+            TreeArgument c1 = new TreeArgument("c1", b1);
+            TreeArgument c2 = new TreeArgument("c2", b2);
+            TreeArgument c3 = new TreeArgument("c3", b2);
+            TreeArgument c4 = new TreeArgument("c4", b2);
             buildTree(root);
         });
         setUpClip();
@@ -291,16 +295,17 @@ public class TreeGraph {
         treePane.getChildren().add(newCircle); tCircles.add(newCircle);
         newCircle.moveToXY(x, y);
         //
-        // Create the arrow pointing from parent to self
+        // Create the arrow pointing from self to parent
         if (parent != null) {
-            TreeArrow arrow = new TreeArrow(parent, newCircle);
+            TreeArrow arrow = new TreeArrow(newCircle, parent);
             treePane.getChildren().addAll(arrow, arrow.getArrowTip()); tArrows.add(arrow);
             arrow.toBack(); arrow.getArrowTip().toBack();
         }
         newCircle.toFront();
     }
 
-    private void buildTree(TreeArgument root) {
+    public void buildTree(TreeArgument root) {
+        clear();
         if (root == null) return;
         root.updateWidth();
         double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),

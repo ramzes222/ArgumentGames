@@ -14,6 +14,8 @@ public class MainController {
     @FXML
     Pane leftGraphPane, rightGraphPane;
 
+    Framework currentFramework;
+
     Graph frameworkGraph;
     TreeGraph gameTree;
     public MainController() {
@@ -21,7 +23,9 @@ public class MainController {
 
     public void initialize() {
         // Set up the two Graphs
+        currentFramework = new Framework();
         frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftCleanupButton);
+        frameworkGraph.loadFramework(currentFramework);
         gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton);
 
         // Construct the menu Bar
@@ -29,6 +33,14 @@ public class MainController {
     }
 
     @FXML
-    public void testAction() {
+    public void buildTreeFromFramework() {
+        String rootName = frameworkGraph.getSelectedArgumentName();
+        if (rootName==null) {
+
+        } else {
+            FrameworkArgument rootOfTree = currentFramework.getArgumentByName(rootName);
+            TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, true);
+            gameTree.buildTree(gameTreeRoot);
+        }
     }
 }

@@ -20,6 +20,8 @@ public class Graph {
     private final Pane graphPane;
     private final ToggleGroup tg = new ToggleGroup();
     private EventHandler<MouseEvent> graphWideEvent;
+
+    private Framework currFramework;
     enum InteractMode {
         SELECT_MODE,
         MOVE_MODE,
@@ -63,7 +65,8 @@ public class Graph {
             outputClip.setHeight(newValue.getHeight());
         });
     }
-    private void generateFromFramework(Framework framework) {
+    public void loadFramework(Framework framework) {
+        currFramework = framework;
         ArrayList<FrameworkArgument> argList = framework.getArguments();
         for (FrameworkArgument arg : argList) { addGCircle(arg.getName());}
     }
@@ -220,16 +223,11 @@ public class Graph {
         dialog.setContentText("Please enter the name of the new node:");
         Optional<String> newName = dialog.showAndWait();
         newName.ifPresent(name -> {
-            // Check if the name is unique among existing GCircles
-            boolean unique = true;
-            for (GraphCircle c : gCircles) {
-                if (c.getName().equals(name)) {
-                    unique = false;
-                    break;
-                }
-            }
-            if (unique) {
+            // Check if the name is unique in the framework
+            if (!currFramework.nameExists(name)) {
                 addGCircle(name);
+                // Save the new argument to the framework
+                currFramework.addArgument(name);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Node already exists");
@@ -372,7 +370,8 @@ public class Graph {
             graphPane.addEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
             //
             // Add event to all nodes
-            for (GraphCircle toGCircle: gCircles) { toGCircle.setOnMouseClicked(e -> { if (e.getButton() == MouseButton.PRIMARY) { addGArrow(fromGCircle, toGCircle); endAddGArrowEvent(newGArrowMouseArrow); fromGCircle.dehighlight();
+            for (GraphCircle toGCircle: gCircles) { toGCircle.setOnMouseClicked(e -> { if (e.getButton() == MouseButton.PRIMARY) { addGArrow(fromGCircle, toGCircle);
+                endAddGArrowEvent(newGArrowMouseArrow); fromGCircle.dehighlight(); currFramework.addAttack(fromGCircle.getName(), toGCircle.getName());
                 graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent); }}); }
 
         } else {
@@ -401,25 +400,33 @@ public class Graph {
             alert.setContentText("To add an attack you must select two different arguments!");
             alert.showAndWait();
         } else {
-            GraphArrow arrow = new GraphArrow(a, b);
-            graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
-            gArrows.add(arrow);
-            arrow.setOnMouseClicked(e -> {
-                // OLD CONDITION: interactMode == InteractMode.SELECT_MODE
-                if (selected == arrow) {
-                    selected.deselect();
-                    selected = null;
-                } else {
-                    if (selected != null) selected.deselect();
-                    selected = arrow;
-                    selected.select();
-                }
-            });
-            // Save arrow reference in the connected nodes
-            a.addArrow(arrow);
-            b.addArrow(arrow);
-            a.toFront();
-            b.toFront();
+            // Check if the new attack is unique
+            if (!currFramework.attackExists(a.getName(), b.getName())) {
+                GraphArrow arrow = new GraphArrow(a, b);
+                graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
+                gArrows.add(arrow);
+                arrow.setOnMouseClicked(e -> {
+                    // OLD CONDITION: interactMode == InteractMode.SELECT_MODE
+                    if (selected == arrow) {
+                        selected.deselect();
+                        selected = null;
+                    } else {
+                        if (selected != null) selected.deselect();
+                        selected = arrow;
+                        selected.select();
+                    }
+                });
+                // Save arrow reference in the connected nodes
+                a.addArrow(arrow);
+                b.addArrow(arrow);
+                a.toFront();
+                b.toFront();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Attack already exists");
+                alert.setContentText("There already exists an attack between the nodes " + a.getName() + " and " + b.getName() + "!");
+                alert.showAndWait();
+            }
         }
     }
 
@@ -442,5 +449,10 @@ public class Graph {
                 node.rotateArrows();
             }
         });
+    }
+
+    public String getSelectedArgumentName() {
+        if (selected!=null) return selected.getName();
+        return null;
     }
 }

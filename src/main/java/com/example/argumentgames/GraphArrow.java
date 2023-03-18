@@ -101,4 +101,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
 
     public Polygon getArrowTip() { return arrow; }
     public Circle getControlPoint() { return controlPoint; }
+    @Override
+    public boolean isCircle() { return false; }
+    public String getName() { return null; }
 }

@@ -100,7 +100,18 @@
                   </VBox.margin>
                </StackPane>
             </VBox>
-            <Pane fx:id="centerPane" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <VBox fx:id="centerPane" alignment="CENTER"  GridPane.columnIndex="1" GridPane.rowIndex="0">
+               <children>
+                  <Button fx:id="buildTreeButton" mnemonicParsing="false" onAction="#buildTreeFromFramework">
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@img/RightArrow.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children></VBox>
             <VBox fx:id="rightGraphBox" GridPane.columnIndex="2" GridPane.rowIndex="0">
                <HBox prefHeight="37.0" prefWidth="298.0">
                   <children>
@@ -155,7 +166,7 @@
                   </children></HBox>
                <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
                   <children>
-                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0"/>
+                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" />
                   </children>
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
