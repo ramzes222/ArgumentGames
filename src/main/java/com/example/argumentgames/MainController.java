@@ -13,6 +13,8 @@ public class MainController {
     Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
+    @FXML
+    ChoiceBox<String> gameTypeChoiceBox;
 
     Framework currentFramework;
 
@@ -36,10 +38,14 @@ public class MainController {
     public void buildTreeFromFramework() {
         String rootName = frameworkGraph.getSelectedArgumentName();
         if (rootName==null) {
-
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Please select an argument first");
+            alert.setContentText("To generate a game tree, first select an argument. The game will be rooted at that argument");
+            alert.showAndWait();
         } else {
             FrameworkArgument rootOfTree = currentFramework.getArgumentByName(rootName);
-            TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, false);
+            boolean isGrounded = gameTypeChoiceBox.getValue().equals("Grounded");
+            TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, isGrounded);
             gameTree.buildTree(gameTreeRoot);
         }
     }

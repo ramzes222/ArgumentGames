@@ -1,5 +1,7 @@
 package com.example.argumentgames;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -223,17 +225,27 @@ public class Graph {
         dialog.setContentText("Please enter the name of the new node:");
         Optional<String> newName = dialog.showAndWait();
         newName.ifPresent(name -> {
+            // Check if the name only contains letters, numbers, or spaces
+            Pattern acceptedSymbols = Pattern.compile("[^a-zA-Z0-9 ]");
+            Matcher m = acceptedSymbols.matcher(name);
+            if (m.find()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Unallowed symbol in name");
+                alert.setContentText("You entered '" + name + "'. Only letters, numbers, and spaces can be used.");
+                alert.showAndWait();
+                return;
+            }
             // Check if the name is unique in the framework
-            if (!currFramework.nameExists(name)) {
-                addGCircle(name);
-                // Save the new argument to the framework
-                currFramework.addArgument(name);
-            } else {
+            if (currFramework.nameExists(name)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Node already exists");
                 alert.setContentText("There already exists a node with name " + name + "!");
                 alert.showAndWait();
+                return;
             }
+            addGCircle(name);
+            // Save the new argument to the framework
+            currFramework.addArgument(name);
         });
     }
 

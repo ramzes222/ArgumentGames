@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -100,7 +102,7 @@
                   </VBox.margin>
                </StackPane>
             </VBox>
-            <VBox fx:id="centerPane" alignment="CENTER"  GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <VBox fx:id="centerPane" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <children>
                   <Button fx:id="buildTreeButton" mnemonicParsing="false" onAction="#buildTreeFromFramework">
                      <graphic>
@@ -163,6 +165,22 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </Button>
+                     <Separator orientation="VERTICAL" prefHeight="200.0">
+                        <HBox.margin>
+                           <Insets left="8.0" right="6.0" />
+                        </HBox.margin>
+                     </Separator>
+                     <ChoiceBox fx:id="gameTypeChoiceBox" prefWidth="120.0" value="Grounded">
+                        <items>
+                           <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="Grounded" />
+                              <String fx:value="Preferred" />
+                           </FXCollections>
+                        </items>
+                        <HBox.margin>
+                           <Insets left="5.0" top="2.0" />
+                        </HBox.margin>
+                     </ChoiceBox>
                   </children></HBox>
                <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
                   <children>
