@@ -8,6 +8,7 @@ import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class MainController {
     @FXML
@@ -125,20 +126,43 @@ public class MainController {
     }
 
     private void loadFromCurrentlyUsedFile() {
-        System.out.println(currentlyUsedFile.getPath());
-        // Set up test framework
-        currentFramework = new Framework();
-        currentFramework.addArgument("a");
-        currentFramework.addArgument("b");
-        currentFramework.addArgument("c");
-        currentFramework.addArgument("d");
-        currentFramework.addAttack("a", "b");
-        currentFramework.addAttack("b", "a");
-        currentFramework.addAttack("a", "c");
-        currentFramework.addAttack("b", "c");
-        currentFramework.addAttack("c", "d");
+        try {
+            Framework loadedFramework = new Framework();
+            FileReader fr = new FileReader(currentlyUsedFile);
+            BufferedReader br = new BufferedReader(fr);
+            String nextLine;
+            boolean loadingNodes = true;
+            while ((nextLine = br.readLine()) != null) {
+                if (nextLine.equals("Nodes:")) loadingNodes = true;
+                else if (nextLine.equals("Edges:")) loadingNodes = false;
+                else {
+                    String[] words = nextLine.split(",");
+                    if (loadingNodes) {
+                        // Interpret the data as a node
+                        loadedFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
+                    } else {
+                        // Interpret the data as an edge
+                        loadedFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                    }
+                }
+            }
+            frameworkGraph.loadFramework(loadedFramework);
+        } catch (Exception exception) {
+            System.out.println(exception);
+        }
 
-        frameworkGraph.loadFramework(currentFramework);
+//        // Set up test framework
+//        currentFramework = new Framework();
+//        currentFramework.addArgument("a");
+//        currentFramework.addArgument("b");
+//        currentFramework.addArgument("c");
+//        currentFramework.addArgument("d");
+//        currentFramework.addAttack("a", "b");
+//        currentFramework.addAttack("b", "a");
+//        currentFramework.addAttack("a", "c");
+//        currentFramework.addAttack("b", "c");
+//        currentFramework.addAttack("c", "d");
+
     }
 
     @FXML

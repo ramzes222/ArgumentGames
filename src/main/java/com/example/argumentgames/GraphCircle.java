@@ -43,6 +43,12 @@ public class GraphCircle extends StackPane implements GraphNode {
         rotateArrows();
     }
 
+    public void setXY(double x, double y) {
+        getCenterYProperty().set(y); getCenterXProperty().set(x);
+        setLayoutY(y); setLayoutX(x);
+        rotateArrows();
+    }
+
     public void setRadius(double r) {
         this.radius = r;
         setTranslateX(-radius);

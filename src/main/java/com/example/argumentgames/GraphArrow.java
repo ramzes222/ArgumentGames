@@ -71,6 +71,13 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         double newX = xDiff + controlPoint.getLayoutX();
         controlPoint.layoutYProperty().add(yDiff); controlPoint.layoutXProperty().add(xDiff);
         controlPoint.setLayoutY(newY); controlPoint.setLayoutX(newX);
+        rotateArrowShape();
+    }
+
+    public void setControlPointXY(double x, double y) {
+        controlPoint.layoutYProperty().set(y); controlPoint.layoutXProperty().set(x);
+        controlPoint.setLayoutY(y); controlPoint.setLayoutX(x);
+        rotateArrowShape();
     }
 
     public void select() {

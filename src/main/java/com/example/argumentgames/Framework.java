@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Framework {
 
     private final ArrayList<FrameworkArgument> arguments = new ArrayList<>();
+    private final ArrayList<FrameworkAttack> attacks = new ArrayList<>();
 
     public Framework() {
 
@@ -48,28 +49,53 @@ public class Framework {
         FrameworkArgument newArg = new FrameworkArgument(name);
         arguments.add(newArg);
     }
+    public void addArgument(String name, double x, double y) {
+        FrameworkArgument newArg = new FrameworkArgument(name, x, y);
+        arguments.add(newArg);
+    }
     public ArrayList<FrameworkArgument> getArguments() { return arguments; }
+    public ArrayList<FrameworkAttack> getAttacks() { return attacks; }
 
     public FrameworkArgument getArgumentByName(String name) {
         for (FrameworkArgument arg : arguments) { if (arg.getName().equals(name)) return arg; }
         return null;
     }
 
+    public FrameworkAttack getAttack(FrameworkArgument from, FrameworkArgument to) {
+        for (FrameworkAttack att: attacks) {
+            if (att.getTo() == to && att.getFrom() == from) return att;
+        }
+        return null;
+    }
+
     public void addAttack(FrameworkArgument from, FrameworkArgument to) {
-        from.addToAttacks(to);
-        to.addToAttackedBy(from);
+        FrameworkAttack att = new FrameworkAttack(from, to);
+        from.addToAttacks(att);
+        attacks.add(att);
     }
 
     public void addAttack(String fromName, String toName) {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
         if (from!=null && to!=null) {
-            from.addToAttacks(to);
-            to.addToAttackedBy(from);
+            FrameworkAttack att = new FrameworkAttack(from, to);
+            from.addToAttacks(att);
+            attacks.add(att);
+        }
+    }
+
+    public void addAttack(String fromName, String toName, Double x, Double y) {
+        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
+        if (from!=null && to!=null) {
+            FrameworkAttack att = new FrameworkAttack(from, to, x, y);
+            from.addToAttacks(att);
+            attacks.add(att);
         }
     }
     public void removeAttack(FrameworkArgument from, FrameworkArgument to) {
-        from.removeAttack(to);
-        to.removeAttackedBy(from);
+        FrameworkAttack att = getAttack(from, to);
+        from.removeAttack( att );
+        to.removeAttack( att );
+        attacks.remove(att);
     }
 
     public boolean nameExists(String name) {

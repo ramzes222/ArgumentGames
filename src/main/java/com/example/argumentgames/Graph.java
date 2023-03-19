@@ -74,12 +74,14 @@ public class Graph {
         currFramework = framework;
         ArrayList<FrameworkArgument> argList = framework.getArguments();
         // Add visual representations of Arguments
-        for (FrameworkArgument arg : argList) { addGCircle(arg.getName());}
-        // Add visual attacks between them
         for (FrameworkArgument arg : argList) {
-            for (FrameworkArgument attacked : arg.getAttacks()) {
-                addGArrow(getGCircle(arg.getName()), getGCircle(attacked.getName()));
-            }
+            GraphCircle c = addGCircle(arg.getName());
+            c.setXY(arg.prefX, arg.prefY);
+        }
+        // Add visual attacks between them
+        for (FrameworkAttack att : framework.getAttacks()) {
+            GraphArrow a = addGArrow( getGCircle(att.getFrom().getName()), getGCircle(att.getTo().getName()) );
+            if (a!=null) a.setControlPointXY(att.prefControlX, att.prefControlY);
         }
     }
     private void setUpInteractModeButton(RadioButton b, InteractMode i) {
@@ -261,7 +263,7 @@ public class Graph {
 
     // Adds a new gCircle to the graph under the specified name
     // Only adds the visual representation of an argument - does not affect the framework
-    private void addGCircle(String name) {
+    private GraphCircle addGCircle(String name) {
         GraphCircle n = new GraphCircle(name, gCircleRadius);
         n.setLayoutX(250);
         n.setLayoutY(300);
@@ -279,9 +281,7 @@ public class Graph {
             });}
         graphPane.getChildren().add(n);
         gCircles.add(n);
-        //
-        // Move the new node to an empty space
-        moveNode(n);
+        return n;
     }
 
     public GraphCircle getGCircle(String name) {
@@ -426,13 +426,14 @@ public class Graph {
         graphPane.setOnMouseMoved(null);
     }
 
-    private void addGArrow(GraphCircle a, GraphCircle b) {
+    private GraphArrow addGArrow(GraphCircle a, GraphCircle b) {
         if (a == b) {
             // An argument cannot attack itself
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Selected the same node twice!");
             alert.setContentText("To add an attack you must select two different arguments!");
             alert.showAndWait();
+            return null;
         } else {
             GraphArrow arrow = new GraphArrow(a, b);
             graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
@@ -453,6 +454,7 @@ public class Graph {
             b.addArrow(arrow);
             a.toFront();
             b.toFront();
+            return arrow;
         }
     }
 
