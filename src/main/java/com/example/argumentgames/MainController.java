@@ -45,11 +45,6 @@ public class MainController {
 
     }
 
-    // Saves the current framework to the current file
-    public void saveData() {
-
-    }
-
     // Saves the current framework to a new file
     public void saveAsFileData() {
         FileChooser fc = new FileChooser();
@@ -103,15 +98,31 @@ public class MainController {
         }
     }
 
-    private void saveToCurrentlyUsedFile() {
+    // Save the current framework to currently used file
+    public void saveToCurrentlyUsedFile() {
         if ( currentlyUsedFile == null ) return;
         FileWriter fr = null;
         BufferedWriter bw = null;
         try {
             fr = new FileWriter(currentlyUsedFile);
             bw = new BufferedWriter(fr);
-            for(int i = 10; i>0; i--){
-                bw.write("abd" + System.getProperty("line.separator"));
+            // Start writing Nodes
+            bw.write("Nodes:" + System.getProperty("line.separator"));
+            for (FrameworkArgument arg : currentFramework.getArguments()) {
+                GraphCircle c = frameworkGraph.getGCircle(arg.getName());
+                if (c!=null) {
+                    arg.prefX = c.getLayoutX();
+                    arg.prefY = c.getLayoutY(); }
+                bw.write(arg.getName() + "," + arg.prefX + "," + arg.prefY + System.getProperty("line.separator"));
+            }
+            // Write Edges
+            bw.write("Edges:" + System.getProperty("line.separator"));
+            for (FrameworkAttack att : currentFramework.getAttacks()) {
+                GraphArrow a = frameworkGraph.getGArrow(att.getFrom().getName(), att.getTo().getName());
+                if (a!=null) {
+                    att.prefControlX = a.getControlX();
+                    att.prefControlY = a.getControlY(); }
+                bw.write(att.getFrom().getName() + "," + att.getTo().getName() + "," + att.prefControlX + "," + att.prefControlY + System.getProperty("line.separator"));
             }
         } catch (IOException ex){
             ex.printStackTrace();
@@ -127,7 +138,7 @@ public class MainController {
 
     private void loadFromCurrentlyUsedFile() {
         try {
-            Framework loadedFramework = new Framework();
+            currentFramework.clear();
             FileReader fr = new FileReader(currentlyUsedFile);
             BufferedReader br = new BufferedReader(fr);
             String nextLine;
@@ -139,29 +150,17 @@ public class MainController {
                     String[] words = nextLine.split(",");
                     if (loadingNodes) {
                         // Interpret the data as a node
-                        loadedFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
+                        currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
                     } else {
                         // Interpret the data as an edge
-                        loadedFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                        currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
                     }
                 }
             }
-            frameworkGraph.loadFramework(loadedFramework);
+            frameworkGraph.loadFramework(currentFramework);
         } catch (Exception exception) {
             System.out.println(exception);
         }
-
-//        // Set up test framework
-//        currentFramework = new Framework();
-//        currentFramework.addArgument("a");
-//        currentFramework.addArgument("b");
-//        currentFramework.addArgument("c");
-//        currentFramework.addArgument("d");
-//        currentFramework.addAttack("a", "b");
-//        currentFramework.addAttack("b", "a");
-//        currentFramework.addAttack("a", "c");
-//        currentFramework.addAttack("b", "c");
-//        currentFramework.addAttack("c", "d");
 
     }
 

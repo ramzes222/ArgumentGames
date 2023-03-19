@@ -11,6 +11,11 @@ public class Framework {
 
     }
 
+    public void clear() {
+        arguments.clear();
+        attacks.clear();
+    }
+
     // Builds a game tree rooted in the supplied argument
     // Can be a preferred or grounded game (defined by parameter)
     // In preferred games, proponent can repeat arguments in a dispute
@@ -67,6 +72,15 @@ public class Framework {
         }
         return null;
     }
+    public FrameworkAttack getAttack(String fromName, String toName) {
+        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
+        if (from!=null && to!=null) {
+            for (FrameworkAttack att: attacks) {
+                if (att.getTo() == to && att.getFrom() == from) return att;
+            }
+        }
+        return null;
+    }
 
     public void addAttack(FrameworkArgument from, FrameworkArgument to) {
         FrameworkAttack att = new FrameworkAttack(from, to);
@@ -108,5 +122,17 @@ public class Framework {
             return from.getAttacks().contains(to);
         }
         return false;
+    }
+
+    public void setArgumentXY(String name, double x, double y) {
+        FrameworkArgument arg = getArgumentByName(name);
+        arg.prefX = x;
+        arg.prefY = y;
+    }
+
+    public void setAttackXY(String from, String to, double x, double y) {
+        FrameworkAttack att = getAttack(from, to);
+        att.prefControlX = x;
+        att.prefControlY = y;
     }
 }

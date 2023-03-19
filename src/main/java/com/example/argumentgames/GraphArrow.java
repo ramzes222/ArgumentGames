@@ -29,9 +29,8 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         });
         controlPoint.setOnMouseDragged(e -> {
             double newX = e.getSceneX() - dragOriginX;
-            controlPoint.setLayoutX(newX);
             double newY = e.getSceneY() - dragOriginY;
-            controlPoint.setLayoutY(newY);
+            setControlPointXY(newX, newY);
             rotateArrowShape();
         });
 
@@ -59,8 +58,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         arrow.getTransforms().add(arrowRotate);
 
         // Place the control point halfway between the nodes
-        controlPoint.setLayoutX( (startXProperty().get() + endXProperty().get()) / 2 );
-        controlPoint.setLayoutY( (startYProperty().get() + endYProperty().get()) / 2 );
+        setControlPointXY( (startXProperty().get() + endXProperty().get()) / 2 , (startYProperty().get() + endYProperty().get()) / 2 );
 
         // Rotate the arrow tip
         rotateArrowShape();
@@ -111,4 +109,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     @Override
     public boolean isCircle() { return false; }
     public String getName() { return null; }
+    public String getFromName() {return startNode.getName(); }
+    public String getToName() {return endNode.getName(); }
 }

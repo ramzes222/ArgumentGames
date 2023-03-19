@@ -255,9 +255,9 @@ public class Graph {
                 alert.showAndWait();
                 return;
             }
-            addGCircle(name);
             // Save the new argument to the framework
             currFramework.addArgument(name);
+            addGCircle(name);
         });
     }
 
@@ -265,8 +265,7 @@ public class Graph {
     // Only adds the visual representation of an argument - does not affect the framework
     private GraphCircle addGCircle(String name) {
         GraphCircle n = new GraphCircle(name, gCircleRadius);
-        n.setLayoutX(250);
-        n.setLayoutY(300);
+        n.setXY(200, 300);
         // Implement selection
         if (interactMode == InteractMode.SELECT_MODE) {
             n.setOnMouseClicked(e -> {
@@ -281,12 +280,20 @@ public class Graph {
             });}
         graphPane.getChildren().add(n);
         gCircles.add(n);
+        System.out.println( currFramework.getArguments() );
         return n;
     }
 
     public GraphCircle getGCircle(String name) {
         for (GraphCircle n: gCircles) {
             if (n.getName().equals(name)) return n;
+        }
+        return null;
+    }
+
+    public GraphArrow getGArrow(String from, String to) {
+        for (GraphArrow a: gArrows) {
+            if (a.getFromName().equals(from) && a.getToName().equals(to)) return a;
         }
         return null;
     }
@@ -329,8 +336,7 @@ public class Graph {
             // SPECIAL CASE
             // If the node is directly on top of another, move it slightly down and finish.
             // Next iteration will fix it
-            n.getCenterYProperty().set(y + 5);
-            n.setLayoutY(y + 5);
+            n.setXY(x, y+5);
             return true;
         }
         targetX = closestGCircle.getLayoutX();
@@ -346,10 +352,7 @@ public class Graph {
             double angle = GeometricHelper.x_y_toAngle( x - targetX, targetY - y) + r.nextDouble(-10, 10);
             double newX = x + GeometricHelper.angle_distance_toX( -angle, moveAwayStep );
             double newY = y + GeometricHelper.angle_distance_toY( -angle, moveAwayStep );
-            n.getCenterXProperty().set(newX);
-            n.setLayoutX(newX);
-            n.getCenterYProperty().set(newY);
-            n.setLayoutY(newY);
+            n.setXY(newX, newY);
             return true;
         } else return false;
     }
