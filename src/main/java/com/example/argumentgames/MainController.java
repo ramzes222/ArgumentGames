@@ -26,6 +26,17 @@ public class MainController {
     public void initialize() {
         // Set up the two Graphs
         currentFramework = new Framework();
+        // Set up test framework
+        currentFramework.addArgument("a");
+        currentFramework.addArgument("b");
+        currentFramework.addArgument("c");
+        currentFramework.addArgument("d");
+        currentFramework.addAttack("a", "b");
+        currentFramework.addAttack("b", "a");
+        currentFramework.addAttack("a", "c");
+        currentFramework.addAttack("b", "c");
+        currentFramework.addAttack("c", "d");
+
         frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftCleanupButton);
         frameworkGraph.loadFramework(currentFramework);
         gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton);
