@@ -9,7 +9,31 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.argumentgames.MainController">
    <children>
-      <HBox minHeight="30.0" prefHeight="40.0" prefWidth="700.0" />
+      <HBox minHeight="30.0" prefHeight="40.0" prefWidth="700.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                     <MenuItem mnemonicParsing="false" text="New" onAction="#newData"/>
+                     <MenuItem mnemonicParsing="false" text="Save" onAction="#saveData"/>
+                     <MenuItem mnemonicParsing="false" text="Save As" onAction="#saveAsFileData"/>
+                     <MenuItem mnemonicParsing="false" text="Load" onAction="#loadData"/>
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children></HBox>
       <GridPane maxHeight="Infinity">
          <children>
             <VBox fx:id="leftGraphBox" prefHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">
