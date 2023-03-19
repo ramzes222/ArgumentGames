@@ -100,7 +100,14 @@ public class MainController {
 
     // Save the current framework to currently used file
     public void saveToCurrentlyUsedFile() {
-        if ( currentlyUsedFile == null ) return;
+        if ( currentlyUsedFile == null ) {
+            // No file loaded- prompt user to Save As
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("No file is loaded!");
+            alert.setContentText("Please select a file to save to first!");
+            alert.showAndWait();
+            saveAsFileData();
+        };
         FileWriter fr = null;
         BufferedWriter bw = null;
         try {

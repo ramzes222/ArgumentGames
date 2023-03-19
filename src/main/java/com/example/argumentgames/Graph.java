@@ -280,7 +280,6 @@ public class Graph {
             });}
         graphPane.getChildren().add(n);
         gCircles.add(n);
-        System.out.println( currFramework.getArguments() );
         return n;
     }
 
