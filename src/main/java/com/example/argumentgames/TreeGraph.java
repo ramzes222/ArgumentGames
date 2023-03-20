@@ -335,6 +335,7 @@ public class TreeGraph {
         for (TreeArrow a : tArrows) {
             a.setDisplayVisible(false);
         }
+        selected = null;
     }
 
     public void visualEnableAll() {
@@ -348,6 +349,7 @@ public class TreeGraph {
             a.setDisplayVisible(true);
         }
     }
+    public void unselect() { selected = null; }
 
     // Disables the buttons that could change the current Tree
     // Returns the Select mode button - the reference to it is used by the Game Controller
@@ -366,6 +368,8 @@ public class TreeGraph {
                     //
                     //
                     if (c.isGameSelectEnabled()) {
+                        if (selected != null) selected.gameSelectable();
+                        selected = c;
                         c.gameSelected();
                         game.selectArgumentToCounter(c.getName(), arg);
                     }

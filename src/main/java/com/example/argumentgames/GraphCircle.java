@@ -29,7 +29,7 @@ public class GraphCircle extends StackPane implements GraphNode {
         circle.setFill( Color.CORNSILK );
         circle.setStrokeWidth(5);
         text = new Text(name);
-        text.setStroke(Color.BLACK);
+        text.setFill(Color.BLACK);
         text.setStyle("-fx-font: 20 arial;");
         //
         // Prepare the stack (self)
@@ -74,13 +74,13 @@ public class GraphCircle extends StackPane implements GraphNode {
     }
 
     public void highlight(Color c) { circle.setStroke(c); }
-    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setStroke(Color.BLACK); }
-    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.PEACHPUFF); text.setStroke(Color.BLACK);}
-    public void gameAttackable() { circle.setStroke(Color.PERU); circle.setFill(Color.LIGHTCORAL); text.setStroke(Color.BLACK);}
+    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setFill(Color.BLACK); }
+    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.PEACHPUFF); text.setFill(Color.BLACK);}
+    public void gameAttackable() { circle.setStroke(Color.PERU); circle.setFill(Color.LIGHTCORAL); text.setFill(Color.BLACK);}
     public void select() { highlight(Color.YELLOW); }
     public void deselect() { highlight(Color.TRANSPARENT); }
-    public void disable() { circle.setFill(Color.LIGHTGRAY); circle.setStroke(Color.DARKGRAY); text.setStroke(Color.DARKGRAY);}
-    public void enable() { baseVisual(); text.setStroke(Color.BLACK);}
+    public void disable() { circle.setFill(Color.LIGHTGRAY); circle.setStroke(Color.DARKGRAY); text.setFill(Color.DARKGRAY);}
+    public void enable() { baseVisual(); text.setFill(Color.BLACK);}
 
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
     public void rotateArrows() { for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }

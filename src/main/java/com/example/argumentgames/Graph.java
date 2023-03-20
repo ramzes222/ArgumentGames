@@ -493,7 +493,6 @@ public class Graph {
             graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
             interactMode = InteractMode.SELECT_MODE;
             // Get which circles should be enabled
-            System.out.println("asasa");
             for (GraphCircle n : gCircles) {
                 n.setMouseTransparent(false);
                 n.setOnMouseDragged(null);
@@ -545,6 +544,7 @@ public class Graph {
         if (selected!=null) return selected.getName();
         return null;
     }
+
 
     public ArrayList<GraphCircle> getgCircles() {return gCircles;}
 }

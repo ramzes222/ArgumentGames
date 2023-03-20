@@ -63,6 +63,7 @@ public class GameController {
         // 1. Swap the player's turns
         isProTurn = !isProTurn;
         // 2. Make all tCircles unselectable
+        gameTree.unselect();
         for (TreeCircle c : gameTree.gettCircles() ) {c.makeGameUnselectable();}
         // 3. Get all "in" arguments in the current tree placed by the other player
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
@@ -79,9 +80,16 @@ public class GameController {
         // Change display of affected nodes
         frameworkGraph.getGCircle(name).gameAttackable();
         for (FrameworkArgument arg:selectableArguments) {
-            frameworkGraph.getGCircle(arg.getName()).gameSelectable();
-            frameworkGraph.getGCircle(arg.getName()).makeGameSelectable();
-            frameworkGraph.getGArrow(arg.getName(), name).highlight();
+            // Check if the argument hasn't been moved already
+            for (TreeArgument correspondingTreeArg : argument.getChildren()) {
+                if (correspondingTreeArg.getName().equals( arg.getName() ) && correspondingTreeArg.getState()==0) {
+                    frameworkGraph.getGCircle(arg.getName()).gameSelectable();
+                    frameworkGraph.getGCircle(arg.getName()).makeGameSelectable();
+                    frameworkGraph.getGArrow(arg.getName(), name).highlight();
+                }
+            }
+
+
         }
     }
 
