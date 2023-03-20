@@ -70,7 +70,6 @@ public class TreeArgument {
 
     public void setState(int newState) {
         if (state != newState) {
-            System.out.println("State of " + name + " is now " + newState);
             state = newState;
             if (parent != null) parent.updateState();
         }

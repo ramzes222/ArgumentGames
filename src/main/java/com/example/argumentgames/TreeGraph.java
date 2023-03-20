@@ -352,6 +352,7 @@ public class TreeGraph {
     // Disables the buttons that could change the current Tree
     // Returns the Select mode button - the reference to it is used by the Game Controller
     public void enterGameMode(GameController game) {
+        setMoveModeButton.fire();
         setSelectModeButton.setOnAction(e -> {
             treePane.setOnMousePressed(null); treePane.setOnMouseDragged(null);
             interactMode = TreeGraph.InteractMode.SELECT_MODE;

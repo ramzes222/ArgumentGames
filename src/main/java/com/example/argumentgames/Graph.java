@@ -486,12 +486,14 @@ public class Graph {
     // Disables the buttons that could change the framework
     // Returns the Select mode button - the reference to it is used by the Game Controller
     public void enterGameMode(GameController game) {
+        setMoveModeButton.fire();
         addGCircleButton.setDisable(true);
         addGArrowButton.setDisable(true);
         setSelectModeButton.setOnAction(e -> {
             graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
             interactMode = InteractMode.SELECT_MODE;
             // Get which circles should be enabled
+            System.out.println("asasa");
             for (GraphCircle n : gCircles) {
                 n.setMouseTransparent(false);
                 n.setOnMouseDragged(null);
@@ -507,6 +509,7 @@ public class Graph {
                 });
             }
         });
+        setSelectModeButton.fire();
     }
 
     public void exitGameMode() {

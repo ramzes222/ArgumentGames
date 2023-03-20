@@ -23,11 +23,6 @@ public class GameController {
         gameTree = t;
         this.isGrounded = isGrounded;
 
-        // Enter game mode
-        frameworkGraph.enterGameMode(this);
-        gameTree.enterGameMode(this);
-
-
         // Setup start space
         gameTree.disableAll();
         frameworkGraph.disableAll();
@@ -36,8 +31,11 @@ public class GameController {
         // Cleanup previous round
         // 1. Make tCircles unselectable
         for (TreeCircle c : gameTree.gettCircles() ) {c.makeGameUnselectable();}
-        // 2. Make gCircles unselectable
-        frameworkGraph.disableAll();
+
+
+        // Enter game mode
+        frameworkGraph.enterGameMode(this);
+        gameTree.enterGameMode(this);
 
         // Move the first argument - Root
         moveArgument(gameTree.getRoot());
