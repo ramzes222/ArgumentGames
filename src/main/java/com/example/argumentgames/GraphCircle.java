@@ -11,9 +11,11 @@ import java.util.Random;
 
 public class GraphCircle extends StackPane implements GraphNode {
     private final String name;
+    private Text text;
     private double radius;
     private final Circle circle;
     private final ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
+    private boolean isGameSelectEnabled = false;
 
     public GraphCircle(String n, double radius) {
         super();
@@ -26,7 +28,9 @@ public class GraphCircle extends StackPane implements GraphNode {
         //circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
         circle.setFill( Color.CORNSILK );
         circle.setStrokeWidth(5);
-        Text text = new Text(name);
+        text = new Text(name);
+        text.setStroke(Color.BLACK);
+        text.setStyle("-fx-font: 20 arial;");
         //
         // Prepare the stack (self)
         setId(name);
@@ -57,10 +61,26 @@ public class GraphCircle extends StackPane implements GraphNode {
         if (r < 10) { circle.setStrokeWidth(2); }
     }
 
+    public void makeGameSelectable() {
+        gameSelectable();
+        setMouseTransparent(false);
+        isGameSelectEnabled = true;
+    }
+
+    public void makeGameUnselectable() {
+        disable();
+        setMouseTransparent(true);
+        isGameSelectEnabled = false;
+    }
+
     public void highlight(Color c) { circle.setStroke(c); }
-    public void dehighlight() { circle.setStroke(Color.TRANSPARENT); }
+    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setStroke(Color.BLACK); }
+    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.PEACHPUFF); text.setStroke(Color.BLACK);}
+    public void gameAttackable() { circle.setStroke(Color.PERU); circle.setFill(Color.LIGHTCORAL); text.setStroke(Color.BLACK);}
     public void select() { highlight(Color.YELLOW); }
-    public void deselect() { dehighlight(); }
+    public void deselect() { highlight(Color.TRANSPARENT); }
+    public void disable() { circle.setFill(Color.LIGHTGRAY); circle.setStroke(Color.DARKGRAY); text.setStroke(Color.DARKGRAY);}
+    public void enable() { baseVisual(); text.setStroke(Color.BLACK);}
 
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
     public void rotateArrows() { for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }
@@ -69,6 +89,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
 
+    public boolean isGameSelectEnabled() {return isGameSelectEnabled;}
     @Override
     public boolean isCircle() { return true; }
 }

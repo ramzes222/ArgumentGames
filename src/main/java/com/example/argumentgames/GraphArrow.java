@@ -88,6 +88,9 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         setStroke(Color.FORESTGREEN);
         controlPoint.setVisible(false);
     }
+    public void disable() { arrow.setFill(Color.DARKGRAY); setStroke(Color.DARKGRAY);}
+    public void enable() { arrow.setFill(Color.FORESTGREEN); setStroke(Color.FORESTGREEN); }
+    public void highlight() { arrow.setFill(Color.INDIANRED); setStroke(Color.INDIANRED); }
 
     public void rotateArrowShape() {
         double x_diff = controlPoint.getLayoutX() - getEndX();

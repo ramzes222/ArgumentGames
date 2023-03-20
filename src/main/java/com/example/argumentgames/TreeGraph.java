@@ -22,6 +22,7 @@ public class TreeGraph {
     private final ToggleGroup tg = new ToggleGroup();
 
     private TreeArgument root;
+
     private EventHandler<MouseEvent> graphWideEvent;
     enum InteractMode {
         SELECT_MODE,
@@ -60,6 +61,8 @@ public class TreeGraph {
         });
         setUpClip();
     }
+
+    public TreeArgument getRoot() { return root; }
 
     // Clears the graph of all tCircles and tArrows
     private void clear() {
@@ -304,8 +307,11 @@ public class TreeGraph {
         newCircle.toFront();
     }
 
-    public void buildTree(TreeArgument root) {
+    public ArrayList<TreeCircle> gettCircles() {return tCircles;}
+
+    public void buildTree(TreeArgument newRoot) {
         clear();
+        root = newRoot;
         if (root == null) return;
         root.updateWidth();
         double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
@@ -318,32 +324,61 @@ public class TreeGraph {
         buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
     }
 
-    // Rebuilds the tree, only moving the existing nodes
-    private void buildTreeOld(TreeArgument root) {
-        if (root == null) { return; }
-        double middleX = treePane.getWidth()/2;
-        double yLevel = tCircleRadius;
-        double yDistance = 3*tCircleRadius, xDistance = 3*tCircleRadius;
-        // Create the root
-        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius); treePane.getChildren().add(rootCircle);
-        rootCircle.moveToXY(middleX, yLevel);
-        // Get the list of children of root
-        ArrayList<TreeArgument> nextLayer = root.getChildren();
-        //
-        // Iterate over tree levels
-        while (!nextLayer.isEmpty()) {
-            ArrayList<TreeArgument> nextChildren = new ArrayList<>();
-            // Set the new x and y values
-            yLevel += yDistance;
-            double itemCount = nextLayer.size();
-            double xPos = middleX - ((itemCount-1)/2)*xDistance;
-            for (TreeArgument a: nextLayer) {
-                TreeCircle newCircle = new TreeCircle(a, tCircleRadius); treePane.getChildren().add(newCircle);
-                newCircle.moveToXY(xPos, yLevel);
-                xPos += xDistance;
-                nextChildren.addAll(a.getChildren());
-            }
-            nextLayer = nextChildren;
+    // Changes the appearance of all nodes and arrows to make them invisible
+    // Also makes them unclickable
+    // Used in Games to signify which nodes are not yet in play
+    public void disableAll() {
+        for (TreeCircle c : tCircles) {
+            c.setMouseTransparent(true);
+            c.setVisible(false);
         }
+        for (TreeArrow a : tArrows) {
+            a.setDisplayVisible(false);
+        }
+    }
+
+    public void visualEnableAll() {
+        for (TreeCircle c : tCircles) {
+            c.baseVisual();
+            c.makeGameUnselectable();
+            c.setMouseTransparent(false);
+            c.setVisible(true);
+        }
+        for (TreeArrow a : tArrows) {
+            a.setDisplayVisible(true);
+        }
+    }
+
+    // Disables the buttons that could change the current Tree
+    // Returns the Select mode button - the reference to it is used by the Game Controller
+    public void enterGameMode(GameController game) {
+        setSelectModeButton.setOnAction(e -> {
+            treePane.setOnMousePressed(null); treePane.setOnMouseDragged(null);
+            interactMode = TreeGraph.InteractMode.SELECT_MODE;
+            // Get which circles should be enabled
+            for (TreeArgument arg: root.getAllArguments()) {
+                TreeCircle c = arg.getVisualTCircle();
+                c.setMouseTransparent(false);
+                c.setOnMouseDragged(null);
+                c.setOnMousePressed(null);
+                c.setOnMouseClicked(e2 -> {
+                    //
+                    //
+                    if (c.isGameSelectEnabled()) {
+                        c.gameSelected();
+                        game.selectArgumentToCounter(c.getName(), arg);
+                    }
+                    //
+                    //
+                });
+            }
+        });
+        setSelectModeButton.fire();
+    }
+
+    public void exitGameMode() {
+        // Restore Select functionality
+        setUpInteractModeButton(setSelectModeButton, TreeGraph.InteractMode.SELECT_MODE);
+        setSelectModeButton.fire();
     }
 }

@@ -7,7 +7,7 @@ import javafx.scene.transform.Rotate;
 public class TreeArrow extends Line {
     // Unlike GraphArrows, the Tree Arrow is a straight line
     // Due to the layers of the tree, there's no need for curved arrows
-    private final TreeCircle startNode, endNode;
+    final TreeCircle startNode, endNode;
     private final Polygon arrow;
     private double dragOriginX, dragOriginY;
     private final Rotate arrowRotate;
@@ -59,4 +59,11 @@ public class TreeArrow extends Line {
     }
 
     public Polygon getArrowTip() { return arrow; }
+
+    public void setDisplayVisible(boolean b) {
+        setMouseTransparent(true);
+        setVisible(b);
+        arrow.setVisible(b);
+        arrow.setMouseTransparent(true);
+    }
 }

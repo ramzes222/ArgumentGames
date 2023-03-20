@@ -388,7 +388,7 @@ public class Graph {
             graphWideEvent = e -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
                     endAddGArrowEvent(newGArrowMouseArrow);
-                    fromGCircle.dehighlight();
+                    fromGCircle.highlight(Color.TRANSPARENT);
                     graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);}
             };
             graphPane.addEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
@@ -406,7 +406,7 @@ public class Graph {
                         alert.showAndWait();
                     }
                     endAddGArrowEvent(newGArrowMouseArrow);
-                    fromGCircle.dehighlight();
+                    fromGCircle.highlight(Color.TRANSPARENT);
                     graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
                 }
             }); }
@@ -460,6 +460,63 @@ public class Graph {
         }
     }
 
+    // Changes the appearance of all nodes and arrows to make them grayed out
+    // Also makes them unclickable
+    // Used in Games to signify which nodes are disabled
+    public void disableAll() {
+        for (GraphCircle c : gCircles) {
+            c.makeGameUnselectable();
+        }
+        for (GraphArrow a : gArrows) {
+            a.disable();
+        }
+    }
+
+    public void visualEnableAll() {
+        for (GraphCircle c : gCircles) {
+            c.baseVisual();
+            c.enable();
+            c.setMouseTransparent(false);
+        }
+        for (GraphArrow a : gArrows) {
+            a.enable();
+        }
+    }
+
+    // Disables the buttons that could change the framework
+    // Returns the Select mode button - the reference to it is used by the Game Controller
+    public void enterGameMode(GameController game) {
+        addGCircleButton.setDisable(true);
+        addGArrowButton.setDisable(true);
+        setSelectModeButton.setOnAction(e -> {
+            graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
+            interactMode = InteractMode.SELECT_MODE;
+            // Get which circles should be enabled
+            for (GraphCircle n : gCircles) {
+                n.setMouseTransparent(false);
+                n.setOnMouseDragged(null);
+                n.setOnMousePressed(null);
+                n.setOnMouseClicked(e2 -> {
+                    //
+                    //
+                    if (n.isGameSelectEnabled()) {
+                        game.selectArgumentToMove(n.getName());
+                    }
+                    //
+                    //
+                });
+            }
+        });
+    }
+
+    public void exitGameMode() {
+        addGCircleButton.setDisable(false);
+        addGArrowButton.setDisable(false);
+        // Restore Select functionality
+        setUpInteractModeButton(setSelectModeButton, InteractMode.SELECT_MODE);
+        setSelectModeButton.fire();
+    }
+
     private void makeDraggable(GraphCircle node) {
         node.setOnMousePressed(e -> {
             if (interactMode == InteractMode.MOVE_MODE) {
@@ -485,4 +542,6 @@ public class Graph {
         if (selected!=null) return selected.getName();
         return null;
     }
+
+    public ArrayList<GraphCircle> getgCircles() {return gCircles;}
 }

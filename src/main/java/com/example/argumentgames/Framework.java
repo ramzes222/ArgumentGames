@@ -29,7 +29,9 @@ public class Framework {
         ArrayList<TreeArgument> lastRoundArguments = new ArrayList<>(); lastRoundArguments.add(root);
         while (!lastRoundArguments.isEmpty()) {
             round++;
+            // Whether arguments can be repeated depends on round and game type
             boolean canArgumentsBeRepeated = (round%2==0) == isGrounded;
+            // Collect arguments added in current round
             ArrayList<TreeArgument> thisRoundArguments = new ArrayList<>();
             for (TreeArgument previousArg: lastRoundArguments) {
                 // For each argument in last round, find all arguments that attack it
@@ -85,6 +87,7 @@ public class Framework {
     public void addAttack(FrameworkArgument from, FrameworkArgument to) {
         FrameworkAttack att = new FrameworkAttack(from, to);
         from.addToAttacks(att);
+        to.addToAttacks(att);
         attacks.add(att);
     }
 
@@ -93,6 +96,7 @@ public class Framework {
         if (from!=null && to!=null) {
             FrameworkAttack att = new FrameworkAttack(from, to);
             from.addToAttacks(att);
+            to.addToAttacks(att);
             attacks.add(att);
         }
     }
@@ -102,6 +106,7 @@ public class Framework {
         if (from!=null && to!=null) {
             FrameworkAttack att = new FrameworkAttack(from, to, x, y);
             from.addToAttacks(att);
+            to.addToAttacks(att);
             attacks.add(att);
         }
     }

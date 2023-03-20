@@ -14,6 +14,7 @@ public class TreeCircle extends StackPane {
     private double radius;
     private final Circle circle;
     private final ArrayList<TreeArrow> connectedArrows = new ArrayList<>();
+    private boolean isGameSelectEnabled = false;
 
     public TreeCircle(String n, double radius) {
         super();
@@ -50,6 +51,18 @@ public class TreeCircle extends StackPane {
         getChildren().addAll(circle,text);
     }
 
+    public void makeGameSelectable() {
+        gameSelectable();
+        setMouseTransparent(false);
+        isGameSelectEnabled = true;
+    }
+
+    public void makeGameUnselectable() {
+        baseVisual();
+        setMouseTransparent(true);
+        isGameSelectEnabled = false;
+    }
+
     public void translateXY(double xDiff, double yDiff) {
         double newY = yDiff + getLayoutY();
         double newX = xDiff + getLayoutX();
@@ -70,15 +83,25 @@ public class TreeCircle extends StackPane {
         if (r < 10) { circle.setStrokeWidth(2); } else { circle.setStrokeWidth(5); }
     }
 
-    public void highlight(Color c) { circle.setStroke(c); }
-    public void dehighlight() { circle.setStroke(Color.TRANSPARENT); }
+    public void highlight(Color c) { circle.setStroke(c); circle.setFill(Color.CORNSILK);}
+    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); }
+    public void gameSelected() { circle.setStroke(Color.DARKRED); circle.setFill(Color.INDIANRED);}
+    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.INDIANRED);}
     public void select() { highlight(Color.YELLOW); }
-    public void deselect() { dehighlight(); }
+    public void deselect() { baseVisual(); }
+    public void setColor(Color c) {circle.setFill(c); circle.setStroke(Color.TRANSPARENT); }
+
+    public void setDisplayVisible( boolean b) {
+        setVisible(b);
+        for (TreeArrow a : connectedArrows) { if (a.startNode == this) a.setDisplayVisible(b); }
+    }
 
     public void addArrow(TreeArrow arr) { connectedArrows.add(arr); }
     public void rotateArrows() { for (TreeArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }
 
     public String getName() { return name; }
+
+    public boolean isGameSelectEnabled() {return isGameSelectEnabled;}
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
 }

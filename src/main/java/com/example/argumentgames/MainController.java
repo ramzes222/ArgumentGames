@@ -2,6 +2,8 @@ package com.example.argumentgames;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.*;
 import javafx.scene.control.Dialog;
@@ -14,16 +16,23 @@ public class MainController {
     @FXML
     RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
-    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton;
+    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton, gameButton, buildTreeButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
     @FXML
     ChoiceBox<String> gameTypeChoiceBox;
+    @FXML
+    ImageView gameButtonImageView;
+    @FXML
+    Menu fileMenu;
 
     Framework currentFramework;
 
     Graph frameworkGraph;
     TreeGraph gameTree;
+
+    GameController gc;
+    boolean gameInProgress;
 
     File currentlyUsedFile;
     public MainController() {
@@ -185,5 +194,32 @@ public class MainController {
             TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, isGrounded);
             gameTree.buildTree(gameTreeRoot);
         }
+    }
+
+    @FXML
+    public void gameButtonPress() {
+        if (gameInProgress) endGame(); else startGame();
+    }
+
+    private void startGame() {
+        gameInProgress = true;
+        Image nextIcon = new Image(getClass().getResourceAsStream("img/End Game.png"));
+        gameButtonImageView.setImage(nextIcon);
+        gc = new GameController();
+        boolean isGrounded = gameTypeChoiceBox.getValue().equals("Grounded");
+        gameTypeChoiceBox.setDisable(true);
+        buildTreeButton.setDisable(true);
+        fileMenu.setDisable(true);
+        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded);
+    }
+
+    private void endGame() {
+        gameInProgress = false;
+        Image nextIcon = new Image(getClass().getResourceAsStream("img/Start Game.png"));
+        gameButtonImageView.setImage(nextIcon);
+        gc.endGame();
+        gameTypeChoiceBox.setDisable(false);
+        buildTreeButton.setDisable(false);
+        fileMenu.setDisable(false);
     }
 }

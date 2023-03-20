@@ -13,12 +13,12 @@
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                   <items>
-                     <MenuItem mnemonicParsing="false" text="New" onAction="#newData"/>
-                     <MenuItem mnemonicParsing="false" text="Save" onAction="#saveToCurrentlyUsedFile"/>
-                     <MenuItem mnemonicParsing="false" text="Save As" onAction="#saveAsFileData"/>
-                     <MenuItem mnemonicParsing="false" text="Load" onAction="#loadData"/>
+                     <MenuItem mnemonicParsing="false" onAction="#newData" text="New" />
+                     <MenuItem mnemonicParsing="false" onAction="#saveToCurrentlyUsedFile" text="Save" />
+                     <MenuItem mnemonicParsing="false" onAction="#saveAsFileData" text="Save As" />
+                     <MenuItem mnemonicParsing="false" onAction="#loadData" text="Load" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
@@ -133,6 +133,18 @@
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@img/RightArrow.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="gameButton" mnemonicParsing="false" onAction="#gameButtonPress">
+                     <graphic>
+                        <ImageView fx:id="gameButtonImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@img/Start Game.png" />
                            </image>
                         </ImageView>
                      </graphic>
