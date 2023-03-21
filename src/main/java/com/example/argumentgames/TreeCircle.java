@@ -15,32 +15,19 @@ public class TreeCircle extends StackPane {
     private final Circle circle;
     private final ArrayList<TreeArrow> connectedArrows = new ArrayList<>();
     private boolean isGameSelectEnabled = false;
-
-    public TreeCircle(String n, double radius) {
-        super();
-        this.radius = radius;
-        name = n;
-        circle = new Circle();
-        circle.setRadius(radius);
-        circle.setFill( Color.CORNSILK );
-        circle.setStrokeWidth(5);
-        Text text = new Text(name);
-        //
-        // Prepare the stack (self)
-        setId(name);
-        setTranslateX(-radius);
-        setTranslateY(-radius);
-        getChildren().addAll(circle,text);
-    }
+    // Signifies whether the argument lays on the Proponent or Opponent layer
+    private boolean isPro;
 
     public TreeCircle(TreeArgument a, double radius) {
         super();
+        this.isPro = a.isPro();
         this.radius = radius;
         a.setVisualTCircle(this);
         name = a.getName();
         circle = new Circle();
         circle.setRadius(radius);
-        circle.setFill( Color.CORNSILK );
+        if (isPro) circle.setFill(Color.CORNSILK);
+            else circle.setFill(Color.MOCCASIN);
         circle.setStrokeWidth(5);
         Text text = new Text(name);
         //
@@ -83,10 +70,15 @@ public class TreeCircle extends StackPane {
         if (r < 10) { circle.setStrokeWidth(2); } else { circle.setStrokeWidth(5); }
     }
 
-    public void highlight(Color c) { circle.setStroke(c); circle.setFill(Color.CORNSILK);}
-    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); }
+    public void highlight(Color c) { circle.setStroke(c);
+        if (isPro) circle.setFill(Color.CORNSILK);
+            else circle.setFill(Color.MOCCASIN);}
+    public void baseVisual() { circle.setStroke(Color.TRANSPARENT);
+        if (isPro) circle.setFill(Color.CORNSILK);
+            else circle.setFill(Color.MOCCASIN); }
     public void gameSelected() { circle.setStroke(Color.DARKRED); circle.setFill(Color.INDIANRED);}
     public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.INDIANRED);}
+    public void computerSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.ORANGERED);}
     public void select() { highlight(Color.YELLOW); }
     public void deselect() { baseVisual(); }
     public void setColor(Color c) {circle.setFill(c); circle.setStroke(Color.TRANSPARENT); }

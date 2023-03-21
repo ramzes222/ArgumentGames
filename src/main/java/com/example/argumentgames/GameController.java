@@ -1,11 +1,15 @@
 package com.example.argumentgames;
 
+import javafx.animation.PauseTransition;
 import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 // Controlls the game process by communicating with the Graph and Tree objects
 public class GameController {
@@ -16,7 +20,7 @@ public class GameController {
 
     TreeArgument currentlySelected = null;
 
-    boolean isProTurn;
+    boolean isProTurn, isComputerPlaying;
 
     public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded) {
         // Save objects
@@ -24,6 +28,7 @@ public class GameController {
         frameworkGraph = g;
         gameTree = t;
         this.isGrounded = isGrounded;
+        isComputerPlaying = true;
         // Reset game tree
         gameTree.getRoot().resetState();
 
@@ -61,6 +66,7 @@ public class GameController {
     // Move the provided argument onto the game tree
     // Advance to the next round
     private void moveArgument(TreeArgument movedArg) {
+        System.out.println("Moving " + movedArg.getName());
         frameworkGraph.disableAll();
 
         // The moved state is always in
@@ -71,7 +77,7 @@ public class GameController {
         // 1. Swap the player's turns
         isProTurn = !isProTurn;
 
-        // Check if the game ends
+        // 2. Check if the game ends
         if (checkIfGameEnd()) {
             // Game over - do not setup next round
             stopInteractions();
@@ -79,21 +85,27 @@ public class GameController {
         }
 
         // Otherwise, setup next round
-        // 2. Make all tCircles unselectable
+        // 3. Make all tCircles unselectable
         gameTree.unselect();
         for (TreeCircle c : gameTree.gettCircles() ) {c.makeGameUnselectable();}
-        // 3. Get all "in" arguments in the current tree placed by the other player
-        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
-        // 4. Mark the counterable arguments visually
-        //    Allow them to be selected
-        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
+        // 4. If it's players turn, set up interactivity
+        //    If it's computer turn, make its move
+        if (isProTurn && isComputerPlaying) {
+            computerTurn();
+        } else {
+            // 4. Get all "in" arguments in the current tree placed by the other player
+            ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
+            // 5. Mark the counterable arguments visually
+            //    Allow them to be selected
+            for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
+        }
     }
 
     // Checks to see if there are still any remaining possible moves
     // If there are none, stops the game
     // Returns true if the game is over, false otherwise
     private boolean checkIfGameEnd() {
-        // 3. Get all "in" arguments in the current tree placed by the other player
+        // Get all "in" arguments in the current tree placed by the other player
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
         // Check if they have any unmoved children
         for (TreeArgument argToCounter : counterableArguments) {
@@ -114,13 +126,43 @@ public class GameController {
         alert.setContentText("No more moves are possible.\nYou may keep looking at the final generated game tree. " +
                 "\nTo finish, click the button between the two graphs.");
         alert.setHeight(500);
-        alert.showAndWait();
+            alert.showAndWait();
         return true;
     }
 
     // Performs the turn as the computer
     private void computerTurn() {
-
+        // Get all arguments that could be countered
+        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
+        // 5. Mark the counterable arguments visually
+        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().computerSelectable(); }
+        ArrayList<TreeArgument> goodMoves = new ArrayList<>();
+        for (TreeArgument countered : counterableArguments) {
+            // Take all arguments that attack the selected one - these can be moved
+            // Collect all that are in the winning strategy
+            for (TreeArgument child : countered.getChildren()) { if (child.isInWinningStrategy) goodMoves.add(child); }
+        }
+        PauseTransition compMoveWait = new PauseTransition(Duration.seconds(2));
+        compMoveWait.setOnFinished(e-> {
+            Random rand = new Random(System.currentTimeMillis());
+            if (goodMoves.size() == 0) {
+                // No move in winning strategy possible - the game is lost, computer will perform a random move
+                TreeArgument selectedMove = null;
+                while (selectedMove == null) {
+                    TreeArgument selectedArgumentToCounter =
+                            counterableArguments.get(rand.nextInt(counterableArguments.size()));
+                    if (!selectedArgumentToCounter.getChildren().isEmpty()) selectedMove =
+                            selectedArgumentToCounter.getChildren().get(rand.nextInt(selectedArgumentToCounter.getChildren().size()));
+                }
+                moveArgument(selectedMove);
+            } else {
+                // Perform a random good move - as all are in winning strategy, all will lead us to victory
+                TreeArgument selectedArgument =
+                        goodMoves.get(rand.nextInt(goodMoves.size()));
+                moveArgument(selectedArgument);
+            }
+        });
+        compMoveWait.play();
     }
 
     public void selectArgumentToCounter(String name, TreeArgument argument) {

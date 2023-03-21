@@ -498,16 +498,55 @@ public class Graph {
                 n.setOnMouseDragged(null);
                 n.setOnMousePressed(null);
                 n.setOnMouseClicked(e2 -> {
-                    //
-                    //
                     if (n.isGameSelectEnabled()) {
                         game.selectArgumentToMove(n.getName());
                     }
-                    //
-                    //
+                });
+            }
+            // Still allow arrows to be selected
+            for (GraphArrow a : gArrows) {
+                a.setMouseTransparent(false);
+                a.setOnMouseClicked(e2 -> {
+                    if (selected == a) {
+                        a.deselectGray();
+                        selected = null;
+                    } else {
+                        if (selected != null) selected.deselect();
+                        selected = a;
+                        a.selectGray();
+                    }
                 });
             }
         });
+        setMoveModeButton.setOnAction(e -> {
+            graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
+            interactMode = InteractMode.MOVE_MODE;
+            if (selected != null) {
+                selected.deselect();
+                selected = null;
+            }
+            // Turn off other events, then make draggable
+            for (GraphCircle n : gCircles) {
+                n.setMouseTransparent(false);
+                n.setOnMouseClicked(null);
+                makeDraggable(n);
+            }
+            // For arrows, keep behaviour from selecting them
+            for (GraphArrow a : gArrows) {
+                a.setMouseTransparent(false);
+                a.setOnMouseClicked(e2 -> {
+                    if (selected == a) {
+                        a.deselectGray();
+                        selected = null;
+                    } else {
+                        if (selected != null) selected.deselect();
+                        selected = a;
+                        a.selectGray();
+                    }
+                });
+            }
+        });
+        setMoveModeButton.fire();
         setSelectModeButton.fire();
     }
 
@@ -516,6 +555,7 @@ public class Graph {
         addGArrowButton.setDisable(false);
         // Restore Select functionality
         setUpInteractModeButton(setSelectModeButton, InteractMode.SELECT_MODE);
+        setMoveModeButton.fire();
         setSelectModeButton.fire();
     }
 

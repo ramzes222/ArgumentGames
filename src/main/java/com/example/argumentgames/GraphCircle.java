@@ -22,7 +22,6 @@ public class GraphCircle extends StackPane implements GraphNode {
         this.radius = radius;
         name = n;
 
-        Random rand = new Random(System.currentTimeMillis());
         circle = new Circle();
         circle.setRadius(radius);
         //circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
@@ -74,7 +73,8 @@ public class GraphCircle extends StackPane implements GraphNode {
     }
 
     public void highlight(Color c) { circle.setStroke(c); }
-    public void baseVisual() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setFill(Color.BLACK); }
+    public void baseVisual() {
+        circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setFill(Color.BLACK); }
     public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.PEACHPUFF); text.setFill(Color.BLACK);}
     public void gameAttackable() { circle.setStroke(Color.PERU); circle.setFill(Color.LIGHTCORAL); text.setFill(Color.BLACK);}
     public void select() { highlight(Color.YELLOW); }

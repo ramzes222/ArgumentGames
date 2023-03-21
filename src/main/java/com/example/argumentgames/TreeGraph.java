@@ -384,6 +384,7 @@ public class TreeGraph {
     public void exitGameMode() {
         // Restore Select functionality
         setUpInteractModeButton(setSelectModeButton, TreeGraph.InteractMode.SELECT_MODE);
+        setMoveModeButton.fire();
         setSelectModeButton.fire();
     }
 }
