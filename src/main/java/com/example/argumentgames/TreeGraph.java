@@ -65,7 +65,7 @@ public class TreeGraph {
     public TreeArgument getRoot() { return root; }
 
     // Clears the graph of all tCircles and tArrows
-    private void clear() {
+    public void clear() {
         treePane.getChildren().clear();
         if (root!=null) root.clearVisualTCircles();
         tCircles.clear();

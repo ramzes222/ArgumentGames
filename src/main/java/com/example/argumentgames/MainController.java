@@ -8,9 +8,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.*;
 import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MainController {
     @FXML
@@ -51,7 +53,41 @@ public class MainController {
 
     // Clears the current framework and changes the file path
     public void newData() {
+        // Ask to confirm with a dialog
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("New file");
+        alert.setHeaderText("Are you sure you want to create a new file?");
+        alert.setContentText("You will lose all changes made in the current file!");
+        Optional<ButtonType> response = alert.showAndWait();
 
+        if (response.get() == ButtonType.OK){
+            FileChooser fc = new FileChooser();
+            // Set FileChooser settings
+            fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            // Set the directory that the dialogue opens to
+            File initialDirectory = new File(System.getProperty("user.home"));
+            if (!initialDirectory.canRead()) { initialDirectory = new File("c:/"); }
+            fc.setInitialDirectory(initialDirectory);
+
+            File selectedFile = fc.showSaveDialog(leftGraphPane.getScene().getWindow());
+            if (selectedFile != null && ( selectedFile.exists() == selectedFile.canWrite() )) {
+                String extension = selectedFile.getPath().substring( selectedFile.getPath().lastIndexOf(".") + 1 );
+                if (extension.equals("txt")) {
+                    // Remember the file, then save
+                    currentFramework.clear();
+                    frameworkGraph.loadFramework(currentFramework);
+                    gameTree.clear();
+                    currentlyUsedFile = selectedFile;
+                    displayCurrentFileAsHeader();
+                    saveToCurrentlyUsedFile();
+                } else {
+                    Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                    alert2.setTitle("Files must be saved as .txt");
+                    alert2.setContentText("Please select a file with a .txt extension!");
+                    alert2.showAndWait();
+                }
+            }
+        }
     }
 
     // Saves the current framework to a new file
@@ -70,6 +106,7 @@ public class MainController {
             if (extension.equals("txt")) {
                 // Save the file
                 currentlyUsedFile = selectedFile;
+                displayCurrentFileAsHeader();
                 saveToCurrentlyUsedFile();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -97,6 +134,7 @@ public class MainController {
             if (extension.equals("txt")) {
                 // Load the file
                 currentlyUsedFile = selectedFile;
+                displayCurrentFileAsHeader();
                 loadFromCurrentlyUsedFile();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -178,6 +216,14 @@ public class MainController {
             System.out.println(exception);
         }
 
+    }
+
+    public void displayCurrentFileAsHeader() {
+        String fileName = currentlyUsedFile.getPath().substring(
+                currentlyUsedFile.getPath().lastIndexOf("\\") + 1 );
+        String stageName = "Argument Games v0.9 - " + fileName;
+        Stage thisStage = (Stage) leftGraphPane.getScene().getWindow();
+        thisStage.setTitle(stageName);
     }
 
     @FXML
