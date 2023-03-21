@@ -1,6 +1,8 @@
 package com.example.argumentgames;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -22,6 +24,11 @@ public class GameController {
         frameworkGraph = g;
         gameTree = t;
         this.isGrounded = isGrounded;
+        // Reset game tree
+        gameTree.getRoot().resetState();
+
+        // Find the winning strategy, if it exists
+        gameTree.getRoot().updateWinningStrategy();
 
         // Setup start space
         gameTree.disableAll();
@@ -41,6 +48,8 @@ public class GameController {
         moveArgument(gameTree.getRoot());
     }
 
+
+
     public void selectArgumentToMove(String name) {
         if (currentlySelected != null) {
             for (TreeArgument arg : currentlySelected.getChildren()) {
@@ -59,9 +68,17 @@ public class GameController {
         // Display the argument and its arrow
         movedArg.getVisualTCircle().setDisplayVisible(true);
 
-        // Setup next round
         // 1. Swap the player's turns
         isProTurn = !isProTurn;
+
+        // Check if the game ends
+        if (checkIfGameEnd()) {
+            // Game over - do not setup next round
+            stopInteractions();
+            return;
+        }
+
+        // Otherwise, setup next round
         // 2. Make all tCircles unselectable
         gameTree.unselect();
         for (TreeCircle c : gameTree.gettCircles() ) {c.makeGameUnselectable();}
@@ -70,6 +87,40 @@ public class GameController {
         // 4. Mark the counterable arguments visually
         //    Allow them to be selected
         for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
+    }
+
+    // Checks to see if there are still any remaining possible moves
+    // If there are none, stops the game
+    // Returns true if the game is over, false otherwise
+    private boolean checkIfGameEnd() {
+        // 3. Get all "in" arguments in the current tree placed by the other player
+        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
+        // Check if they have any unmoved children
+        for (TreeArgument argToCounter : counterableArguments) {
+            for (TreeArgument child : argToCounter.getChildren()) {
+                // After moving arguments get 1 or 2 state
+                // Arguments with state 0 are unmoved
+                if (child.getState()==0) return false;
+            }
+        }
+        // If, after going through all possibilities, no moves remain, end the game
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("End of the game");
+        String text = "";
+        if (isProTurn) text+="Opponent";
+        else text+="Proponent";
+        text+= " has won!";
+        alert.setHeaderText(text);
+        alert.setContentText("No more moves are possible.\nYou may keep looking at the final generated game tree. " +
+                "\nTo finish, click the button between the two graphs.");
+        alert.setHeight(500);
+        alert.showAndWait();
+        return true;
+    }
+
+    // Performs the turn as the computer
+    private void computerTurn() {
+
     }
 
     public void selectArgumentToCounter(String name, TreeArgument argument) {
@@ -88,9 +139,14 @@ public class GameController {
                     frameworkGraph.getGArrow(arg.getName(), name).highlight();
                 }
             }
-
-
         }
+    }
+
+    // Disables all interactions with the graph
+    // Effectively ends the game, but does not clean up
+    public void stopInteractions() {
+        frameworkGraph.getgCircles().forEach(GraphCircle::makeGameUnselectable);
+        gameTree.gettCircles().forEach(TreeCircle::makeGameUnselectable);
     }
 
     // Ends the game, regardless of current state

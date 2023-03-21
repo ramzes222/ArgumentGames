@@ -23,6 +23,8 @@ public class TreeArgument {
     // Signifies whether the argument lays on the Proponent or Opponent layer
     private final boolean isPro;
 
+    boolean isInWinningStrategy = false;
+
     public TreeArgument(String name, TreeArgument parent) {
         this.parent = parent;
         if (parent != null) {
@@ -67,6 +69,11 @@ public class TreeArgument {
 
     public ArrayList<TreeArgument> getChildren() { return children; }
     public ArrayList<TreeArgument> getPastInBranch() { return pastInBranch; }
+
+    public void resetState() {
+        state = 0;
+        for (TreeArgument child : children) {child.resetState();}
+    }
 
     public void setState(int newState) {
         if (state != newState) {
@@ -115,4 +122,48 @@ public class TreeArgument {
     public TreeArgument getParent() {return parent; }
     public int getWidth() { return width; }
     public boolean isLeaf() { return children.size() == 0; }
+
+    // Updates the isInWinningStrategy to show
+    // Whether this argument is part of proponent's winning strategy
+    // We provide a "guess" about the parent to inform our choice
+    // As an arg cannot be inStrat when it's parent is out,
+    // we cut off whole branches when we determine something to be out
+    public void updateWinningStrategy() {
+        // Is it pro turn argument?
+        if (isPro) {
+            if (children.isEmpty()) {
+                isInWinningStrategy = true;
+            } else {
+                // Update the children
+                for (TreeArgument childArg : children) { childArg.updateWinningStrategy(); }
+                // If any of the children are not inStrat, this has to be out
+                for (TreeArgument childArg : children) {
+                    if (!childArg.isInWinningStrategy) cutOffStrategyBranch();
+                }
+                // All children are inStrat - so this has to be in strat
+                isInWinningStrategy = true;
+            }
+        } else {
+            // Easiest case - if opp turn and no children, it's always out
+            if (children.isEmpty()) {
+                cutOffStrategyBranch();
+            } else {
+                // Update the children
+                for (TreeArgument childArg : children) { childArg.updateWinningStrategy(); }
+                // If any of the children are inStrat, this is in
+                for (TreeArgument childArg : children) {
+                    if (childArg.isInWinningStrategy) isInWinningStrategy = true;
+                }
+                // Otherwise, all pro children are out, so this has to be out
+                cutOffStrategyBranch();
+            }
+        }
+    }
+
+    // Removes the argument and all it's children from the winning strategy
+    private void cutOffStrategyBranch() {
+        isInWinningStrategy = false;
+        for (TreeArgument arg : children) arg.cutOffStrategyBranch();
+    }
+
 }
