@@ -60,6 +60,12 @@ public class Framework {
         FrameworkArgument newArg = new FrameworkArgument(name, x, y);
         arguments.add(newArg);
     }
+
+    public void removeArgument(String name) {
+        FrameworkArgument argToDelete = getArgumentByName(name);
+        arguments.remove(argToDelete);
+    }
+
     public ArrayList<FrameworkArgument> getArguments() { return arguments; }
     public ArrayList<FrameworkAttack> getAttacks() { return attacks; }
 
@@ -115,6 +121,13 @@ public class Framework {
         from.removeAttack( att );
         to.removeAttack( att );
         attacks.remove(att);
+    }
+
+    public void removeAttack(String fromName, String toName) {
+        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
+        if (from!=null && to!=null) {
+            removeAttack(from, to);
+        }
     }
 
     public boolean nameExists(String name) {

@@ -18,7 +18,7 @@ public class MainController {
     @FXML
     RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
-    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton, gameButton, buildTreeButton;
+    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton, gameButton, buildTreeButton, leftDeleteButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
     @FXML
@@ -43,7 +43,7 @@ public class MainController {
     public void initialize() {
         // Set up the two Graphs
         currentFramework = new Framework();
-        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftCleanupButton);
+        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton);
         frameworkGraph.loadFramework(currentFramework);
         gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton);
 

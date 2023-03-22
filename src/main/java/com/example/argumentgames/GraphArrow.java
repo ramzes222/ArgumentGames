@@ -124,4 +124,9 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     public String getName() { return null; }
     public String getFromName() {return startNode.getName(); }
     public String getToName() {return endNode.getName(); }
+
+    public void delete() {
+        startNode.removeArrow(this);
+        endNode.removeArrow(this);
+    }
 }

@@ -100,6 +100,18 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </Button>
+                     <Button fx:id="leftDeleteButton" mnemonicParsing="false">
+                        <graphic>
+                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@img/Delete.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                        <HBox.margin>
+                           <Insets left="5.0" />
+                        </HBox.margin>
+                     </Button>
                      <Separator orientation="VERTICAL" prefHeight="200.0">
                         <HBox.margin>
                            <Insets left="8.0" right="6.0" />

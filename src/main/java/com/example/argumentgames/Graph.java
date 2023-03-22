@@ -14,7 +14,7 @@ import javafx.scene.shape.Rectangle;
 public class Graph {
     private final double moveAwayStep = 10;
     private double dragOriginY = 0, dragOriginX = 0, gCircleRadius = 45;
-    private final Button addGCircleButton, addGArrowButton, cleanupButton;
+    private final Button addGCircleButton, addGArrowButton, cleanupButton, deleteButton;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<GraphCircle> gCircles = new ArrayList<>();
     private final ArrayList<GraphArrow> gArrows = new ArrayList<>();
@@ -32,7 +32,7 @@ public class Graph {
     }
     private InteractMode interactMode = InteractMode.SELECT_MODE;
 
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button cleanupButton) {
+    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button deleteButton, Button cleanupButton) {
         // Save variables
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
@@ -40,6 +40,7 @@ public class Graph {
         this.graphPane = graphPane;
         this.addGCircleButton = addGCircleButton;
         this.addGArrowButton = addGArrowButton;
+        this.deleteButton = deleteButton;
         this.cleanupButton = cleanupButton;
         //
         // Setup interact mode buttons
@@ -52,6 +53,7 @@ public class Graph {
         this.addGCircleButton.setOnAction(e-> { beginManualAddGCircle(); });
         this.addGArrowButton.setOnAction(e-> { beginManualAddGArrow(); });
         this.cleanupButton.setOnAction(e-> { cleanNodes(); });
+        this.deleteButton.setOnAction(e-> { deleteSelected(); });
         setUpClip();
     }
 
@@ -133,9 +135,8 @@ public class Graph {
             case MOVE_MODE -> {
                 graphPane.setOnMousePressed(null); graphPane.setOnMouseDragged(null);
                 interactMode = m;
-                if (this.addGArrowButton != null) {
-                    this.addGArrowButton.setDisable(true);
-                }
+                this.addGArrowButton.setDisable(true);
+                this.deleteButton.setDisable(true);
                 if (selected != null) {
                     selected.deselect();
                     selected = null;
@@ -166,9 +167,8 @@ public class Graph {
             case PAN_MODE -> {
                 // Make nodes and arrows transparent - only clicks on the Pane matter
                 interactMode = m;
-                if (this.addGArrowButton != null) {
-                    this.addGArrowButton.setDisable(true);
-                }
+                this.addGArrowButton.setDisable(true);
+                this.deleteButton.setDisable(true);
                 if (selected != null) {
                     selected.deselect();
                     selected = null;
@@ -226,6 +226,7 @@ public class Graph {
         setPanModeButton.setDisable(b);
         addGArrowButton.setDisable(b);
         addGCircleButton.setDisable(b);
+        deleteButton.setDisable(b);
         cleanupButton.setDisable(b);
     }
 
@@ -460,6 +461,33 @@ public class Graph {
         }
     }
 
+    private void deleteSelected() {
+        if (selected == null) return;
+        if (selected.getClass() == GraphCircle.class) {
+            // Delete node
+            GraphCircle nodeToDelete = (GraphCircle) selected;
+            selected = null;
+            ArrayList<GraphArrow> arrowsToDelete = (ArrayList<GraphArrow>) nodeToDelete.getConnectedArrows().clone();
+            for (GraphArrow a: arrowsToDelete) {
+                a.delete();
+                gArrows.remove(a);
+                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint());
+                currFramework.removeAttack(a.getFromName(), a.getToName());
+            }
+            gCircles.remove(nodeToDelete);
+            graphPane.getChildren().removeAll(nodeToDelete);
+            currFramework.removeArgument(nodeToDelete.getName());
+        } else {
+            // Delete edge
+            GraphArrow edgeToDelete = (GraphArrow) selected;
+            selected = null;
+            edgeToDelete.delete();
+            gArrows.remove(edgeToDelete);
+            graphPane.getChildren().removeAll(edgeToDelete, edgeToDelete.getArrowTip(), edgeToDelete.getControlPoint());
+            currFramework.removeAttack(edgeToDelete.getFromName(), edgeToDelete.getToName());
+        }
+    }
+
     // Changes the appearance of all nodes and arrows to make them grayed out
     // Also makes them unclickable
     // Used in Games to signify which nodes are disabled
@@ -584,7 +612,6 @@ public class Graph {
         if (selected!=null) return selected.getName();
         return null;
     }
-
 
     public ArrayList<GraphCircle> getgCircles() {return gCircles;}
 }

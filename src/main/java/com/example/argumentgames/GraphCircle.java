@@ -83,6 +83,8 @@ public class GraphCircle extends StackPane implements GraphNode {
     public void enable() { baseVisual(); text.setFill(Color.BLACK);}
 
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
+    public void removeArrow(GraphArrow arr) { connectedArrows.remove(arr); }
+    public ArrayList<GraphArrow> getConnectedArrows() { return connectedArrows; }
     public void rotateArrows() { for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }
 
     public String getName() { return name; }
@@ -92,4 +94,8 @@ public class GraphCircle extends StackPane implements GraphNode {
     public boolean isGameSelectEnabled() {return isGameSelectEnabled;}
     @Override
     public boolean isCircle() { return true; }
+
+    public void delete() {
+
+    }
 }
