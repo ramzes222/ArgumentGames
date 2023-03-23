@@ -52,7 +52,7 @@ public class Graph {
         // Setup control buttons
         this.addGCircleButton.setOnAction(e-> { beginManualAddGCircle(); });
         this.addGArrowButton.setOnAction(e-> { beginManualAddGArrow(); });
-        this.cleanupButton.setOnAction(e-> { cleanNodes(); });
+        this.cleanupButton.setOnAction(e-> { cleanUp(); });
         this.deleteButton.setOnAction(e-> { deleteSelected(); });
         setUpClip();
     }
@@ -313,7 +313,7 @@ public class Graph {
     // Moves the nodes away from each other to clean up the graph
     // Executes moveGCircleIntoEmptySpace on all nodes until no collision
     // or until reaching max iteration
-    private void cleanNodes() {
+    public void cleanUp() {
         int maxIterations = 1000;
         while (maxIterations > 0) {
             maxIterations--;
@@ -353,6 +353,8 @@ public class Graph {
             double newX = x + GeometricHelper.angle_distance_toX( -angle, moveAwayStep );
             double newY = y + GeometricHelper.angle_distance_toY( -angle, moveAwayStep );
             n.setXY(newX, newY);
+            // Make the arrows straight
+            n.getConnectedArrows().forEach(GraphArrow::centerControlPoint);
             return true;
         } else return false;
     }

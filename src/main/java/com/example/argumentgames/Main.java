@@ -14,7 +14,7 @@ public class Main extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("main-view.fxml"));
             Scene scene = new Scene(root);
-            stage.setTitle("Argument Games v0.9");
+            stage.setTitle("Argument Games v1.0");
 
             stage.setScene(scene);
             stage.show();

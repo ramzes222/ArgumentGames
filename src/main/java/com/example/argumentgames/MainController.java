@@ -22,6 +22,9 @@ public class MainController {
     @FXML
     Pane leftGraphPane, rightGraphPane;
     @FXML
+    Label gameLabel;
+
+    @FXML
     ChoiceBox<String> gameTypeChoiceBox;
     @FXML
     ImageView gameButtonImageView;
@@ -48,7 +51,8 @@ public class MainController {
         gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton);
 
         // Construct the menu Bar
-
+        gameLabel.prefWidthProperty().bind(rightGraphPane.widthProperty());
+        gameLabel.toFront();
     }
 
     // Clears the current framework and changes the file path
@@ -154,6 +158,7 @@ public class MainController {
             alert.setContentText("Please select a file to save to first!");
             alert.showAndWait();
             saveAsFileData();
+            return;
         };
         FileWriter fr = null;
         BufferedWriter bw = null;
@@ -197,6 +202,7 @@ public class MainController {
             BufferedReader br = new BufferedReader(fr);
             String nextLine;
             boolean loadingNodes = true;
+            boolean requiresCleanUp = false;
             while ((nextLine = br.readLine()) != null) {
                 if (nextLine.equals("Nodes:")) loadingNodes = true;
                 else if (nextLine.equals("Edges:")) loadingNodes = false;
@@ -204,14 +210,27 @@ public class MainController {
                     String[] words = nextLine.split(",");
                     if (loadingNodes) {
                         // Interpret the data as a node
-                        currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
+                        // If the positions are not provided, use default values
+                        if (words.length < 3) {
+                            currentFramework.addArgument(words[0], 200, 200);
+                            requiresCleanUp = true;
+                        } else {
+                            currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
+                        }
                     } else {
                         // Interpret the data as an edge
-                        currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                        // If the positions are not provided, use default values
+                        if (words.length < 4) {
+                            currentFramework.addAttack(words[0], words[1], 300.0, 300.0);
+                            requiresCleanUp = true;
+                        } else {
+                            currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                        }
                     }
                 }
             }
             frameworkGraph.loadFramework(currentFramework);
+            if (requiresCleanUp) frameworkGraph.cleanUp();
         } catch (Exception exception) {
             System.out.println(exception);
         }
@@ -221,7 +240,7 @@ public class MainController {
     public void displayCurrentFileAsHeader() {
         String fileName = currentlyUsedFile.getPath().substring(
                 currentlyUsedFile.getPath().lastIndexOf("\\") + 1 );
-        String stageName = "Argument Games v0.9 - " + fileName;
+        String stageName = "Argument Games v1.0 - " + fileName;
         Stage thisStage = (Stage) leftGraphPane.getScene().getWindow();
         thisStage.setTitle(stageName);
     }
@@ -256,7 +275,7 @@ public class MainController {
         gameTypeChoiceBox.setDisable(true);
         buildTreeButton.setDisable(true);
         fileMenu.setDisable(true);
-        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded);
+        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, gameLabel);
     }
 
     private void endGame() {

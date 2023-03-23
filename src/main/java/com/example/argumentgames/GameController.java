@@ -1,7 +1,9 @@
 package com.example.argumentgames;
 
 import javafx.animation.PauseTransition;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.paint.Color;
@@ -17,18 +19,21 @@ public class GameController {
     Graph frameworkGraph;
     Framework framework;
     TreeGraph gameTree;
+    Label gameLabel;
 
     TreeArgument currentlySelected = null;
 
     boolean isProTurn, isComputerPlaying;
 
-    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded) {
+    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded, Label gameLabel) {
         // Save objects
         framework = f;
         frameworkGraph = g;
         gameTree = t;
         this.isGrounded = isGrounded;
-        isComputerPlaying = true;
+        isComputerPlaying = false;
+        this.gameLabel = gameLabel;
+        this.gameLabel.setVisible(true);
         // Reset game tree
         gameTree.getRoot().resetState();
 
@@ -66,9 +71,13 @@ public class GameController {
     // Move the provided argument onto the game tree
     // Advance to the next round
     private void moveArgument(TreeArgument movedArg) {
-        System.out.println("Moving " + movedArg.getName());
-        frameworkGraph.disableAll();
+        // Display a message in the gameLabel
+        String text = "";
+        if (isProTurn) text = "Proponent"; else text = "Opponent";
+        text += " moves argument '" + movedArg.getName() + "'";
+        gameLabel.setText(text);
 
+        frameworkGraph.disableAll();
         // The moved state is always in
         movedArg.setState(1);
         // Display the argument and its arrow
@@ -122,6 +131,7 @@ public class GameController {
         if (isProTurn) text+="Opponent";
         else text+="Proponent";
         text+= " has won!";
+        gameLabel.setText(text);
         alert.setHeaderText(text);
         alert.setContentText("No more moves are possible.\nYou may keep looking at the final generated game tree. " +
                 "\nTo finish, click the button between the two graphs.");
@@ -132,6 +142,7 @@ public class GameController {
 
     // Performs the turn as the computer
     private void computerTurn() {
+        gameLabel.setText("Computer is thinking...");
         // Get all arguments that could be countered
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
         // 5. Mark the counterable arguments visually
@@ -194,6 +205,7 @@ public class GameController {
     // Ends the game, regardless of current state
     // Cleanups the tree/graph
     public void endGame() {
+        gameLabel.setVisible(false);
         // Enable Graph interactions previously disabled
         frameworkGraph.exitGameMode();
 

@@ -58,10 +58,15 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         arrow.getTransforms().add(arrowRotate);
 
         // Place the control point halfway between the nodes
-        setControlPointXY( (startXProperty().get() + endXProperty().get()) / 2 , (startYProperty().get() + endYProperty().get()) / 2 );
+        centerControlPoint();
 
         // Rotate the arrow tip
         rotateArrowShape();
+    }
+
+    // Place the control point halfway between the nodes
+    public void centerControlPoint() {
+        setControlPointXY( (startXProperty().get() + endXProperty().get()) / 2 , (startYProperty().get() + endYProperty().get()) / 2 );
     }
 
     public void translateControlPointXY(double xDiff, double yDiff) {

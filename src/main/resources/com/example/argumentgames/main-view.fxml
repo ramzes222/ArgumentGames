@@ -6,6 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.argumentgames.MainController">
    <children>
@@ -129,9 +130,9 @@
                         </HBox.margin>
                      </Button>
                   </children></HBox>
-               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; overflow:hidden">
                   <children>
-                     <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" />
+                     <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" style="-fx-background-color: lightgray;" />
                   </children>
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -230,9 +231,13 @@
                         </HBox.margin>
                      </ChoiceBox>
                   </children></HBox>
-               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; -fx-background-color: lightgray;">
+               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; overflow: hidden; -fx-border-width: 5; ">
                   <children>
-                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" />
+                     <Label fx:id="gameLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: goldenrod;" text="Label" textAlignment="CENTER" visible="false" StackPane.alignment="TOP_CENTER">
+                        <font>
+                           <Font size="14.0" />
+                        </font></Label>
+                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" style="-fx-background-color: lightgray;" />
                   </children>
                   <VBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

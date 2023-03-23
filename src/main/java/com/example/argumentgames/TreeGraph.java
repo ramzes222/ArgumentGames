@@ -315,7 +315,7 @@ public class TreeGraph {
         if (root == null) return;
         root.updateWidth();
         double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
-                yLevel = tCircleRadius;
+                yLevel = tCircleRadius + 30;
         // Create the root
         TreeCircle rootCircle = new TreeCircle(root, tCircleRadius);
         treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
