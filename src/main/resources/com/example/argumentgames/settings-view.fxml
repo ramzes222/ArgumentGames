@@ -23,6 +23,7 @@
               </rowConstraints>
                <children>
                   <CheckBox fx:id="savePositionToFile" mnemonicParsing="false" text="Save positions of elements in file">
+                      <tooltip><Tooltip text="${'If true, when saving the framework to a file, the created file will include the layout of the elements in the framework. \n\nIf false, the generated file will only include the necessary data: argument names and attacks between them.\nUpon loading this file, visual configuration will be different!'}" /></tooltip>
                      <padding>
                         <Insets bottom="10.0" left="20.0" top="10.0" />
                      </padding>

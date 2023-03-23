@@ -6,6 +6,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -233,6 +234,23 @@ public class TreeGraph {
         return leftBound + (position * distanceBetween);
     }
 
+    public void buildTree(TreeArgument newRoot) {
+        clear();
+        root = newRoot;
+        if (root == null) return;
+        root.updateWinningStrategy();
+        root.updateWidth();
+        double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
+                yLevel = tCircleRadius + 30;
+        // Create the root
+        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius);
+        treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
+        if (root.isInWinningStrategy) rootCircle.highlight(Color.YELLOW);
+        rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
+        // Build the branch from the root
+        buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
+    }
+
     // Places the children of the root
     // Places them within the area between xLeft and xRight, at yLevel
     private void buildBranch(TreeArgument root, double yLevel, double xLeft, double xRight) {
@@ -296,6 +314,8 @@ public class TreeGraph {
     private void addTCircle(TreeArgument arg, double x, double y, TreeCircle parent) {
         TreeCircle newCircle = new TreeCircle(arg, tCircleRadius);
         treePane.getChildren().add(newCircle); tCircles.add(newCircle);
+        System.out.println(arg.getName() + " before");
+        if (arg.isInWinningStrategy) {newCircle.highlight(Color.YELLOW); System.out.println("aaa");}
         newCircle.moveToXY(x, y);
         //
         // Create the arrow pointing from self to parent
@@ -308,21 +328,6 @@ public class TreeGraph {
     }
 
     public ArrayList<TreeCircle> gettCircles() {return tCircles;}
-
-    public void buildTree(TreeArgument newRoot) {
-        clear();
-        root = newRoot;
-        if (root == null) return;
-        root.updateWidth();
-        double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
-                yLevel = tCircleRadius + 30;
-        // Create the root
-        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius);
-        treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
-        rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
-        // Build the branch from the root
-        buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
-    }
 
     // Changes the appearance of all nodes and arrows to make them invisible
     // Also makes them unclickable
@@ -361,6 +366,7 @@ public class TreeGraph {
             // Get which circles should be enabled
             for (TreeArgument arg: root.getAllArguments()) {
                 TreeCircle c = arg.getVisualTCircle();
+                c.highlight(Color.TRANSPARENT);
                 c.setMouseTransparent(false);
                 c.setOnMouseDragged(null);
                 c.setOnMousePressed(null);

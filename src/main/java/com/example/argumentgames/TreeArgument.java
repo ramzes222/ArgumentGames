@@ -138,7 +138,7 @@ public class TreeArgument {
                 for (TreeArgument childArg : children) { childArg.updateWinningStrategy(); }
                 // If any of the children are not inStrat, this has to be out
                 for (TreeArgument childArg : children) {
-                    if (!childArg.isInWinningStrategy) cutOffStrategyBranch();
+                    if (!childArg.isInWinningStrategy) { cutOffStrategyBranch(); return; }
                 }
                 // All children are inStrat - so this has to be in strat
                 isInWinningStrategy = true;
@@ -152,7 +152,7 @@ public class TreeArgument {
                 for (TreeArgument childArg : children) { childArg.updateWinningStrategy(); }
                 // If any of the children are inStrat, this is in
                 for (TreeArgument childArg : children) {
-                    if (childArg.isInWinningStrategy) isInWinningStrategy = true;
+                    if (childArg.isInWinningStrategy) { isInWinningStrategy = true; return;}
                 }
                 // Otherwise, all pro children are out, so this has to be out
                 cutOffStrategyBranch();
