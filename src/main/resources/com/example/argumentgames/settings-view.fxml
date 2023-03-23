@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="60.0" prefWidth="600.0">
+         <children>
+            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Save File">
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </Label>
+            <GridPane layoutY="22.0" prefHeight="41.0" prefWidth="600.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <CheckBox fx:id="savePositionToFile" mnemonicParsing="false" text="Save positions of elements in file">
+                     <padding>
+                        <Insets bottom="10.0" left="20.0" top="10.0" />
+                     </padding>
+                  </CheckBox>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+      <Pane layoutY="60.0" prefHeight="60.0" prefWidth="600.0">
+         <children>
+            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Argument Games">
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </Label>
+            <GridPane layoutY="22.0" prefHeight="41.0" prefWidth="600.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <CheckBox fx:id="savePositionToFile1" mnemonicParsing="false" text="Play against the computer">
+                     <padding>
+                        <Insets bottom="10.0" left="20.0" top="10.0" />
+                     </padding>
+                  </CheckBox>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+      <Pane layoutY="120.0" prefHeight="213.0" prefWidth="600.0">
+         <children>
+            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Colors">
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </Label>
+            <GridPane layoutY="22.0" prefHeight="188.0" prefWidth="600.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <ColorPicker fx:id="argumentBaseColor" prefHeight="26.0" prefWidth="93.0" GridPane.halignment="RIGHT">
+                     <GridPane.margin>
+                        <Insets left="20.0" right="10.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </ColorPicker>
+                  <Label text="Argument base" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets left="20.0" />
+                     </GridPane.margin>
+                  </Label>
+
+                   <ColorPicker fx:id="selectionColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Selection" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="proponentArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Proponent argument in game" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="opponentArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Opponent argument in game" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="attackedArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Attacked argument" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="attackingArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Attacking argument" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="attackArrowColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Attack base" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+
+                   <ColorPicker fx:id="attackControlColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                       <GridPane.margin>
+                           <Insets left="20.0" right="10.0" />
+                       </GridPane.margin>
+                       <opaqueInsets>
+                           <Insets />
+                       </opaqueInsets>
+                   </ColorPicker>
+                   <Label text="Attack control point" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                       <GridPane.margin>
+                           <Insets left="20.0" />
+                       </GridPane.margin>
+                   </Label>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+      <Button layoutX="534.0" layoutY="361.0" mnemonicParsing="false" text="Cancel" />
+      <Button layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Save" />
+   </children>
+</AnchorPane>

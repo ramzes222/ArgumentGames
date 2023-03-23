@@ -1,6 +1,9 @@
 package com.example.argumentgames;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -286,5 +289,13 @@ public class MainController {
         gameTypeChoiceBox.setDisable(false);
         buildTreeButton.setDisable(false);
         fileMenu.setDisable(false);
+    }
+
+    @FXML
+    private void openSettings() {
+        SettingsController settingsController = new SettingsController(this);
+        settingsController.showWindow();
+
+
     }
 }
