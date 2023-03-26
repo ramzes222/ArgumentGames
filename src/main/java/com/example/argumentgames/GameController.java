@@ -25,13 +25,13 @@ public class GameController {
 
     boolean isProTurn, isComputerPlaying;
 
-    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded, Label gameLabel) {
+    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded, boolean isComputerPlaying, Label gameLabel) {
         // Save objects
         framework = f;
         frameworkGraph = g;
         gameTree = t;
         this.isGrounded = isGrounded;
-        isComputerPlaying = false;
+        this.isComputerPlaying = isComputerPlaying;
         this.gameLabel = gameLabel;
         this.gameLabel.setVisible(true);
         // Reset game tree
@@ -146,7 +146,7 @@ public class GameController {
         // Get all arguments that could be countered
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
         // 5. Mark the counterable arguments visually
-        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().computerSelectable(); }
+        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().setVisual("computerSelectable"); }
         ArrayList<TreeArgument> goodMoves = new ArrayList<>();
         for (TreeArgument countered : counterableArguments) {
             // Take all arguments that attack the selected one - these can be moved
@@ -182,12 +182,12 @@ public class GameController {
         // Take all arguments that attack the selected one - these can be moved
         ArrayList<FrameworkArgument> selectableArguments = framework.getArgumentByName(name).getAttackedBy();
         // Change display of affected nodes
-        frameworkGraph.getGCircle(name).gameAttackable();
+        frameworkGraph.getGCircle(name).setVisual("gameAttackable");
         for (FrameworkArgument arg:selectableArguments) {
             // Check if the argument hasn't been moved already
             for (TreeArgument correspondingTreeArg : argument.getChildren()) {
                 if (correspondingTreeArg.getName().equals( arg.getName() ) && correspondingTreeArg.getState()==0) {
-                    frameworkGraph.getGCircle(arg.getName()).gameSelectable();
+                    frameworkGraph.getGCircle(arg.getName()).setVisual("gameSelectable");
                     frameworkGraph.getGCircle(arg.getName()).makeGameSelectable();
                     frameworkGraph.getGArrow(arg.getName(), name).highlight();
                 }

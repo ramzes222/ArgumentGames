@@ -22,6 +22,7 @@ public class Graph {
     private final Pane graphPane;
     private final ToggleGroup tg = new ToggleGroup();
     private EventHandler<MouseEvent> graphWideEvent;
+    private HashMap<String, Color> colorLookup = new HashMap<>();
 
     private Framework currFramework;
     enum InteractMode {
@@ -32,7 +33,7 @@ public class Graph {
     }
     private InteractMode interactMode = InteractMode.SELECT_MODE;
 
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button deleteButton, Button cleanupButton) {
+    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button deleteButton, Button cleanupButton, HashMap<String, Color> colorLookup) {
         // Save variables
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
@@ -42,6 +43,7 @@ public class Graph {
         this.addGArrowButton = addGArrowButton;
         this.deleteButton = deleteButton;
         this.cleanupButton = cleanupButton;
+        this.colorLookup = colorLookup;
         //
         // Setup interact mode buttons
         setUpInteractModeButton(setMoveModeButton, InteractMode.MOVE_MODE);
@@ -265,7 +267,7 @@ public class Graph {
     // Adds a new gCircle to the graph under the specified name
     // Only adds the visual representation of an argument - does not affect the framework
     private GraphCircle addGCircle(String name) {
-        GraphCircle n = new GraphCircle(name, gCircleRadius);
+        GraphCircle n = new GraphCircle(name, gCircleRadius, colorLookup);
         n.setXY(200, 300);
         // Implement selection
         if (interactMode == InteractMode.SELECT_MODE) {
@@ -380,7 +382,7 @@ public class Graph {
         if (selected != null && selected.getClass() == GraphCircle.class) {
             // Remember origin node and style it
             GraphCircle fromGCircle = (GraphCircle) selected;
-            fromGCircle.highlight(Color.LAWNGREEN);
+            fromGCircle.highlight(colorLookup.get("attackArrowColor"));
             selected = null;
             //
             // Add arrow for visuals
@@ -440,7 +442,7 @@ public class Graph {
             alert.showAndWait();
             return null;
         } else {
-            GraphArrow arrow = new GraphArrow(a, b);
+            GraphArrow arrow = new GraphArrow(a, b, colorLookup);
             graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
             gArrows.add(arrow);
             arrow.setOnMouseClicked(e -> {
@@ -504,7 +506,7 @@ public class Graph {
 
     public void visualEnableAll() {
         for (GraphCircle c : gCircles) {
-            c.baseVisual();
+            c.setVisual("base");
             c.enable();
             c.setMouseTransparent(false);
         }
@@ -608,6 +610,11 @@ public class Graph {
                 node.rotateArrows();
             }
         });
+    }
+
+    public void reloadColors() {
+        for (GraphCircle c: gCircles) c.reloadVisual();
+        for (GraphArrow a: gArrows) a.reloadVisual();
     }
 
     public String getSelectedArgumentName() {

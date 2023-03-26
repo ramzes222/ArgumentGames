@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TreeGraph {
     private final double moveAwayStep = 10;
@@ -21,6 +22,8 @@ public class TreeGraph {
     private TreeCircle selected = null;
     private final Pane treePane;
     private final ToggleGroup tg = new ToggleGroup();
+    HashMap<String, Color> colorLookup;
+
 
     private TreeArgument root;
 
@@ -34,13 +37,14 @@ public class TreeGraph {
     private TreeGraph.InteractMode interactMode = TreeGraph.InteractMode.SELECT_MODE;
 
     public TreeGraph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton,
-                     RadioButton setPanModeButton, Button buildTreeButton) {
+                     RadioButton setPanModeButton, Button buildTreeButton,  HashMap<String, Color> colorLookup) {
         // Save variables
         this.treePane = graphPane;
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
         this.setPanModeButton = setPanModeButton;
         this.buildTreeButton = buildTreeButton;
+        this.colorLookup = colorLookup;
         //
         // Setup interact mode buttons
         setUpInteractModeButton(setMoveModeButton, TreeGraph.InteractMode.MOVE_MODE);
@@ -243,9 +247,9 @@ public class TreeGraph {
         double leftBound = 0, rightBound = Math.max( treePane.getWidth(), (3*tCircleRadius * root.getWidth()) ),
                 yLevel = tCircleRadius + 30;
         // Create the root
-        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius);
+        TreeCircle rootCircle = new TreeCircle(root, tCircleRadius, colorLookup);
         treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
-        if (root.isInWinningStrategy) rootCircle.highlight(Color.YELLOW);
+        if (root.isInWinningStrategy) rootCircle.highlight(Color.TRANSPARENT);
         rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
         // Build the branch from the root
         buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
@@ -257,18 +261,19 @@ public class TreeGraph {
         ArrayList<TreeArgument> children = root.getChildren();
         if (children.isEmpty()) return;
         double distance = (xRight - xLeft) / root.getWidth();
-        if (children.size() == root.getWidth()) {
-            // Special case - all width slots are taken, so treat each node as width 1
-            double currX = xLeft;
+        double currRightX = xLeft, currLeftX = xLeft;
+        //if (children.size() == root.getWidth()) {
+        if (false) {
+            // Special case - all children are leaves
             for (TreeArgument arg: children) {
                 // Create the node
                 // NEW CIRCLE
-                addTCircle(arg, currX + (distance/2),
+                addTCircle(arg, currRightX + (distance/2),
                         yLevel, root.getVisualTCircle());
                 // If it's a branch, build the subtree
-                if (!arg.isLeaf()) buildBranch(arg, yLevel + (tCircleRadius * 3), currX, currX + distance);
+                if (!arg.isLeaf()) buildBranch(arg, yLevel + (tCircleRadius * 3), currRightX, currRightX + distance);
                 // Increase the currLeftX
-                currX += distance;
+                currRightX += distance;
             }
         } else {
             /* For each child:
@@ -276,9 +281,8 @@ public class TreeGraph {
                 Step 2: If it's not a leaf, take its width and place it in its "box"
                 Step 3: Save the locations of free spaces - leaves will slot into them later
              */
-            double currRightX = xLeft, currLeftX = xLeft;
             ArrayList<TreeArgument> leaves = new ArrayList<>();
-            ArrayList<Double> emptySpots = new ArrayList<Double>();
+            ArrayList<Double> emptySpots = new ArrayList<>();
             for (TreeArgument arg: children) {
                 if (arg.isLeaf()) {leaves.add(arg); }
                 else {
@@ -303,24 +307,35 @@ public class TreeGraph {
             }
             // We have placed all branches - time for slotting leaves into the saved empty slots
             for (TreeArgument leaf: leaves) {
-                double xSlot = emptySpots.remove(0);
-                // NEW CIRCLE
-                addTCircle(leaf, xSlot,
-                        yLevel, root.getVisualTCircle());
+                if (emptySpots.size() > 0) {
+                    // Slot into save slot
+                    double xSlot = emptySpots.remove(0);
+                    // NEW CIRCLE
+                    addTCircle(leaf, xSlot,
+                            yLevel, root.getVisualTCircle());
+                } else {
+                    // Add with width 1
+                    // Create the node
+                    // NEW CIRCLE
+                    addTCircle(leaf, currRightX + (distance/2),
+                            yLevel, root.getVisualTCircle());
+                    // Increase the currLeftX
+                    currRightX += distance;
+
+                }
             }
         }
     }
 
     private void addTCircle(TreeArgument arg, double x, double y, TreeCircle parent) {
-        TreeCircle newCircle = new TreeCircle(arg, tCircleRadius);
+        TreeCircle newCircle = new TreeCircle(arg, tCircleRadius, colorLookup);
         treePane.getChildren().add(newCircle); tCircles.add(newCircle);
-        System.out.println(arg.getName() + " before");
-        if (arg.isInWinningStrategy) {newCircle.highlight(Color.YELLOW); System.out.println("aaa");}
+        if (arg.isInWinningStrategy) {newCircle.highlight(Color.TRANSPARENT);}
         newCircle.moveToXY(x, y);
         //
         // Create the arrow pointing from self to parent
         if (parent != null) {
-            TreeArrow arrow = new TreeArrow(newCircle, parent);
+            TreeArrow arrow = new TreeArrow(newCircle, parent, colorLookup);
             treePane.getChildren().addAll(arrow, arrow.getArrowTip()); tArrows.add(arrow);
             arrow.toBack(); arrow.getArrowTip().toBack();
         }
@@ -345,7 +360,7 @@ public class TreeGraph {
 
     public void visualEnableAll() {
         for (TreeCircle c : tCircles) {
-            c.baseVisual();
+            c.setVisual("base");
             c.makeGameUnselectable();
             c.setMouseTransparent(false);
             c.setVisible(true);
@@ -355,6 +370,10 @@ public class TreeGraph {
         }
     }
     public void unselect() { selected = null; }
+    public void reloadColors() {
+        for (TreeCircle c: tCircles) c.reloadVisual();
+        for (TreeArrow a: tArrows) a.reloadVisual();
+    }
 
     // Disables the buttons that could change the current Tree
     // Returns the Select mode button - the reference to it is used by the Game Controller
@@ -374,9 +393,9 @@ public class TreeGraph {
                     //
                     //
                     if (c.isGameSelectEnabled()) {
-                        if (selected != null) selected.gameSelectable();
+                        if (selected != null) selected.setVisual("gameSelectable");
                         selected = c;
-                        c.gameSelected();
+                        c.setVisual("gameSelected");
                         game.selectArgumentToCounter(c.getName(), arg);
                     }
                     //

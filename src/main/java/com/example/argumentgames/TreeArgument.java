@@ -53,7 +53,6 @@ public class TreeArgument {
     public void disappear() { visualTCircle.setVisible(false);}
 
     public void highlight() { visualTCircle.highlight(Color.ORANGE);}
-    public void setColor(Color c) { visualTCircle.setColor(c);}
     public void dehighlight() { visualTCircle.highlight(Color.TRANSPARENT);}
 
     // Clears the visualTCircles for self and all children

@@ -48,8 +48,9 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <CheckBox fx:id="savePositionToFile1" mnemonicParsing="false" text="Play against the computer">
-                     <padding>
+                  <CheckBox fx:id="playAgainstComputer" mnemonicParsing="false" text="Play against the computer">
+                      <tooltip><Tooltip text="${'If true, in argument games, the proponent will be controlled by the computer. \n\nIf false, both players will be controlled by the user'}" /></tooltip>
+                      <padding>
                         <Insets bottom="10.0" left="20.0" top="10.0" />
                      </padding>
                   </CheckBox>
@@ -77,7 +78,8 @@
               </rowConstraints>
                <children>
                   <ColorPicker fx:id="argumentBaseColor" prefHeight="26.0" prefWidth="93.0" GridPane.halignment="RIGHT">
-                     <GridPane.margin>
+                      <tooltip><Tooltip text="${'The base color for arguments in the framework and tree'}" /></tooltip>
+                      <GridPane.margin>
                         <Insets left="20.0" right="10.0" />
                      </GridPane.margin>
                      <opaqueInsets>
@@ -91,6 +93,7 @@
                   </Label>
 
                    <ColorPicker fx:id="selectionColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                       <tooltip><Tooltip text="${'The highlight color for selected argument or attack'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -105,6 +108,7 @@
                    </Label>
 
                    <ColorPicker fx:id="proponentArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                       <tooltip><Tooltip text="${'The color of arguments moved by the proponent in an argument game'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -119,6 +123,7 @@
                    </Label>
 
                    <ColorPicker fx:id="opponentArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                       <tooltip><Tooltip text="${'The color of arguments moved by the opponent in an argument game'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -133,6 +138,7 @@
                    </Label>
 
                    <ColorPicker fx:id="attackedArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                       <tooltip><Tooltip text="${'The color of arguments being attacked in the framework.\n\nUsed when selecting an argument to move in the game.'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -147,6 +153,7 @@
                    </Label>
 
                    <ColorPicker fx:id="attackingArgColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                       <tooltip><Tooltip text="${'The color of attacking arguments in the framework.\n\nUsed when selecting an argument to move in the game.'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -161,6 +168,7 @@
                    </Label>
 
                    <ColorPicker fx:id="attackArrowColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                       <tooltip><Tooltip text="${'The color of arrows between arguments, representing attacks.'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -175,6 +183,7 @@
                    </Label>
 
                    <ColorPicker fx:id="attackControlColor" prefHeight="26.0" prefWidth="93.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                       <tooltip><Tooltip text="${'The color of arrows control point. Shown when changing the curvature of the arrow.'}" /></tooltip>
                        <GridPane.margin>
                            <Insets left="20.0" right="10.0" />
                        </GridPane.margin>
@@ -191,7 +200,8 @@
             </GridPane>
          </children>
       </Pane>
-      <Button layoutX="534.0" layoutY="361.0" mnemonicParsing="false" text="Cancel" />
-      <Button layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Save" />
+      <Button fx:id="cancelButton" layoutX="534.0" layoutY="361.0" mnemonicParsing="false" text="Cancel" />
+      <Button fx:id="saveButton" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Save" />
+      <Button fx:id="restoreDefaultsButton" layoutX="380.0" layoutY="361.0" mnemonicParsing="false" text="Restore Defaut Settings" />
    </children>
 </AnchorPane>

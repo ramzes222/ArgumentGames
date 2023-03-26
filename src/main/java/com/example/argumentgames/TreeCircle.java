@@ -7,6 +7,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class TreeCircle extends StackPane {
@@ -17,17 +18,20 @@ public class TreeCircle extends StackPane {
     private boolean isGameSelectEnabled = false;
     // Signifies whether the argument lays on the Proponent or Opponent layer
     private boolean isPro;
+    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private String currVisual;
 
-    public TreeCircle(TreeArgument a, double radius) {
+    public TreeCircle(TreeArgument a, double radius, HashMap<String, Color> colorLookup) {
         super();
         this.isPro = a.isPro();
         this.radius = radius;
+        this.colorLookup = colorLookup;
+
         a.setVisualTCircle(this);
         name = a.getName();
         circle = new Circle();
         circle.setRadius(radius);
-        if (isPro) circle.setFill(Color.CORNSILK);
-            else circle.setFill(Color.MOCCASIN);
+        setVisual("base");
         circle.setStrokeWidth(5);
         Text text = new Text(name);
         //
@@ -36,18 +40,6 @@ public class TreeCircle extends StackPane {
         setTranslateX(-radius);
         setTranslateY(-radius);
         getChildren().addAll(circle,text);
-    }
-
-    public void makeGameSelectable() {
-        gameSelectable();
-        setMouseTransparent(false);
-        isGameSelectEnabled = true;
-    }
-
-    public void makeGameUnselectable() {
-        baseVisual();
-        setMouseTransparent(true);
-        isGameSelectEnabled = false;
     }
 
     public void translateXY(double xDiff, double yDiff) {
@@ -70,18 +62,52 @@ public class TreeCircle extends StackPane {
         if (r < 10) { circle.setStrokeWidth(2); } else { circle.setStrokeWidth(5); }
     }
 
-    public void highlight(Color c) { circle.setStroke(c);
-        if (isPro) circle.setFill(Color.CORNSILK);
-            else circle.setFill(Color.MOCCASIN);}
-    public void baseVisual() { circle.setStroke(Color.TRANSPARENT);
-        if (isPro) circle.setFill(Color.CORNSILK);
-            else circle.setFill(Color.MOCCASIN); }
-    public void gameSelected() { circle.setStroke(Color.DARKRED); circle.setFill(Color.INDIANRED);}
-    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.INDIANRED);}
-    public void computerSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.ORANGERED);}
-    public void select() { highlight(Color.YELLOW); }
-    public void deselect() { baseVisual(); }
-    public void setColor(Color c) {circle.setFill(c); circle.setStroke(Color.TRANSPARENT); }
+    public void reloadVisual() {setVisual(currVisual);}
+    // Sets the visual style of the circle, according to the color lookup table
+    public void setVisual(String s) {
+        currVisual = s;
+        System.out.println(s);
+        switch (s){
+            case "base":
+                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
+                else circle.setFill(colorLookup.get("opponentArgColor"));
+                circle.setStroke(Color.TRANSPARENT);
+                break;
+            case "gameSelectable":
+                circle.setStroke(Color.TRANSPARENT);
+                circle.setFill(colorLookup.get("attackingArgColor"));
+                break;
+            case "gameSelected":
+                circle.setStroke(colorLookup.get("attackedArgColor"));
+                circle.setFill(colorLookup.get("attackingArgColor"));
+                break;
+            case "computerSelectable":
+                circle.setStroke(Color.TRANSPARENT);
+                circle.setFill(colorLookup.get("computerSelectableColor"));
+                break;
+            case "selected":
+                circle.setStroke(colorLookup.get("selectionColor"));
+                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
+                else circle.setFill(colorLookup.get("opponentArgColor"));
+                break;
+        }
+    }
+
+    public void makeGameSelectable() {
+        setVisual("gameSelectable");
+        setMouseTransparent(false);
+        isGameSelectEnabled = true;
+    }
+
+    public void makeGameUnselectable() {
+        setVisual("base");
+        setMouseTransparent(true);
+        isGameSelectEnabled = false;
+    }
+
+    public void highlight(Color c) { circle.setStroke(c); setVisual("base");}
+    public void select() { setVisual("selected"); }
+    public void deselect() { setVisual("base"); }
 
     public void setDisplayVisible( boolean b) {
         setVisible(b);

@@ -2,12 +2,14 @@ package com.example.argumentgames;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class MainController {
@@ -32,7 +35,7 @@ public class MainController {
     @FXML
     ImageView gameButtonImageView;
     @FXML
-    Menu fileMenu;
+    Menu fileMenu, editMenu;
 
     Framework currentFramework;
 
@@ -41,6 +44,8 @@ public class MainController {
 
     GameController gc;
     boolean gameInProgress;
+    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private HashMap<String, Boolean> booleanLookup = new HashMap<>();
 
     File currentlyUsedFile;
     public MainController() {
@@ -49,13 +54,70 @@ public class MainController {
     public void initialize() {
         // Set up the two Graphs
         currentFramework = new Framework();
-        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton);
+        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton, colorLookup);
         frameworkGraph.loadFramework(currentFramework);
-        gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton);
+        gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton, colorLookup);
 
         // Construct the menu Bar
         gameLabel.prefWidthProperty().bind(rightGraphPane.widthProperty());
         gameLabel.toFront();
+
+        // Load the settings
+        restoreDefaults();
+        loadSettings();
+    }
+
+    public void loadSettings() {
+        File settingsFile = new File("settings.txt");
+        if ( settingsFile.exists() && settingsFile.canRead() ) {
+            // Load the file
+            try {
+                FileReader fr = new FileReader(settingsFile);
+                BufferedReader br = new BufferedReader(fr);
+                String nextLine;
+                while ((nextLine = br.readLine()) != null) {
+                    String[] words = nextLine.split("=");
+                    if (words[1].length() == 10) {
+                        // Read color
+                        Color readColor = Color.valueOf(words[1]);
+                        String key = words[0];
+                        colorLookup.put(key, readColor);
+                    } else {
+                        // Read Boolean
+                        Boolean readBool = Boolean.valueOf(words[1]);
+                        String key = words[0];
+                        booleanLookup.put(key, readBool);
+                    }
+                }
+            } catch (Exception exception) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Cannot read settings file");
+                alert.setContentText("The saved settings cannot be read. Using default settings... \n\nError: " + exception.toString());
+                alert.showAndWait();
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Cannot read settings file");
+            alert.setContentText("The saved settings cannot be read. Using default settings...\n\nError: File cannot be read.");
+            alert.showAndWait();
+        }
+        frameworkGraph.reloadColors();
+        gameTree.reloadColors();
+    }
+
+    private void restoreDefaults() {
+        booleanLookup.put("playAgainstComputer",false);
+        booleanLookup.put("savePositionToFile",true);
+
+        colorLookup.put("argumentBaseColor", Color.CORNSILK);
+        colorLookup.put("selectionColor", Color.YELLOW);
+        colorLookup.put("attackArrowColor", Color.FORESTGREEN);
+        colorLookup.put("attackControlColor", Color.ALICEBLUE);
+        colorLookup.put("proponentArgColor", Color.CORNSILK);
+        colorLookup.put("opponentArgColor", Color.MOCCASIN);
+        colorLookup.put("attackingArgColor", Color.LIGHTCORAL);
+        colorLookup.put("attackedArgColor", Color.PEACHPUFF);
+        colorLookup.put("computerSelectableColor", Color.ORANGERED);
     }
 
     // Clears the current framework and changes the file path
@@ -154,6 +216,7 @@ public class MainController {
 
     // Save the current framework to currently used file
     public void saveToCurrentlyUsedFile() {
+        boolean savePos = booleanLookup.get("savePositionToFile");
         if ( currentlyUsedFile == null ) {
             // No file loaded- prompt user to Save As
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -175,7 +238,11 @@ public class MainController {
                 if (c!=null) {
                     arg.prefX = c.getLayoutX();
                     arg.prefY = c.getLayoutY(); }
-                bw.write(arg.getName() + "," + arg.prefX + "," + arg.prefY + System.getProperty("line.separator"));
+                if (savePos) {
+                    bw.write(arg.getName() + "," + arg.prefX + "," + arg.prefY + System.getProperty("line.separator"));
+                } else {
+                    bw.write(arg.getName() + System.getProperty("line.separator"));
+                }
             }
             // Write Edges
             bw.write("Edges:" + System.getProperty("line.separator"));
@@ -184,7 +251,12 @@ public class MainController {
                 if (a!=null) {
                     att.prefControlX = a.getControlX();
                     att.prefControlY = a.getControlY(); }
-                bw.write(att.getFrom().getName() + "," + att.getTo().getName() + "," + att.prefControlX + "," + att.prefControlY + System.getProperty("line.separator"));
+                if (savePos) {
+                    bw.write(att.getFrom().getName() + "," + att.getTo().getName() + "," + att.prefControlX + "," + att.prefControlY + System.getProperty("line.separator"));
+                } else {
+                    bw.write(att.getFrom().getName() + "," + att.getTo().getName() + System.getProperty("line.separator"));
+                }
+
             }
         } catch (IOException ex){
             ex.printStackTrace();
@@ -278,7 +350,8 @@ public class MainController {
         gameTypeChoiceBox.setDisable(true);
         buildTreeButton.setDisable(true);
         fileMenu.setDisable(true);
-        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, gameLabel);
+        editMenu.setDisable(true);
+        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, booleanLookup.get("playAgainstComputer"), gameLabel);
     }
 
     private void endGame() {
@@ -289,6 +362,7 @@ public class MainController {
         gameTypeChoiceBox.setDisable(false);
         buildTreeButton.setDisable(false);
         fileMenu.setDisable(false);
+        editMenu.setDisable(false);
     }
 
     @FXML

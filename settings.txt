@@ -1,0 +1,10 @@
+savePositionToFile=true
+playAgainstComputer=false
+argumentBaseColor=0xfff8dcff
+selectionColor=0xffff00ff
+attackArrowColor=0x228b22ff
+attackControlColor=0xf0f8ffff
+proponentArgColor=0xfff8dcff
+opponentArgColor=0xffe4b5ff
+attackingArgColor=0xf08080ff
+attackedArgColor=0xffdab9ff

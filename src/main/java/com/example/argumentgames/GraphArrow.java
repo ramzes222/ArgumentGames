@@ -3,6 +3,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
+import java.util.HashMap;
+
 public class GraphArrow extends QuadCurve implements GraphNode {
 
     private final GraphCircle startNode, endNode;
@@ -10,15 +12,17 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     private final Polygon arrow;
     private double dragOriginX, dragOriginY;
     private final Rotate arrowRotate;
+    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private String currVisual;
 
-    public GraphArrow(GraphCircle a, GraphCircle b) {
+    public GraphArrow(GraphCircle a, GraphCircle b, HashMap<String, Color> colorLookup) {
         startNode = a;
         endNode = b;
+        this.colorLookup = colorLookup;
 
         //create Control Node at halfway point
         controlPoint = new Circle();
         controlPoint.setRadius(10);
-        controlPoint.setFill(Color.ALICEBLUE);
         controlPoint.setVisible(false);
 
         //make the Control Node draggable
@@ -41,7 +45,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         endYProperty().bind(endNode.layoutYProperty());
         controlXProperty().bind(controlPoint.layoutXProperty());
         controlYProperty().bind(controlPoint.layoutYProperty());
-        setStroke(Color.FORESTGREEN);
         setStrokeWidth(4);
         setStrokeLineCap(StrokeLineCap.ROUND);
         setFill(Color.TRANSPARENT);
@@ -50,18 +53,51 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         // Setup the arrow tip
         double[] shape = new double[] { 20,0,60,20,60,-20 };
         arrow = new Polygon(shape);
-        arrow.setFill(Color.FORESTGREEN);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
         arrow.layoutYProperty().bind(endNode.layoutYProperty());
         arrow.toBack();
         arrowRotate = new Rotate( 0, 0, 0 );
         arrow.getTransforms().add(arrowRotate);
 
+        setVisual("base");
+
         // Place the control point halfway between the nodes
         centerControlPoint();
 
         // Rotate the arrow tip
         rotateArrowShape();
+    }
+
+    public void reloadVisual() {setVisual(currVisual);}
+    public void setVisual(String s) {
+        currVisual = s;
+        switch (s){
+            case "base":
+                controlPoint.setFill(colorLookup.get("attackControlColor"));
+                setStroke(colorLookup.get("attackArrowColor"));
+                arrow.setFill(colorLookup.get("attackArrowColor"));
+                break;
+            case "selected":
+                controlPoint.setFill(colorLookup.get("attackControlColor"));
+                setStroke(colorLookup.get("selectionColor"));
+                arrow.setFill(colorLookup.get("attackArrowColor"));
+                break;
+            case "disabledSelect":
+                controlPoint.setFill(colorLookup.get("attackControlColor"));
+                setStroke(Color.SLATEGRAY);
+                arrow.setFill(Color.SLATEGRAY);
+                break;
+            case "disabledBase":
+                arrow.setFill(Color.DARKGRAY);
+                setStroke(Color.DARKGRAY);
+                controlPoint.setFill(colorLookup.get("attackControlColor"));
+                break;
+            case "attacking":
+                controlPoint.setFill(colorLookup.get("attackControlColor"));
+                setStroke(colorLookup.get("attackingArgColor"));
+                arrow.setFill(colorLookup.get("attackingArgColor"));
+                break;
+        }
     }
 
     // Place the control point halfway between the nodes
@@ -84,28 +120,28 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     }
 
     public void select() {
-        setStroke(Color.YELLOW);
+        setVisual("selected");
         controlPoint.setVisible(true);
         controlPoint.toFront();
     }
 
     public void deselect() {
-        setStroke(Color.FORESTGREEN);
+        setVisual("base");
         controlPoint.setVisible(false);
     }
     public void selectGray() {
-        setStroke(Color.SLATEGRAY);
+        setVisual("disabledSelect");
         controlPoint.setVisible(true);
         controlPoint.toFront();
     }
 
     public void deselectGray() {
-        setStroke(Color.DARKGRAY);
+        setVisual("disabledBase");
         controlPoint.setVisible(false);
     }
-    public void disable() { arrow.setFill(Color.DARKGRAY); setStroke(Color.DARKGRAY);}
-    public void enable() { arrow.setFill(Color.FORESTGREEN); setStroke(Color.FORESTGREEN); }
-    public void highlight() { arrow.setFill(Color.INDIANRED); setStroke(Color.INDIANRED); }
+    public void disable() { setVisual("disabledBase");}
+    public void enable() { setVisual("base"); }
+    public void highlight() { setVisual("attacking"); }
 
     public void rotateArrowShape() {
         double x_diff = controlPoint.getLayoutX() - getEndX();

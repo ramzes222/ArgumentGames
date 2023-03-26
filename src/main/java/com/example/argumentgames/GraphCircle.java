@@ -7,6 +7,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class GraphCircle extends StackPane implements GraphNode {
@@ -16,16 +17,17 @@ public class GraphCircle extends StackPane implements GraphNode {
     private final Circle circle;
     private final ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
     private boolean isGameSelectEnabled = false;
+    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private String currVisual;
 
-    public GraphCircle(String n, double radius) {
+    public GraphCircle(String n, double radius, HashMap<String, Color> colorLookup) {
         super();
         this.radius = radius;
+        this.colorLookup = colorLookup;
         name = n;
 
         circle = new Circle();
         circle.setRadius(radius);
-        //circle.setFill(Color.color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()));
-        circle.setFill( Color.CORNSILK );
         circle.setStrokeWidth(5);
         text = new Text(name);
         text.setFill(Color.BLACK);
@@ -36,6 +38,8 @@ public class GraphCircle extends StackPane implements GraphNode {
         setTranslateX(-radius);
         setTranslateY(-radius);
         getChildren().addAll(circle,text);
+
+        setVisual("base");
     }
 
     public void translateXY(double xDiff, double yDiff) {
@@ -61,7 +65,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     }
 
     public void makeGameSelectable() {
-        gameSelectable();
+        setVisual("gameSelectable");
         setMouseTransparent(false);
         isGameSelectEnabled = true;
     }
@@ -72,15 +76,39 @@ public class GraphCircle extends StackPane implements GraphNode {
         isGameSelectEnabled = false;
     }
 
-    public void highlight(Color c) { circle.setStroke(c); }
-    public void baseVisual() {
-        circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.CORNSILK); text.setFill(Color.BLACK); }
-    public void gameSelectable() { circle.setStroke(Color.TRANSPARENT); circle.setFill(Color.PEACHPUFF); text.setFill(Color.BLACK);}
-    public void gameAttackable() { circle.setStroke(Color.PERU); circle.setFill(Color.LIGHTCORAL); text.setFill(Color.BLACK);}
-    public void select() { highlight(Color.YELLOW); }
-    public void deselect() { highlight(Color.TRANSPARENT); }
+    public void reloadVisual() {setVisual(currVisual);}
+
+    // Sets the visual style of the circle, according to the color lookup table
+    public void setVisual(String s) {
+        currVisual = s;
+        switch (s){
+            case "base":
+                circle.setStroke(Color.TRANSPARENT);
+                circle.setFill(colorLookup.get("argumentBaseColor"));
+                text.setFill(Color.BLACK);
+                break;
+            case "gameSelectable":
+                circle.setStroke(Color.TRANSPARENT);
+                circle.setFill(colorLookup.get("attackingArgColor"));
+                text.setFill(Color.BLACK);
+                break;
+            case "gameAttackable":
+                circle.setStroke(colorLookup.get("attackingArgColor"));
+                circle.setFill(colorLookup.get("attackedArgColor"));
+                text.setFill(Color.BLACK);
+                break;
+            case "selected":
+                circle.setStroke(colorLookup.get("selectionColor"));
+                circle.setFill(colorLookup.get("argumentBaseColor"));
+                text.setFill(Color.BLACK);
+                break;
+        }
+    }
+    public void highlight(Color c) {circle.setStroke(c);}
+    public void select() { setVisual("selected");}
+    public void deselect() { circle.setStroke(Color.TRANSPARENT); }
     public void disable() { circle.setFill(Color.LIGHTGRAY); circle.setStroke(Color.DARKGRAY); text.setFill(Color.DARKGRAY);}
-    public void enable() { baseVisual(); text.setFill(Color.BLACK);}
+    public void enable() { setVisual("base"); text.setFill(Color.BLACK);}
 
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
     public void removeArrow(GraphArrow arr) { connectedArrows.remove(arr); }
