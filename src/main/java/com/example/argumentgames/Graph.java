@@ -443,7 +443,7 @@ public class Graph {
             return null;
         } else {
             GraphArrow arrow = new GraphArrow(a, b, colorLookup);
-            graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint());
+            graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint(), arrow.getMidPoint());
             gArrows.add(arrow);
             arrow.setOnMouseClicked(e -> {
                 // OLD CONDITION: interactMode == InteractMode.SELECT_MODE
