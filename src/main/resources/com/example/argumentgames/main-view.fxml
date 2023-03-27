@@ -23,6 +23,9 @@
                 <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                     <MenuItem mnemonicParsing="false" fx:id="prefGameTreeButton" text="Show Preferred Game Tree" />
+                     <MenuItem mnemonicParsing="false" fx:id="groundGameTreeButton" text="Show Grounded Game Tree" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

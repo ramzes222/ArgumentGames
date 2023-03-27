@@ -84,11 +84,6 @@ public class TreeCircle extends StackPane {
                 circle.setStroke(Color.TRANSPARENT);
                 circle.setFill(colorLookup.get("computerSelectableColor"));
                 break;
-            case "selected":
-                circle.setStroke(colorLookup.get("selectionColor"));
-                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
-                else circle.setFill(colorLookup.get("opponentArgColor"));
-                break;
         }
     }
 
@@ -104,8 +99,8 @@ public class TreeCircle extends StackPane {
         isGameSelectEnabled = false;
     }
 
-    public void highlight(Color c) { circle.setStroke(c); setVisual("base");}
-    public void select() { setVisual("selected"); }
+    public void highlight(Color c) { setVisual("base"); circle.setStroke(c); }
+    public void select() {  }
     public void deselect() { setVisual("base"); }
 
     public void setDisplayVisible( boolean b) {

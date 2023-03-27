@@ -136,7 +136,7 @@ public class GameController {
         alert.setContentText("No more moves are possible.\nYou may keep looking at the final generated game tree. " +
                 "\nTo finish, click the button between the two graphs.");
         alert.setHeight(500);
-            alert.showAndWait();
+        alert.show();
         return true;
     }
 

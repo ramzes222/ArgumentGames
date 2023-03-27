@@ -22,6 +22,7 @@ public class TreeGraph {
     private final Pane treePane;
     private final ToggleGroup tg = new ToggleGroup();
     HashMap<String, Color> colorLookup;
+    boolean inGame = false;
 
 
     private TreeArgument root;
@@ -234,10 +235,11 @@ public class TreeGraph {
         // Create the root
         TreeCircle rootCircle = new TreeCircle(root, tCircleRadius, colorLookup);
         treePane.getChildren().add(rootCircle); tCircles.add(rootCircle);
-        if (root.isInWinningStrategy) rootCircle.highlight(Color.TRANSPARENT);
+        if (root.isInWinningStrategy) rootCircle.highlight(colorLookup.get("attackArrowColor"));
         rootCircle.moveToXY(getEvenDivision(leftBound, rightBound, 1, 1), yLevel);
         // Build the branch from the root
         buildBranch(root, yLevel + (tCircleRadius*3), leftBound, rightBound);
+        reloadColors();
     }
 
     // Places the children of the root
@@ -315,7 +317,7 @@ public class TreeGraph {
     private void addTCircle(TreeArgument arg, double x, double y, TreeCircle parent) {
         TreeCircle newCircle = new TreeCircle(arg, tCircleRadius, colorLookup);
         treePane.getChildren().add(newCircle); tCircles.add(newCircle);
-        if (arg.isInWinningStrategy) {newCircle.highlight(Color.TRANSPARENT);}
+        if (arg.isInWinningStrategy) {newCircle.highlight(colorLookup.get("attackArrowColor"));}
         newCircle.moveToXY(x, y);
         //
         // Create the arrow pointing from self to parent
@@ -355,14 +357,23 @@ public class TreeGraph {
         }
     }
     public void unselect() { selected = null; }
+
     public void reloadColors() {
-        for (TreeCircle c: tCircles) c.reloadVisual();
+        for (TreeCircle c: tCircles) {c.reloadVisual();}
         for (TreeArrow a: tArrows) a.reloadVisual();
+        if (root != null && !inGame) {
+            for (TreeArgument arg : root.getAllArguments()) {
+                if (arg.isInWinningStrategy) {
+                    arg.getVisualTCircle().highlight(colorLookup.get("attackArrowColor"));
+                }
+            }
+        }
     }
 
     // Disables the buttons that could change the current Tree
     // Returns the Select mode button - the reference to it is used by the Game Controller
     public void enterGameMode(GameController game) {
+        inGame = true;
         setMoveModeButton.fire();
         setSelectModeButton.setOnAction(e -> {
             treePane.setOnMousePressed(null); treePane.setOnMouseDragged(null);
@@ -392,6 +403,7 @@ public class TreeGraph {
     }
 
     public void exitGameMode() {
+        inGame = false;
         // Clear tree
         clear();
         // Restore Select functionality

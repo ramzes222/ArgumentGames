@@ -34,6 +34,8 @@ public class MainController {
     ImageView gameButtonImageView;
     @FXML
     Menu fileMenu, editMenu;
+    @FXML
+    MenuItem prefGameTreeButton, groundGameTreeButton;
 
     Framework currentFramework;
 
@@ -63,6 +65,10 @@ public class MainController {
         // Load the settings
         restoreDefaults();
         loadSettings();
+
+        // Set menu item functionality
+        prefGameTreeButton.setOnAction(e-> {buildTreeFromFramework(false);});
+        groundGameTreeButton.setOnAction(e-> {buildTreeFromFramework(true);});
     }
 
     public void loadSettings() {
