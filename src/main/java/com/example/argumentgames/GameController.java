@@ -95,7 +95,18 @@ public class GameController {
         // 4. If it's players turn, set up interactivity
         //    If it's computer turn, make its move
         if (isProTurn && isComputerPlaying) {
-            computerTurn();
+            gameLabel.setText("Computer is thinking...");
+            // Give visual indicators
+            // Get all arguments that could be countered
+            ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
+            // 5. Mark the counterable arguments visually
+            for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().setVisual("computerSelectable"); }
+            // After a short wait perform the move
+            PauseTransition compMoveWait = new PauseTransition(Duration.seconds(2));
+            compMoveWait.setOnFinished(e-> {
+                computerTurn();
+            });
+            compMoveWait.play();
         } else {
             // 4. Get all "in" arguments in the current tree placed by the other player
             ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
@@ -122,7 +133,7 @@ public class GameController {
         // If, after going through all possibilities, no moves remain, end the game
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("End of the game");
-        String text = "";
+        String text = gameLabel.getText() + "   ";
         if (isProTurn) text+="Opponent";
         else text+="Proponent";
         text+= " has won!";
@@ -139,38 +150,31 @@ public class GameController {
 
     // Performs the turn as the computer
     private void computerTurn() {
-        gameLabel.setText("Computer is thinking...");
         // Get all arguments that could be countered
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfStateAndLayer(1, !isProTurn);
-        // 5. Mark the counterable arguments visually
-        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().setVisual("computerSelectable"); }
         ArrayList<TreeArgument> goodMoves = new ArrayList<>();
         for (TreeArgument countered : counterableArguments) {
             // Take all arguments that attack the selected one - these can be moved
             // Collect all that are in the winning strategy
-            for (TreeArgument child : countered.getChildren()) { if (child.isInWinningStrategy) goodMoves.add(child); }
+            for (TreeArgument child : countered.getChildren()) { if (child.isInWinningStrategy && child.getState()==0) goodMoves.add(child); }
         }
-        PauseTransition compMoveWait = new PauseTransition(Duration.seconds(2));
-        compMoveWait.setOnFinished(e-> {
-            Random rand = new Random(System.currentTimeMillis());
-            if (goodMoves.size() == 0) {
-                // No move in winning strategy possible - the game is lost, computer will perform a random move
-                TreeArgument selectedMove = null;
-                while (selectedMove == null) {
-                    TreeArgument selectedArgumentToCounter =
-                            counterableArguments.get(rand.nextInt(counterableArguments.size()));
-                    if (!selectedArgumentToCounter.getChildren().isEmpty()) selectedMove =
-                            selectedArgumentToCounter.getChildren().get(rand.nextInt(selectedArgumentToCounter.getChildren().size()));
-                }
-                moveArgument(selectedMove);
-            } else {
-                // Perform a random good move - as all are in winning strategy, all will lead us to victory
-                TreeArgument selectedArgument =
-                        goodMoves.get(rand.nextInt(goodMoves.size()));
-                moveArgument(selectedArgument);
+        Random rand = new Random(System.currentTimeMillis());
+        if (goodMoves.size() == 0) {
+            // No move in winning strategy possible - the game is lost, computer will perform a random move
+            TreeArgument selectedMove = null;
+            while (selectedMove == null) {
+                TreeArgument selectedArgumentToCounter =
+                        counterableArguments.get(rand.nextInt(counterableArguments.size()));
+                if (!selectedArgumentToCounter.getChildren().isEmpty()) selectedMove =
+                        selectedArgumentToCounter.getChildren().get(rand.nextInt(selectedArgumentToCounter.getChildren().size()));
             }
-        });
-        compMoveWait.play();
+            moveArgument(selectedMove);
+        } else {
+            // Perform a random good move - as all are in winning strategy, all will lead us to victory
+            TreeArgument selectedArgument =
+                    goodMoves.get(rand.nextInt(goodMoves.size()));
+            moveArgument(selectedArgument);
+        }
     }
 
     public void selectArgumentToCounter(String name, TreeArgument argument) {
@@ -205,6 +209,7 @@ public class GameController {
         gameLabel.setVisible(false);
         // Enable Graph interactions previously disabled
         frameworkGraph.exitGameMode();
+        gameTree.exitGameMode();
 
         // Return all enabled look
         gameTree.visualEnableAll();
