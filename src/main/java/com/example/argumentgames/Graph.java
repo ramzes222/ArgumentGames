@@ -12,8 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Graph {
-    private final double moveAwayStep = 10;
-    private double dragOriginY = 0, dragOriginX = 0, gCircleRadius = 45;
+    private double dragOriginY = 0;
+    private double dragOriginX = 0;
+    private final double gCircleRadius = 45;
     private final Button addGCircleButton, addGArrowButton, cleanupButton, deleteButton;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<GraphCircle> gCircles = new ArrayList<>();
@@ -22,7 +23,7 @@ public class Graph {
     private final Pane graphPane;
     private final ToggleGroup tg = new ToggleGroup();
     private EventHandler<MouseEvent> graphWideEvent;
-    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private final HashMap<String, Color> colorLookup;
 
     private Framework currFramework;
     enum InteractMode {
@@ -52,10 +53,10 @@ public class Graph {
         this.setSelectModeButton.fire();
         //
         // Setup control buttons
-        this.addGCircleButton.setOnAction(e-> { beginManualAddGCircle(); });
-        this.addGArrowButton.setOnAction(e-> { beginManualAddGArrow(); });
-        this.cleanupButton.setOnAction(e-> { cleanUp(); });
-        this.deleteButton.setOnAction(e-> { deleteSelected(); });
+        this.addGCircleButton.setOnAction(e-> beginManualAddGCircle());
+        this.addGArrowButton.setOnAction(e-> beginManualAddGArrow());
+        this.cleanupButton.setOnAction(e-> cleanUp());
+        this.deleteButton.setOnAction(e-> deleteSelected());
         setUpClip();
     }
 
@@ -91,9 +92,7 @@ public class Graph {
     private void setUpInteractModeButton(RadioButton b, InteractMode i) {
         b.getStyleClass().remove("radio-button");
         b.setToggleGroup(this.tg);
-        b.setOnAction(e -> {
-            setInteractMode(i);
-        });
+        b.setOnAction(e -> setInteractMode(i));
     }
 
     private void setInteractMode(InteractMode m) {
@@ -300,26 +299,18 @@ public class Graph {
         return null;
     }
 
-    // Move the provided GraphCircle n away from nearby other nodes on the graph
-    // Will attempt to move it into clear space, so it's not covered by others
-    // Returns whether a move has been made
-
-    public void moveNode(GraphCircle circle) {
-        boolean wasMoved = true;
-        int counter = 100;
-        if (circle != null) {
-            while (wasMoved && counter > 0) { wasMoved = moveGCircleIntoEmptySpace( circle ); counter--;}
-        }
-    }
-
     // Moves the nodes away from each other to clean up the graph
     // Executes moveGCircleIntoEmptySpace on all nodes until no collision
     // or until reaching max iteration
     public void cleanUp() {
         int maxIterations = 1000;
-        while (maxIterations > 0) {
+        boolean wasChanged = true;
+        while (maxIterations > 0 && wasChanged) {
+            wasChanged = false;
             maxIterations--;
-            for (GraphCircle c: gCircles) { moveGCircleIntoEmptySpace(c); }
+            for (GraphCircle c: gCircles) {
+                if (moveGCircleIntoEmptySpace(c)) wasChanged = true;
+            }
         }
 
     }
@@ -327,7 +318,7 @@ public class Graph {
     // Move the target node away from the closest other node
     // Does not take Borders into account (as we can pan around the graph anyway)
     private boolean moveGCircleIntoEmptySpace(GraphCircle n) {
-        double x = n.getLayoutX(), y = n.getLayoutY(), targetX=0, targetY=0, distanceToTarget;
+        double x = n.getLayoutX(), y = n.getLayoutY(), targetX, targetY, distanceToTarget;
         //
         // Get the closest gCircle
         GraphCircle closestGCircle = findClosestGCircle(n);
@@ -348,12 +339,13 @@ public class Graph {
         // If we're at least acceptable distance away, does nothing
         // Otherwise, moves a few steps directly away
         // Acceptable distance: 2*GCircle radius + moveAwayStep
+        double moveAwayStep = 10;
         if (distanceToTarget < 2*gCircleRadius + moveAwayStep) {
             Random r = new Random();
             // To prevent loops, add a little noise
             double angle = GeometricHelper.x_y_toAngle( x - targetX, targetY - y) + r.nextDouble(-10, 10);
-            double newX = x + GeometricHelper.angle_distance_toX( -angle, moveAwayStep );
-            double newY = y + GeometricHelper.angle_distance_toY( -angle, moveAwayStep );
+            double newX = x + GeometricHelper.angle_distance_toX( -angle, moveAwayStep);
+            double newY = y + GeometricHelper.angle_distance_toY( -angle, moveAwayStep);
             n.setXY(newX, newY);
             // Make the arrows straight
             n.getConnectedArrows().forEach(GraphArrow::centerControlPoint);
@@ -429,7 +421,6 @@ public class Graph {
         // Perform cleanup after manual Add GArrow has been completed or cancelled
         setInteractMode(InteractMode.SELECT_MODE);
         mArrow.delete();
-        mArrow = null;
         graphPane.setOnMouseMoved(null);
     }
 

@@ -1,19 +1,14 @@
 package com.example.argumentgames;
 
 import javafx.animation.PauseTransition;
-import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TreeTableRow;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-// Controlls the game process by communicating with the Graph and Tree objects
+// Controls the game process by communicating with the Graph and Tree objects
 public class GameController {
     boolean isGrounded;
     Graph frameworkGraph;
@@ -72,7 +67,7 @@ public class GameController {
     // Advance to the next round
     private void moveArgument(TreeArgument movedArg) {
         // Display a message in the gameLabel
-        String text = "";
+        String text;
         if (isProTurn) text = "Proponent"; else text = "Opponent";
         text += " moves argument '" + movedArg.getName() + "'";
         gameLabel.setText(text);
@@ -133,8 +128,10 @@ public class GameController {
         text+= " has won!";
         gameLabel.setText(text);
         alert.setHeaderText(text);
-        alert.setContentText("No more moves are possible.\nYou may keep looking at the final generated game tree. " +
-                "\nTo finish, click the button between the two graphs.");
+        alert.setContentText("""
+                No more moves are possible.
+                You may keep looking at the final generated game tree.\s
+                To finish, click the button between the two graphs.""");
         alert.setHeight(500);
         alert.show();
         return true;

@@ -12,7 +12,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     private final Polygon arrow;
     private double dragOriginX, dragOriginY;
     private final Rotate arrowRotate;
-    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private final HashMap<String, Color> colorLookup;
     private String currVisual;
 
     public GraphArrow(GraphCircle a, GraphCircle b, HashMap<String, Color> colorLookup) {
@@ -44,7 +44,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
             rotateArrowShape();
         });
 
-        // Setup the curve
+        // Set up the curve
         startXProperty().bind(startNode.layoutXProperty());
         startYProperty().bind(startNode.layoutYProperty());
         endXProperty().bind(endNode.layoutXProperty());
@@ -56,7 +56,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         setFill(Color.TRANSPARENT);
         toBack();
 
-        // Setup the arrow tip
+        // Set up the arrow tip
         double[] shape = new double[] { 20,0,60,20,60,-20 };
         arrow = new Polygon(shape);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
@@ -77,32 +77,32 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     public void reloadVisual() {setVisual(currVisual);}
     public void setVisual(String s) {
         currVisual = s;
-        switch (s){
-            case "base":
+        switch (s) {
+            case "base" -> {
                 controlPoint.setFill(colorLookup.get("attackControlColor"));
                 setStroke(colorLookup.get("attackArrowColor"));
                 arrow.setFill(colorLookup.get("attackArrowColor"));
-                break;
-            case "selected":
+            }
+            case "selected" -> {
                 controlPoint.setFill(colorLookup.get("attackControlColor"));
                 setStroke(colorLookup.get("selectionColor"));
                 arrow.setFill(colorLookup.get("attackArrowColor"));
-                break;
-            case "disabledSelect":
+            }
+            case "disabledSelect" -> {
                 controlPoint.setFill(colorLookup.get("attackControlColor"));
                 setStroke(Color.SLATEGRAY);
                 arrow.setFill(Color.SLATEGRAY);
-                break;
-            case "disabledBase":
+            }
+            case "disabledBase" -> {
                 arrow.setFill(Color.DARKGRAY);
                 setStroke(Color.DARKGRAY);
                 controlPoint.setFill(colorLookup.get("attackControlColor"));
-                break;
-            case "attacking":
+            }
+            case "attacking" -> {
                 controlPoint.setFill(colorLookup.get("attackControlColor"));
                 setStroke(colorLookup.get("attackingArgColor"));
                 arrow.setFill(colorLookup.get("attackingArgColor"));
-                break;
+            }
         }
     }
 
@@ -166,15 +166,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         double y_diff = getEndY() - controlPoint.getLayoutY();
         arrowRotate.setAngle( -GeometricHelper.x_y_toAngle(x_diff, y_diff) );
         setCenterPoint();
-    }
-
-    // Determines if the arrow is connected to a node
-    // Returns 0 if it's the start, 1 if the end
-    // Returns -1 if the Node is not connected at all
-    public int getConnectionType(GraphCircle n) {
-        if (startNode == n) return 0;
-        if (endNode == n) return 1;
-        return -1;
     }
 
     public Polygon getArrowTip() { return arrow; }

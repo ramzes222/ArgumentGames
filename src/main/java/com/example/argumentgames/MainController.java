@@ -1,23 +1,17 @@
 package com.example.argumentgames;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
-import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MainController {
@@ -44,8 +38,8 @@ public class MainController {
 
     GameController gc;
     boolean gameInProgress;
-    private HashMap<String, Color> colorLookup = new HashMap<>();
-    private HashMap<String, Boolean> booleanLookup = new HashMap<>();
+    private final HashMap<String, Color> colorLookup = new HashMap<>();
+    private final HashMap<String, Boolean> booleanLookup = new HashMap<>();
     File currentlyUsedFile;
 
     public MainController() {
@@ -67,8 +61,8 @@ public class MainController {
         loadSettings();
 
         // Set menu item functionality
-        prefGameTreeButton.setOnAction(e-> {buildTreeFromFramework(false);});
-        groundGameTreeButton.setOnAction(e-> {buildTreeFromFramework(true);});
+        prefGameTreeButton.setOnAction(e-> buildTreeFromFramework(false));
+        groundGameTreeButton.setOnAction(e-> buildTreeFromFramework(true));
     }
 
     public void loadSettings() {
@@ -96,7 +90,7 @@ public class MainController {
             } catch (Exception exception) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Cannot read settings file");
-                alert.setContentText("The saved settings cannot be read. Using default settings... \n\nError: " + exception.toString());
+                alert.setContentText("The saved settings cannot be read. Using default settings... \n\nError: " + exception);
                 alert.showAndWait();
             }
         } else {
@@ -221,14 +215,14 @@ public class MainController {
     public void saveToCurrentlyUsedFile() {
         boolean savePos = booleanLookup.get("savePositionToFile");
         if ( currentlyUsedFile == null ) {
-            // No file loaded- prompt user to Save As
+            // No file loaded - prompt user to Save As
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("No file is loaded!");
             alert.setContentText("Please select a file to save to first!");
             alert.showAndWait();
             saveAsFileData();
             return;
-        };
+        }
         FileWriter fr = null;
         BufferedWriter bw = null;
         try {
@@ -265,8 +259,10 @@ public class MainController {
             ex.printStackTrace();
         } finally {
             try {
-                bw.close();
-                fr.close();
+                if (bw != null) {
+                    bw.close();
+                    fr.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -310,7 +306,7 @@ public class MainController {
             frameworkGraph.loadFramework(currentFramework);
             if (requiresCleanUp) frameworkGraph.cleanUp();
         } catch (Exception exception) {
-            System.out.println(exception);
+            System.out.println("Error: " + exception);
         }
 
     }
@@ -349,7 +345,7 @@ public class MainController {
     public void startGame(boolean isComputerPlaying, boolean isGrounded) {
         buildTreeFromFramework(isGrounded);
         gameInProgress = true;
-        Image nextIcon = new Image(getClass().getResourceAsStream("img/End Game.png"));
+        Image nextIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("img/End Game.png")));
         gameButtonImageView.setImage(nextIcon);
         gc = new GameController();
         fileMenu.setDisable(true);
@@ -359,7 +355,7 @@ public class MainController {
 
     private void endGame() {
         gameInProgress = false;
-        Image nextIcon = new Image(getClass().getResourceAsStream("img/Start Game.png"));
+        Image nextIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("img/Start Game.png")));
         gameButtonImageView.setImage(nextIcon);
         gc.endGame();
         fileMenu.setDisable(false);

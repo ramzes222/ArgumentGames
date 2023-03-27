@@ -8,21 +8,18 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class GraphCircle extends StackPane implements GraphNode {
     private final String name;
-    private Text text;
-    private double radius;
+    private final Text text;
     private final Circle circle;
     private final ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
     private boolean isGameSelectEnabled = false;
-    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private final HashMap<String, Color> colorLookup;
     private String currVisual;
 
     public GraphCircle(String n, double radius, HashMap<String, Color> colorLookup) {
         super();
-        this.radius = radius;
         this.colorLookup = colorLookup;
         name = n;
 
@@ -56,14 +53,6 @@ public class GraphCircle extends StackPane implements GraphNode {
         rotateArrows();
     }
 
-    public void setRadius(double r) {
-        this.radius = r;
-        setTranslateX(-radius);
-        setTranslateY(-radius);
-        circle.setRadius(radius);
-        if (r < 10) { circle.setStrokeWidth(2); }
-    }
-
     public void makeGameSelectable() {
         setVisual("gameSelectable");
         setMouseTransparent(false);
@@ -81,27 +70,27 @@ public class GraphCircle extends StackPane implements GraphNode {
     // Sets the visual style of the circle, according to the color lookup table
     public void setVisual(String s) {
         currVisual = s;
-        switch (s){
-            case "base":
+        switch (s) {
+            case "base" -> {
                 circle.setStroke(Color.TRANSPARENT);
                 circle.setFill(colorLookup.get("argumentBaseColor"));
                 text.setFill(Color.BLACK);
-                break;
-            case "gameSelectable":
+            }
+            case "gameSelectable" -> {
                 circle.setStroke(Color.TRANSPARENT);
                 circle.setFill(colorLookup.get("attackingArgColor"));
                 text.setFill(Color.BLACK);
-                break;
-            case "gameAttackable":
+            }
+            case "gameAttackable" -> {
                 circle.setStroke(colorLookup.get("attackingArgColor"));
                 circle.setFill(colorLookup.get("attackedArgColor"));
                 text.setFill(Color.BLACK);
-                break;
-            case "selected":
+            }
+            case "selected" -> {
                 circle.setStroke(colorLookup.get("selectionColor"));
                 circle.setFill(colorLookup.get("argumentBaseColor"));
                 text.setFill(Color.BLACK);
-                break;
+            }
         }
     }
     public void highlight(Color c) {circle.setStroke(c);}
@@ -122,8 +111,4 @@ public class GraphCircle extends StackPane implements GraphNode {
     public boolean isGameSelectEnabled() {return isGameSelectEnabled;}
     @Override
     public boolean isCircle() { return true; }
-
-    public void delete() {
-
-    }
 }

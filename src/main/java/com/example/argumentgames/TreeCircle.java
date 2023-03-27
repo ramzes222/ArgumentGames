@@ -8,23 +8,20 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class TreeCircle extends StackPane {
     private final String name;
-    private double radius;
     private final Circle circle;
     private final ArrayList<TreeArrow> connectedArrows = new ArrayList<>();
     private boolean isGameSelectEnabled = false;
-    // Signifies whether the argument lays on the Proponent or Opponent layer
-    private boolean isPro;
-    private HashMap<String, Color> colorLookup = new HashMap<>();
+    // Signifies whether the argument lies on the Proponent or Opponent layer
+    private final boolean isPro;
+    private final HashMap<String, Color> colorLookup;
     private String currVisual;
 
     public TreeCircle(TreeArgument a, double radius, HashMap<String, Color> colorLookup) {
         super();
         this.isPro = a.isPro();
-        this.radius = radius;
         this.colorLookup = colorLookup;
 
         a.setVisualTCircle(this);
@@ -54,36 +51,28 @@ public class TreeCircle extends StackPane {
         setLayoutX(x); setLayoutY(y);
     }
 
-    public void setRadius(double r) {
-        this.radius = r;
-        setTranslateX(-radius);
-        setTranslateY(-radius);
-        circle.setRadius(radius);
-        if (r < 10) { circle.setStrokeWidth(2); } else { circle.setStrokeWidth(5); }
-    }
-
     public void reloadVisual() {setVisual(currVisual);}
     // Sets the visual style of the circle, according to the color lookup table
     public void setVisual(String s) {
         currVisual = s;
-        switch (s){
-            case "base":
+        switch (s) {
+            case "base" -> {
                 if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
                 else circle.setFill(colorLookup.get("opponentArgColor"));
                 circle.setStroke(Color.TRANSPARENT);
-                break;
-            case "gameSelectable":
+            }
+            case "gameSelectable" -> {
                 circle.setStroke(Color.TRANSPARENT);
                 circle.setFill(colorLookup.get("attackingArgColor"));
-                break;
-            case "gameSelected":
+            }
+            case "gameSelected" -> {
                 circle.setStroke(colorLookup.get("attackedArgColor"));
                 circle.setFill(colorLookup.get("attackingArgColor"));
-                break;
-            case "computerSelectable":
+            }
+            case "computerSelectable" -> {
                 circle.setStroke(Color.TRANSPARENT);
                 circle.setFill(colorLookup.get("computerSelectableColor"));
-                break;
+            }
         }
     }
 
