@@ -54,7 +54,6 @@ public class TreeArrow extends Line {
     // Sets the visual style of the circle, according to the color lookup table
     public void setVisual(String s) {
         currVisual = s;
-        System.out.println(s);
         switch (s){
             case "base":
                 setStroke(colorLookup.get("attackArrowColor"));

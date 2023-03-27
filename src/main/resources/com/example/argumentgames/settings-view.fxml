@@ -48,7 +48,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <CheckBox fx:id="playAgainstComputer" mnemonicParsing="false" text="Play against the computer">
+                  <CheckBox fx:id="playAgainstComputer" disable="true" mnemonicParsing="false" text="Play against the computer">
                       <tooltip><Tooltip text="${'If true, in argument games, the proponent will be controlled by the computer. \n\nIf false, both players will be controlled by the user'}" /></tooltip>
                       <padding>
                         <Insets bottom="10.0" left="20.0" top="10.0" />

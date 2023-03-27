@@ -70,7 +70,6 @@ public class SettingsController {
 
         // Setup the HashMap
         stringToNode.put("savePositionToFile", savePositionToFile);
-        stringToNode.put("playAgainstComputer", playAgainstComputer);
         stringToNode.put("argumentBaseColor", argumentBaseColor);
         stringToNode.put("selectionColor", selectionColor);
         stringToNode.put("attackArrowColor", attackArrowColor);
@@ -163,7 +162,7 @@ public class SettingsController {
             // savePositionToFile
             bw.write("savePositionToFile=" + savePositionToFile.isSelected() + System.getProperty("line.separator"));
             // playAgainstComputer
-            bw.write("playAgainstComputer=" + playAgainstComputer.isSelected() + System.getProperty("line.separator"));
+            //bw.write("playAgainstComputer=" + playAgainstComputer.isSelected() + System.getProperty("line.separator"));
 
 
             // argumentBaseColor
@@ -195,7 +194,6 @@ public class SettingsController {
     }
 
     private void restoreDefaults() {
-        playAgainstComputer.setSelected(false);
         savePositionToFile.setSelected(true);
 
         argumentBaseColor.setValue(Color.CORNSILK);

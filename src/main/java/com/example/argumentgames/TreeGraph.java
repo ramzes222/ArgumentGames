@@ -16,7 +16,6 @@ public class TreeGraph {
     private final double moveAwayStep = 10;
     private double dragOriginY = 0, dragOriginX = 0, tCircleRadius = 30;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
-    private final Button buildTreeButton;
     private final ArrayList<TreeCircle> tCircles = new ArrayList<>();
     private final ArrayList<TreeArrow> tArrows = new ArrayList<>();
     private TreeCircle selected = null;
@@ -37,13 +36,12 @@ public class TreeGraph {
     private TreeGraph.InteractMode interactMode = TreeGraph.InteractMode.SELECT_MODE;
 
     public TreeGraph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton,
-                     RadioButton setPanModeButton, Button buildTreeButton,  HashMap<String, Color> colorLookup) {
+                     RadioButton setPanModeButton, HashMap<String, Color> colorLookup) {
         // Save variables
         this.treePane = graphPane;
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
         this.setPanModeButton = setPanModeButton;
-        this.buildTreeButton = buildTreeButton;
         this.colorLookup = colorLookup;
         //
         // Setup interact mode buttons
@@ -51,19 +49,6 @@ public class TreeGraph {
         setUpInteractModeButton(setSelectModeButton, TreeGraph.InteractMode.SELECT_MODE);
         setUpInteractModeButton(setPanModeButton, TreeGraph.InteractMode.PAN_MODE);
         this.setSelectModeButton.fire();
-        // Setup other buttons
-        this.buildTreeButton.setOnAction(e-> {
-            clear();
-            root = new TreeArgument("a", null);
-            TreeArgument b1 = new TreeArgument("b1", root);
-            TreeArgument b2 = new TreeArgument("b2", root);
-            TreeArgument b3 = new TreeArgument("b3", root);
-            TreeArgument c1 = new TreeArgument("c1", b1);
-            TreeArgument c2 = new TreeArgument("c2", b2);
-            TreeArgument c3 = new TreeArgument("c3", b2);
-            TreeArgument c4 = new TreeArgument("c4", b2);
-            buildTree(root);
-        });
         setUpClip();
     }
 
@@ -407,6 +392,8 @@ public class TreeGraph {
     }
 
     public void exitGameMode() {
+        // Clear tree
+        clear();
         // Restore Select functionality
         setUpInteractModeButton(setSelectModeButton, TreeGraph.InteractMode.SELECT_MODE);
         setMoveModeButton.fire();

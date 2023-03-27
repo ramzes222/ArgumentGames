@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -22,9 +20,9 @@
                      <MenuItem mnemonicParsing="false" onAction="#loadData" text="Load" />
                   </items>
                 </Menu>
-                <Menu fx:id="editMenu"  mnemonicParsing="false" text="Edit">
+                <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#openSettings"  text="Settings" />
+                    <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -141,18 +139,6 @@
             </VBox>
             <VBox fx:id="centerPane" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <children>
-                  <Button fx:id="buildTreeButton" mnemonicParsing="false" onAction="#buildTreeFromFramework">
-                     <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@img/RightArrow.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <VBox.margin>
-                        <Insets bottom="20.0" />
-                     </VBox.margin>
-                  </Button>
                   <Button fx:id="gameButton" mnemonicParsing="false" onAction="#gameButtonPress">
                      <graphic>
                         <ImageView fx:id="gameButtonImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
@@ -202,34 +188,11 @@
                            <Insets left="5.0" />
                         </HBox.margin>
                      </RadioButton>
-                     <Button fx:id="rightBuildTreeButton" mnemonicParsing="false">
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/BuildTree.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </Button>
                      <Separator orientation="VERTICAL" prefHeight="200.0">
                         <HBox.margin>
                            <Insets left="8.0" right="6.0" />
                         </HBox.margin>
                      </Separator>
-                     <ChoiceBox fx:id="gameTypeChoiceBox" prefWidth="120.0" value="Grounded">
-                        <items>
-                           <FXCollections fx:factory="observableArrayList">
-                              <String fx:value="Grounded" />
-                              <String fx:value="Preferred" />
-                           </FXCollections>
-                        </items>
-                        <HBox.margin>
-                           <Insets left="5.0" top="2.0" />
-                        </HBox.margin>
-                     </ChoiceBox>
                   </children></HBox>
                <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; overflow: hidden; -fx-border-width: 5; ">
                   <children>

@@ -28,7 +28,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         //create Test Node at halfway point
         midPoint = new Circle();
         midPoint.setRadius(10);
-        midPoint.setVisible(true);
+        midPoint.setVisible(false);
         midPoint.setFill(Color.TURQUOISE);
 
         //make the Control Node draggable

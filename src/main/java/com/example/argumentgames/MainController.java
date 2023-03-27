@@ -24,14 +24,12 @@ public class MainController {
     @FXML
     RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
-    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, rightBuildTreeButton, gameButton, buildTreeButton, leftDeleteButton;
+    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, gameButton, leftDeleteButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
     @FXML
     Label gameLabel;
 
-    @FXML
-    ChoiceBox<String> gameTypeChoiceBox;
     @FXML
     ImageView gameButtonImageView;
     @FXML
@@ -46,8 +44,8 @@ public class MainController {
     boolean gameInProgress;
     private HashMap<String, Color> colorLookup = new HashMap<>();
     private HashMap<String, Boolean> booleanLookup = new HashMap<>();
-
     File currentlyUsedFile;
+
     public MainController() {
     }
 
@@ -56,7 +54,7 @@ public class MainController {
         currentFramework = new Framework();
         frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton, colorLookup);
         frameworkGraph.loadFramework(currentFramework);
-        gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, rightBuildTreeButton, colorLookup);
+        gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, colorLookup);
 
         // Construct the menu Bar
         gameLabel.prefWidthProperty().bind(rightGraphPane.widthProperty());
@@ -106,7 +104,6 @@ public class MainController {
     }
 
     private void restoreDefaults() {
-        booleanLookup.put("playAgainstComputer",false);
         booleanLookup.put("savePositionToFile",true);
 
         colorLookup.put("argumentBaseColor", Color.CORNSILK);
@@ -321,7 +318,7 @@ public class MainController {
     }
 
     @FXML
-    public void buildTreeFromFramework() {
+    public void buildTreeFromFramework(boolean isGrounded) {
         String rootName = frameworkGraph.getSelectedArgumentName();
         if (rootName==null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -330,7 +327,6 @@ public class MainController {
             alert.showAndWait();
         } else {
             FrameworkArgument rootOfTree = currentFramework.getArgumentByName(rootName);
-            boolean isGrounded = gameTypeChoiceBox.getValue().equals("Grounded");
             TreeArgument gameTreeRoot = currentFramework.buildGameTree(rootOfTree, isGrounded);
             gameTree.buildTree(gameTreeRoot);
         }
@@ -338,20 +334,21 @@ public class MainController {
 
     @FXML
     public void gameButtonPress() {
-        if (gameInProgress) endGame(); else startGame();
+        if (gameInProgress) endGame(); else {
+            StartGameController startGameController = new StartGameController(this);
+            startGameController.showWindow();
+        }
     }
 
-    private void startGame() {
+    public void startGame(boolean isComputerPlaying, boolean isGrounded) {
+        buildTreeFromFramework(isGrounded);
         gameInProgress = true;
         Image nextIcon = new Image(getClass().getResourceAsStream("img/End Game.png"));
         gameButtonImageView.setImage(nextIcon);
         gc = new GameController();
-        boolean isGrounded = gameTypeChoiceBox.getValue().equals("Grounded");
-        gameTypeChoiceBox.setDisable(true);
-        buildTreeButton.setDisable(true);
         fileMenu.setDisable(true);
         editMenu.setDisable(true);
-        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, booleanLookup.get("playAgainstComputer"), gameLabel);
+        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, isComputerPlaying, gameLabel);
     }
 
     private void endGame() {
@@ -359,8 +356,6 @@ public class MainController {
         Image nextIcon = new Image(getClass().getResourceAsStream("img/Start Game.png"));
         gameButtonImageView.setImage(nextIcon);
         gc.endGame();
-        gameTypeChoiceBox.setDisable(false);
-        buildTreeButton.setDisable(false);
         fileMenu.setDisable(false);
         editMenu.setDisable(false);
     }
@@ -369,7 +364,5 @@ public class MainController {
     private void openSettings() {
         SettingsController settingsController = new SettingsController(this);
         settingsController.showWindow();
-
-
     }
 }

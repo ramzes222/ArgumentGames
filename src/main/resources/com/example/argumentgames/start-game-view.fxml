@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ChoiceBox fx:id="gameTypeChoiceBox" layoutX="28.0" layoutY="206.0" prefWidth="120.0" value="Grounded">
+         <items>
+            <FXCollections fx:factory="observableArrayList">
+               <String fx:value="Grounded" />
+               <String fx:value="Preferred" />
+            </FXCollections>
+         </items>
+      </ChoiceBox>
+      <Label layoutY="164.0" prefHeight="22.0" prefWidth="500.0" style="-fx-background-color: lightgray;" text="Game type">
+         <padding>
+            <Insets left="30.0" />
+         </padding></Label>
+      <Pane layoutY="256.0" prefHeight="46.0" prefWidth="500.0" style="-fx-background-color: lightgray;">
+         <children>
+            <Button fx:id="startGameButton" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" text="Start Game" />
+            <Button fx:id="cancelButton" layoutX="434.0" layoutY="11.0" mnemonicParsing="false" text="Cancel" />
+         </children>
+      </Pane>
+      <Label layoutY="81.0" prefHeight="22.0" prefWidth="500.0" style="-fx-background-color: lightgray;" text="Computer player">
+         <padding>
+            <Insets left="30.0" />
+         </padding>
+      </Label>
+      <CheckBox fx:id="computerPlayerCheckbox" layoutX="28.0" layoutY="124.0" mnemonicParsing="false" text="Proponent is controlled by computer" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="14.0" prefHeight="35.0" prefWidth="500.0" text="Starting an argument game" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
