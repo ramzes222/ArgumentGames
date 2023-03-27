@@ -83,7 +83,7 @@ public class GameController {
 
         // 2. Check if the game ends
         if (checkIfGameEnd()) {
-            // Game over - do not setup next round
+            // Game over - do not set up next round
             stopInteractions();
             return;
         }
@@ -103,9 +103,7 @@ public class GameController {
             for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().setVisual("computerSelectable"); }
             // After a short wait perform the move
             PauseTransition compMoveWait = new PauseTransition(Duration.seconds(2));
-            compMoveWait.setOnFinished(e-> {
-                computerTurn();
-            });
+            compMoveWait.setOnFinished(e-> computerTurn());
             compMoveWait.play();
         } else {
             // 4. Get all "in" arguments in the current tree placed by the other player
