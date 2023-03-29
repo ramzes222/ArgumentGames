@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 // Controls the game process by communicating with the Graph and Tree objects
@@ -21,6 +22,7 @@ public class GameController {
     TreeGraph gameTree;
     Label gameLabel;
     TreeArgument currentlySelected = null;
+    private HashMap<String, Color> colorLookup;
     boolean isProTurn, isComputerPlaying, baseRuleset = true, lastPass = false;
     /* RULESETS:
     baseRuleset = True
@@ -31,7 +33,7 @@ public class GameController {
     Game is exhaustive - every argument will be moved
     */
 
-    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded, boolean isComputerPlaying, boolean baseRuleset, Label gameLabel, Button passButton) {
+    public void startGame(Graph g, Framework f, TreeGraph t, boolean isGrounded, boolean isComputerPlaying, boolean baseRuleset, Label gameLabel, Button passButton, HashMap<String, Color> colorLookup) {
         // Save objects
         framework = f;
         frameworkGraph = g;
@@ -42,6 +44,7 @@ public class GameController {
         this.gameLabel = gameLabel;
         this.gameLabel.setVisible(true);
         this.passButton = passButton;
+        this.colorLookup = colorLookup;
         passButton.setVisible(true);
         // Setup pass button
         passButton.setOnAction(e->passAttempt());
@@ -104,8 +107,8 @@ public class GameController {
         }
         // 1. Swap the player's turns
         isProTurn = !isProTurn;
-        if (isProTurn) gameLabel.setBackground(new Background(new BackgroundFill(Color.MEDIUMSPRINGGREEN, null, null)));
-        else gameLabel.setBackground(new Background(new BackgroundFill(Color.MEDIUMORCHID, null, null)));
+        if (isProTurn) gameLabel.setBackground(new Background(new BackgroundFill(colorLookup.get("proponentArgColor"), null, null)));
+        else gameLabel.setBackground(new Background(new BackgroundFill(colorLookup.get("opponentArgColor"), null, null)));
 
         // 2. Check if the game ends
         if (lastPass && (movedArg==null)) {
@@ -144,7 +147,7 @@ public class GameController {
         // 5. Mark the counterable arguments visually
         //    Allow them to be selected
         for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
-        if (gameTree.getRoot().getState()==1) text+="     Opponent";
+        if (!isProTurn) text+="     Opponent";
         else text+="     Proponent";
         text+= "'s turn:";
         gameLabel.setText(text);
@@ -231,6 +234,10 @@ public class GameController {
     // The current player attempts to pass
     // Check if the attempt is valid - if not, display a message
     private void passAttempt() {
+        if (baseRuleset && isProTurn) {
+            // Proponent can always pass in base ruleset game
+            moveArgument(null);
+        }
         ArrayList<TreeArgument> possibleMoves = new ArrayList<>();
         ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getInGameOfLayer(!isProTurn);
         for (TreeArgument countered : counterableArguments) {

@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="400.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ChoiceBox fx:id="gameTypeChoiceBox" layoutX="28.0" layoutY="206.0" prefWidth="120.0" value="Grounded">
+      <ChoiceBox fx:id="gameTypeChoiceBox" layoutX="28.0" layoutY="210.0" prefWidth="120.0" value="Grounded">
          <items>
             <FXCollections fx:factory="observableArrayList">
                <String fx:value="Grounded" />
@@ -21,7 +21,7 @@
          <padding>
             <Insets left="30.0" />
          </padding></Label>
-      <Pane layoutY="256.0" prefHeight="46.0" prefWidth="500.0" style="-fx-background-color: lightgray;">
+      <Pane layoutX="2.0" layoutY="353.0" prefHeight="46.0" prefWidth="500.0" style="-fx-background-color: lightgray;">
          <children>
             <Button fx:id="startGameButton" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" text="Start Game" />
             <Button fx:id="cancelButton" layoutX="434.0" layoutY="11.0" mnemonicParsing="false" text="Cancel" />
@@ -37,6 +37,20 @@
          <font>
             <Font size="24.0" />
          </font>
+      </Label>
+      <ChoiceBox fx:id="rulesetChoiceBox" layoutX="28.0" layoutY="303.0" prefWidth="120.0" value="Base">
+         <items>
+            <FXCollections fx:factory="observableArrayList">
+               <String fx:value="Base" />
+               <String fx:value="Exhaustive" />
+            </FXCollections>
+         </items>
+         <tooltip><Tooltip text="${'Base ruleset: Proponent is allowed to pass anytime, but opponent must always make a move is possible.\nExhaustive ruleset: Both players may only pass if no possible moves remain.\n\nIn both cases, the game ends when both players pass.'}" /></tooltip>
+      </ChoiceBox>
+      <Label layoutY="260.0" prefHeight="22.0" prefWidth="500.0" style="-fx-background-color: lightgray;" text="Ruleset">
+         <padding>
+            <Insets left="30.0" />
+         </padding>
       </Label>
    </children>
 </AnchorPane>

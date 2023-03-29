@@ -351,7 +351,7 @@ public class MainController {
 
     // Starts an argument game rooted in the currently selected framework argument.
     // Applies provided arguments to the game.
-    public void startGame(boolean isComputerPlaying, boolean isGrounded) {
+    public void startGame(boolean isComputerPlaying, boolean isGrounded, boolean isBaseRuleset) {
         if (frameworkGraph.getSelectedArgumentName() != null) {
             buildTreeFromFramework(isGrounded);
             gameInProgress = true;
@@ -360,7 +360,7 @@ public class MainController {
             gc = new GameController();
             fileMenu.setDisable(true);
             editMenu.setDisable(true);
-            gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, isComputerPlaying, true, gameLabel, passButton);
+            gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, isComputerPlaying, isBaseRuleset, gameLabel, passButton, colorLookup);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Please select an argument first");

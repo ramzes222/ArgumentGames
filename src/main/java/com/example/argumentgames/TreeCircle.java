@@ -62,16 +62,19 @@ public class TreeCircle extends StackPane {
                 circle.setStroke(Color.TRANSPARENT);
             }
             case "gameSelectable" -> {
-                circle.setStroke(Color.TRANSPARENT);
-                circle.setFill(colorLookup.get("attackingArgColor"));
+                circle.setStroke(colorLookup.get("attackedArgColor"));
+                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
+                else circle.setFill(colorLookup.get("opponentArgColor"));
             }
             case "gameSelected" -> {
-                circle.setStroke(colorLookup.get("attackedArgColor"));
-                circle.setFill(colorLookup.get("attackingArgColor"));
+                circle.setStroke(colorLookup.get("attackingArgColor"));
+                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
+                else circle.setFill(colorLookup.get("opponentArgColor"));
             }
             case "computerSelectable" -> {
-                circle.setStroke(Color.TRANSPARENT);
-                circle.setFill(colorLookup.get("computerSelectableColor"));
+                circle.setStroke(colorLookup.get("computerSelectableColor"));
+                if (isPro) circle.setFill(colorLookup.get("proponentArgColor"));
+                else circle.setFill(colorLookup.get("opponentArgColor"));
             }
         }
     }

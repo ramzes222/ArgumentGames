@@ -17,7 +17,7 @@ public class StartGameController {
     @FXML
     Button startGameButton, cancelButton;
     @FXML
-    ChoiceBox gameTypeChoiceBox;
+    ChoiceBox gameTypeChoiceBox, rulesetChoiceBox;
     @FXML
     CheckBox computerPlayerCheckbox;
 
@@ -27,7 +27,7 @@ public class StartGameController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("start-game-view.fxml"));
             loader.setController(this);
             Parent startGameRoot = loader.load();
-            Scene startGameScene = new Scene(startGameRoot, 500, 300);
+            Scene startGameScene = new Scene(startGameRoot, 350, 400);
             this.startGameStage = new Stage();
             startGameStage.setScene(startGameScene);
             startGameStage.setTitle("Start Game");
@@ -42,8 +42,9 @@ public class StartGameController {
     private void initialize() {
         startGameButton.setOnAction(e -> {
             boolean isGrounded = gameTypeChoiceBox.getValue().equals("Grounded");
+            boolean isBaseRuleset = rulesetChoiceBox.getValue().equals("Base");
             startGameStage.hide();
-            mainController.startGame(computerPlayerCheckbox.isSelected(), isGrounded);
+            mainController.startGame(computerPlayerCheckbox.isSelected(), isGrounded, isBaseRuleset);
         });
         cancelButton.setOnAction(e-> {
             startGameStage.hide();
