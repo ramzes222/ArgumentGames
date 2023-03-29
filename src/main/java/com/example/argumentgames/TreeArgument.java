@@ -20,7 +20,7 @@ public class TreeArgument {
     // 1 - in
     // 2 - out
     private int state = 0;
-    // Signifies whether the argument lays on the Proponent or Opponent layer
+    // Signifies whether the argument lies on the Proponent or Opponent layer
     private final boolean isPro;
 
     boolean isInWinningStrategy = false;
@@ -50,7 +50,6 @@ public class TreeArgument {
     }
 
     public void appear() { visualTCircle.setVisible(true);}
-    public void disappear() { visualTCircle.setVisible(false);}
 
     public void highlight() { visualTCircle.highlight(Color.ORANGE);}
     public void dehighlight() { visualTCircle.highlight(Color.TRANSPARENT);}
@@ -109,6 +108,12 @@ public class TreeArgument {
         ArrayList<TreeArgument> res = new ArrayList<>();
         if (this.state == stateRequested && this.isPro == isProRequested) res.add(this);
         for (TreeArgument arg : children) { res.addAll(arg.getOfStateAndLayer(stateRequested, isProRequested)); }
+        return res;
+    }
+    public ArrayList<TreeArgument> getOfLayer(boolean isProRequested) {
+        ArrayList<TreeArgument> res = new ArrayList<>();
+        if (this.isPro == isProRequested) res.add(this);
+        for (TreeArgument arg : children) { res.addAll(arg.getOfLayer(isProRequested)); }
         return res;
     }
     public boolean pastInBranchIncludes(String name) {

@@ -24,8 +24,8 @@
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                     <MenuItem mnemonicParsing="false" fx:id="prefGameTreeButton" text="Show Preferred Game Tree" />
-                     <MenuItem mnemonicParsing="false" fx:id="groundGameTreeButton" text="Show Grounded Game Tree" />
+                     <MenuItem fx:id="prefGameTreeButton" mnemonicParsing="false" text="Show Preferred Game Tree" />
+                     <MenuItem fx:id="groundGameTreeButton" mnemonicParsing="false" text="Show Grounded Game Tree" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -196,6 +196,11 @@
                            <Insets left="8.0" right="6.0" />
                         </HBox.margin>
                      </Separator>
+                     <Button fx:id="passButton" mnemonicParsing="false" prefHeight="26.0" text="Pass" visible="false">
+                        <padding>
+                           <Insets left="4.0" />
+                        </padding>
+                     </Button>
                   </children></HBox>
                <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; overflow: hidden; -fx-border-width: 5; ">
                   <children>

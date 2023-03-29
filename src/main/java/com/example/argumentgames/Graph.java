@@ -350,7 +350,11 @@ public class Graph {
             // Make the arrows straight
             n.getConnectedArrows().forEach(GraphArrow::centerControlPoint);
             return true;
-        } else return false;
+        } else {
+            // Make the arrows straight
+            n.getConnectedArrows().forEach(GraphArrow::centerControlPoint);
+            return false;
+        }
     }
 
     private GraphCircle findClosestGCircle(GraphCircle origin) {

@@ -1,5 +1,4 @@
 savePositionToFile=true
-playAgainstComputer=false
 argumentBaseColor=0xfff8dcff
 selectionColor=0xffff00ff
 attackArrowColor=0x228b22ff

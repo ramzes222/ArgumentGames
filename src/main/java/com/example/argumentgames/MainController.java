@@ -18,7 +18,7 @@ public class MainController {
     @FXML
     RadioButton leftSelectButton, leftMoveButton, leftPanButton, rightSelectButton, rightMoveButton, rightPanButton;
     @FXML
-    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, gameButton, leftDeleteButton;
+    Button leftAddNodeButton, leftAddEdgeButton, leftCleanupButton, gameButton, leftDeleteButton, passButton;
     @FXML
     Pane leftGraphPane, rightGraphPane;
     @FXML
@@ -337,22 +337,39 @@ public class MainController {
     @FXML
     public void gameButtonPress() {
         if (gameInProgress) endGame(); else {
-            StartGameController startGameController = new StartGameController(this);
-            startGameController.showWindow();
+            if (frameworkGraph.getSelectedArgumentName() != null) {
+                StartGameController startGameController = new StartGameController(this);
+                startGameController.showWindow();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Please select an argument first");
+                alert.setContentText("To start an argument game, first select an argument. The game will be rooted at that argument");
+                alert.showAndWait();
+            }
         }
     }
 
+    // Starts an argument game rooted in the currently selected framework argument.
+    // Applies provided arguments to the game.
     public void startGame(boolean isComputerPlaying, boolean isGrounded) {
-        buildTreeFromFramework(isGrounded);
-        gameInProgress = true;
-        Image nextIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("img/End Game.png")));
-        gameButtonImageView.setImage(nextIcon);
-        gc = new GameController();
-        fileMenu.setDisable(true);
-        editMenu.setDisable(true);
-        gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, isComputerPlaying, gameLabel);
+        if (frameworkGraph.getSelectedArgumentName() != null) {
+            buildTreeFromFramework(isGrounded);
+            gameInProgress = true;
+            Image nextIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("img/End Game.png")));
+            gameButtonImageView.setImage(nextIcon);
+            gc = new GameController();
+            fileMenu.setDisable(true);
+            editMenu.setDisable(true);
+            gc.startGame(frameworkGraph, currentFramework, gameTree, isGrounded, isComputerPlaying, true, gameLabel, passButton);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Please select an argument first");
+            alert.setContentText("To start an argument game, first select an argument. The game will be rooted at that argument");
+            alert.showAndWait();
+        }
     }
 
+    // Ends the currently ongoing game
     private void endGame() {
         gameInProgress = false;
         Image nextIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("img/Start Game.png")));
@@ -360,8 +377,10 @@ public class MainController {
         gc.endGame();
         fileMenu.setDisable(false);
         editMenu.setDisable(false);
+        passButton.setVisible(false);
     }
 
+    // Opens the settings window
     @FXML
     private void openSettings() {
         SettingsController settingsController = new SettingsController(this);
