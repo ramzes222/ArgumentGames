@@ -19,6 +19,7 @@ public class Graph {
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<GraphCircle> gCircles = new ArrayList<>();
     private final ArrayList<GraphArrow> gArrows = new ArrayList<>();
+    private final ArrayList<GraphMetaArrow> gMetaArrows = new ArrayList<>();
     private GraphNode selected = null;
     private final Pane graphPane;
     private final ToggleGroup tg = new ToggleGroup();
@@ -411,6 +412,23 @@ public class Graph {
                     graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
                 }
             }); }
+            // Add event to all arrows
+            for (GraphArrow toGArrow: gArrows) { toGArrow.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    if (!currFramework.metaAttackExists(fromGCircle.getName(), toGArrow.getName())) {
+                        addGMetaArrow(fromGCircle, toGArrow);
+                        currFramework.addMetaAttack(fromGCircle.getName(), toGArrow.getName());
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Meta attack already exists");
+                        alert.setContentText("There already exists an attack between the node " + fromGCircle.getName() + " and attack " + toGArrow.getName() + "!");
+                        alert.showAndWait();
+                    }
+                    endAddGArrowEvent(newGArrowMouseArrow);
+                    fromGCircle.highlight(Color.TRANSPARENT);
+                    graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
+                }
+            }); }
         } else {
             // This should be prevented by other functions, but
             // just in case show a warning
@@ -460,6 +478,29 @@ public class Graph {
         }
     }
 
+    private GraphMetaArrow addGMetaArrow(GraphCircle a, GraphArrow b) {
+        GraphMetaArrow mArrow = new GraphMetaArrow(a, b, colorLookup);
+        graphPane.getChildren().addAll(mArrow, mArrow.getArrowTip(), mArrow.getControlPoint());
+        gMetaArrows.add(mArrow);
+        mArrow.setOnMouseClicked(e -> {
+            if (selected == mArrow) {
+                selected.deselect();
+                selected = null;
+            } else {
+                if (selected != null) selected.deselect();
+                selected = mArrow;
+                selected.select();
+            }
+        });
+        // Save arrow reference in the connected nodes
+        a.addMetaArrow(mArrow);
+        b.addMetaArrow(mArrow);
+        a.toFront();
+        b.getMidPoint().setVisible(true);
+        b.getMidPoint().toFront();
+        return mArrow;
+    }
+
     private void deleteSelected() {
         if (selected == null) return;
         if (selected.getClass() == GraphCircle.class) {
@@ -476,14 +517,22 @@ public class Graph {
             gCircles.remove(nodeToDelete);
             graphPane.getChildren().removeAll(nodeToDelete);
             currFramework.removeArgument(nodeToDelete.getName());
-        } else {
+        } else if (selected.getClass() == GraphArrow.class) {
             // Delete edge
             GraphArrow edgeToDelete = (GraphArrow) selected;
             selected = null;
             edgeToDelete.delete();
             gArrows.remove(edgeToDelete);
-            graphPane.getChildren().removeAll(edgeToDelete, edgeToDelete.getArrowTip(), edgeToDelete.getControlPoint());
+            graphPane.getChildren().removeAll(edgeToDelete, edgeToDelete.getArrowTip(), edgeToDelete.getControlPoint(), edgeToDelete.getMidPoint());
             currFramework.removeAttack(edgeToDelete.getFromName(), edgeToDelete.getToName());
+        } else {
+            // Delete meta arrow
+            GraphMetaArrow metaEdgeToDelete = (GraphMetaArrow) selected;
+            selected = null;
+            metaEdgeToDelete.delete();
+            gMetaArrows.remove(metaEdgeToDelete);
+            graphPane.getChildren().removeAll(metaEdgeToDelete, metaEdgeToDelete.getArrowTip(), metaEdgeToDelete.getControlPoint());
+            currFramework.removeMetaAttack(metaEdgeToDelete.getFromName(), metaEdgeToDelete.getToName());
         }
     }
 

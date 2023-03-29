@@ -6,6 +6,7 @@ public class Framework {
 
     private final ArrayList<FrameworkArgument> arguments = new ArrayList<>();
     private final ArrayList<FrameworkAttack> attacks = new ArrayList<>();
+    private final ArrayList<FrameworkMetaAttack> metaAttacks = new ArrayList<>();
 
     public Framework() {
 
@@ -38,7 +39,7 @@ public class Framework {
                 // Create a TreeArgument for each, then add them to next round
                 FrameworkArgument frArg = getArgumentByName(previousArg.getName());
                 if (frArg != null) {
-                    for (FrameworkArgument attackOfFrArg: frArg.getAttackedBy()) {
+                    for (FrameworkArgument attackOfFrArg: getAttackedBy(frArg)) {
                         String attackerName = attackOfFrArg.getName();
                         if (canArgumentsBeRepeated || !previousArg.pastInBranchIncludes(attackerName)) {
                             TreeArgument newTreeAttack = new TreeArgument(attackerName, previousArg);
@@ -74,8 +75,19 @@ public class Framework {
         return null;
     }
 
+    public FrameworkAttack getAttackByName(String attName) {
+        for (FrameworkAttack att : attacks) { if (att.getName().equals(attName)) return att; }
+        return null;
+    }
+
     public FrameworkAttack getAttack(FrameworkArgument from, FrameworkArgument to) {
         for (FrameworkAttack att: attacks) {
+            if (att.getTo() == to && att.getFrom() == from) return att;
+        }
+        return null;
+    }
+    public FrameworkMetaAttack getMetaAttack(FrameworkArgument from, FrameworkAttack to) {
+        for (FrameworkMetaAttack att: metaAttacks) {
             if (att.getTo() == to && att.getFrom() == from) return att;
         }
         return null;
@@ -94,8 +106,6 @@ public class Framework {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
         if (from!=null && to!=null) {
             FrameworkAttack att = new FrameworkAttack(from, to);
-            from.addToAttacks(att);
-            to.addToAttacks(att);
             attacks.add(att);
         }
     }
@@ -104,15 +114,29 @@ public class Framework {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
         if (from!=null && to!=null) {
             FrameworkAttack att = new FrameworkAttack(from, to, x, y);
-            from.addToAttacks(att);
-            to.addToAttacks(att);
             attacks.add(att);
         }
     }
+
+    public void addMetaAttack(String fromName, String toAttackName) {
+        FrameworkArgument from = getArgumentByName(fromName);
+        FrameworkAttack to = getAttackByName(toAttackName);
+        if (from!=null && to!=null) {
+            FrameworkMetaAttack metAtt = new FrameworkMetaAttack(from, to);
+            metaAttacks.add(metAtt);
+        }
+    }
+    public void addMetaAttack(String fromName, String toAttackName, Double x, Double y) {
+        FrameworkArgument from = getArgumentByName(fromName);
+        FrameworkAttack to = getAttackByName(toAttackName);
+        if (from!=null && to!=null) {
+            FrameworkMetaAttack metAtt = new FrameworkMetaAttack(from, to, x, y);
+            metaAttacks.add(metAtt);
+        }
+    }
+
     public void removeAttack(FrameworkArgument from, FrameworkArgument to) {
         FrameworkAttack att = getAttack(from, to);
-        from.removeAttack( att );
-        to.removeAttack( att );
         attacks.remove(att);
     }
 
@@ -123,15 +147,50 @@ public class Framework {
         }
     }
 
+    public void removeMetaAttack(FrameworkArgument from, FrameworkAttack to) {
+        FrameworkMetaAttack att = getMetaAttack(from, to);
+        metaAttacks.remove(att);
+    }
+
+    public void removeMetaAttack(String fromName, String toAttackName) {
+        FrameworkArgument from = getArgumentByName(fromName);
+        FrameworkAttack to = getAttackByName(toAttackName);
+        if (from!=null && to!=null) {
+            removeMetaAttack(from, to);
+        }
+    }
+
     public boolean nameExists(String name) {
         for (FrameworkArgument arg : arguments) { if (arg.getName().equals(name)) return true; }
         return false;
     }
+
     public boolean attackExists(String fromName, String toName) {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
         if (from!=null && to!=null) {
-            return from.attackToExists(to);
+            for (FrameworkAttack att: attacks) {
+                if (att.getFrom() == from && att.getTo() == to) return true;
+            }
         }
         return false;
+    }
+
+    public boolean metaAttackExists(String fromName, String toAttackName) {
+        FrameworkArgument from = getArgumentByName(fromName);
+        FrameworkAttack to = getAttackByName(toAttackName);
+        if (from!=null && to!=null) {
+            for (FrameworkMetaAttack att: metaAttacks) {
+                if (att.getFrom() == from && att.getTo() == to) return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<FrameworkArgument> getAttackedBy(FrameworkArgument arg) {
+        ArrayList<FrameworkArgument> res = new ArrayList<>();
+        for (FrameworkAttack att: attacks) {
+            if (att.getTo() == arg) res.add(att.getFrom());
+        }
+        return res;
     }
 }

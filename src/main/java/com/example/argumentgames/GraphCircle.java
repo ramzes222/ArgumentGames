@@ -14,6 +14,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     private final Text text;
     private final Circle circle;
     private final ArrayList<GraphArrow> connectedArrows = new ArrayList<>();
+    private final ArrayList<GraphMetaArrow> connectedMetaArrows = new ArrayList<>();
     private boolean isGameSelectEnabled = false;
     private final HashMap<String, Color> colorLookup;
     private String currVisual;
@@ -100,9 +101,14 @@ public class GraphCircle extends StackPane implements GraphNode {
     public void enable() { setVisual("base"); text.setFill(Color.BLACK);}
 
     public void addArrow(GraphArrow arr) { connectedArrows.add(arr); }
+    public void addMetaArrow(GraphMetaArrow arr) { connectedMetaArrows.add(arr); }
     public void removeArrow(GraphArrow arr) { connectedArrows.remove(arr); }
+    public void removeMetaArrow(GraphMetaArrow arr) { connectedMetaArrows.remove(arr); }
     public ArrayList<GraphArrow> getConnectedArrows() { return connectedArrows; }
-    public void rotateArrows() { for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); } }
+    public void rotateArrows() {
+        for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); }
+        for (GraphMetaArrow mArrow: connectedMetaArrows) { mArrow.rotateArrowShape(); }
+    }
 
     public String getName() { return name; }
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }

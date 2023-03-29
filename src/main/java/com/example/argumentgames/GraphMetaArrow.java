@@ -1,37 +1,34 @@
 package com.example.argumentgames;
+
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.QuadCurve;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Rotate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GraphArrow extends QuadCurve implements GraphNode {
-
-    private final GraphCircle startNode, endNode;
-    private final Circle controlPoint, midPoint;
+public class GraphMetaArrow extends QuadCurve implements GraphNode {
+    private final GraphCircle startNode;
+    private final GraphArrow attackedArrow;
+    private final Circle endNode, controlPoint;
     private final Polygon arrow;
     private double dragOriginX, dragOriginY;
     private final Rotate arrowRotate;
-    private final ArrayList<GraphMetaArrow> connectedMetaArrows = new ArrayList<>();
     private final HashMap<String, Color> colorLookup;
     private String currVisual;
 
-    public GraphArrow(GraphCircle a, GraphCircle b, HashMap<String, Color> colorLookup) {
+    public GraphMetaArrow(GraphCircle a, GraphArrow b, HashMap<String, Color> colorLookup) {
         startNode = a;
-        endNode = b;
+        endNode = b.getMidPoint();
+        attackedArrow = b;
         this.colorLookup = colorLookup;
 
         //create Control Node at halfway point
         controlPoint = new Circle();
         controlPoint.setRadius(10);
         controlPoint.setVisible(false);
-
-        //create Test Node at halfway point
-        midPoint = new Circle();
-        midPoint.setRadius(10);
-        midPoint.setVisible(false);
-        midPoint.setFill(Color.TURQUOISE);
 
         //make the Control Node draggable
         controlPoint.setOnMousePressed(e -> {
@@ -66,7 +63,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         arrow.toBack();
         arrowRotate = new Rotate( 0, 0, 0 );
         arrow.getTransforms().add(arrowRotate);
-
         setVisual("base");
 
         // Place the control point halfway between the nodes
@@ -113,14 +109,6 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         setControlPointXY( (startXProperty().get() + endXProperty().get()) / 2 , (startYProperty().get() + endYProperty().get()) / 2 );
     }
 
-    public void setCenterPoint() {
-        double centerX = 0.25*startXProperty().get() + 0.5*controlPoint.getLayoutX() + 0.25*endXProperty().get();
-        double centerY = 0.25*startYProperty().get() + 0.5*controlPoint.getLayoutY() + 0.25*endYProperty().get();
-        midPoint.setLayoutX(centerX);
-        midPoint.setLayoutY(centerY);
-        for (GraphMetaArrow metArr: connectedMetaArrows) { metArr.rotateArrowShape(); }
-    }
-
     public void translateControlPointXY(double xDiff, double yDiff) {
         double newY = yDiff + controlPoint.getLayoutY();
         double newX = xDiff + controlPoint.getLayoutX();
@@ -163,24 +151,18 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         double x_diff = controlPoint.getLayoutX() - getEndX();
         double y_diff = getEndY() - controlPoint.getLayoutY();
         arrowRotate.setAngle( -GeometricHelper.x_y_toAngle(x_diff, y_diff) );
-        setCenterPoint();
     }
 
     public Polygon getArrowTip() { return arrow; }
     public Circle getControlPoint() { return controlPoint; }
-    public Circle getMidPoint() { return midPoint; }
     @Override
     public boolean isCircle() { return false; }
-    public String getName() { return  "(" + startNode.getName() + " attacks " + endNode.getName() + ")"; }
+    public String getName() { return null; }
     public String getFromName() {return startNode.getName(); }
-    public String getToName() {return endNode.getName(); }
-
-    public void addMetaArrow(GraphMetaArrow arr) {connectedMetaArrows.add(arr);}
-    public void removeMetaArrow(GraphMetaArrow arr) {connectedMetaArrows.remove(arr);}
+    public String getToName() {return attackedArrow.getName(); }
 
     public void delete() {
-        startNode.removeArrow(this);
-        endNode.removeArrow(this);
-        for (GraphMetaArrow a: connectedMetaArrows) {a.delete();}
+        startNode.removeMetaArrow(this);
+        attackedArrow.removeMetaArrow(this);
     }
 }

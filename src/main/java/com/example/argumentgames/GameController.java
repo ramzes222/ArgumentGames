@@ -264,7 +264,7 @@ public class GameController {
         currentlySelected = argument;
         frameworkGraph.disableAll();
         // Take all arguments that attack the selected one - these can be moved
-        ArrayList<FrameworkArgument> selectableArguments = framework.getArgumentByName(name).getAttackedBy();
+        ArrayList<FrameworkArgument> selectableArguments = framework.getAttackedBy(framework.getArgumentByName(name));
         // Change display of affected nodes
         frameworkGraph.getGCircle(name).setVisual("gameAttackable");
         for (FrameworkArgument arg:selectableArguments) {

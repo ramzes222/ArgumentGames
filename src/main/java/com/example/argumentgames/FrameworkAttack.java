@@ -18,4 +18,5 @@ public class FrameworkAttack {
 
     public FrameworkArgument getTo() { return to; }
     public FrameworkArgument getFrom() { return from; }
+    public String getName() { return  "(" + from.getName() + " attacks " + to.getName() + ")"; }
 }
