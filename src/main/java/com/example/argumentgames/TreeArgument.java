@@ -49,7 +49,7 @@ public class TreeArgument {
         width = Math.max(nonLeafChildSum, children.size());
     }
 
-    public void appear() { visualTCircle.setVisible(true);}
+    public void appear() { visualTCircle.setDisplayVisible(true);}
 
     public void highlight() { visualTCircle.highlight(Color.ORANGE);}
     public void dehighlight() { visualTCircle.highlight(Color.TRANSPARENT);}
@@ -110,10 +110,13 @@ public class TreeArgument {
         for (TreeArgument arg : children) { res.addAll(arg.getOfStateAndLayer(stateRequested, isProRequested)); }
         return res;
     }
-    public ArrayList<TreeArgument> getOfLayer(boolean isProRequested) {
+
+    // Returns all args with the requested layer
+    // Only returns args that have been moved
+    public ArrayList<TreeArgument> getInGameOfLayer(boolean isProRequested) {
         ArrayList<TreeArgument> res = new ArrayList<>();
-        if (this.isPro == isProRequested) res.add(this);
-        for (TreeArgument arg : children) { res.addAll(arg.getOfLayer(isProRequested)); }
+        if (this.isPro == isProRequested && this.state != 0) res.add(this);
+        for (TreeArgument arg : children) { res.addAll(arg.getInGameOfLayer(isProRequested)); }
         return res;
     }
     public boolean pastInBranchIncludes(String name) {

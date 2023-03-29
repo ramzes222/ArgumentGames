@@ -4,6 +4,9 @@ import javafx.animation.PauseTransition;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -39,8 +42,9 @@ public class GameController {
         this.gameLabel = gameLabel;
         this.gameLabel.setVisible(true);
         this.passButton = passButton;
+        passButton.setVisible(true);
         // Setup pass button
-        passButton.setOnAction(e->moveArgument(null));
+        passButton.setOnAction(e->passAttempt());
         lastPass = false;
         // Reset game tree
         gameTree.getRoot().resetState();
@@ -79,14 +83,13 @@ public class GameController {
     // Advance to the next round
     // May pass null arg - that indicates a player passes
     private void moveArgument(TreeArgument movedArg) {
+        String text = "";
         if (movedArg != null) {
             // Player did not pass - move argument
             // Display a message in the gameLabel
-            String text;
             if (isProTurn) text = "Proponent"; else text = "Opponent";
             text += " moves argument '" + movedArg.getName() + "'";
             gameLabel.setText(text);
-
             frameworkGraph.disableAll();
             // The moved state is always in
             movedArg.setState(1);
@@ -95,14 +98,14 @@ public class GameController {
         } else {
             // Player passed - move no argument, but advance turn
             // Display a message in the gameLabel
-            String text;
             if (isProTurn) text = "Proponent"; else text = "Opponent";
             text += " passed.";
             gameLabel.setText(text);
         }
         // 1. Swap the player's turns
         isProTurn = !isProTurn;
-        passButton.setVisible(false);
+        if (isProTurn) gameLabel.setBackground(new Background(new BackgroundFill(Color.MEDIUMSPRINGGREEN, null, null)));
+        else gameLabel.setBackground(new Background(new BackgroundFill(Color.MEDIUMORCHID, null, null)));
 
         // 2. Check if the game ends
         if (lastPass && (movedArg==null)) {
@@ -121,12 +124,11 @@ public class GameController {
         for (TreeCircle c : gameTree.gettCircles() ) {c.makeGameUnselectable();}
         // 4. If it's players turn, set up interactivity
         //    If it's computer turn, make its move
-        if (isProTurn) {
-            if (isComputerPlaying) {
+        if (isProTurn && isComputerPlaying) {
                 gameLabel.setText("Computer is thinking...");
                 // Give visual indicators
                 // Get all arguments that could be countered - all args moved by opponent
-                ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfLayer(!isProTurn);
+                ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getInGameOfLayer(!isProTurn);
                 // 5. Mark the counterable arguments visually
                 for (TreeArgument countArg : counterableArguments) {
                     countArg.getVisualTCircle().setVisual("computerSelectable");
@@ -135,17 +137,17 @@ public class GameController {
                 PauseTransition compMoveWait = new PauseTransition(Duration.seconds(2));
                 compMoveWait.setOnFinished(e -> computerTurn());
                 compMoveWait.play();
-            } else {
-                // If Base Ruleset, display the pass button
-                if (baseRuleset) passButton.setVisible(true);
-            }
-        } else {
-            // 4. Get all "in" arguments in the current tree placed by the other player
-            ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfLayer(!isProTurn);
-            // 5. Mark the counterable arguments visually
-            //    Allow them to be selected
-            for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
+                return;
         }
+        // 4. Get all "in" arguments in the current tree placed by the other player
+        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getInGameOfLayer(!isProTurn);
+        // 5. Mark the counterable arguments visually
+        //    Allow them to be selected
+        for (TreeArgument countArg : counterableArguments) { countArg.getVisualTCircle().makeGameSelectable(); }
+        if (gameTree.getRoot().getState()==1) text+="     Opponent";
+        else text+="     Proponent";
+        text+= "'s turn:";
+        gameLabel.setText(text);
     }
 
     // Signal end of the game with a message
@@ -155,7 +157,7 @@ public class GameController {
         alert.setTitle("End of the game");
         String text = gameLabel.getText() + "   ";
         // Choose winner depending on the status of the root argument
-        if (gameTree.getRoot().getState()==1) text+="Opponent";
+        if (gameTree.getRoot().getState()==2) text+="Opponent";
         else text+="Proponent";
         text+= " has won!";
         gameLabel.setText(text);
@@ -206,7 +208,7 @@ public class GameController {
                     moveArgument(null);
                 } else {
                     // No move in winning strategy possible - the game is lost, computer will perform a random move
-                    ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfLayer(!isProTurn);
+                    ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getInGameOfLayer(!isProTurn);
                     for (TreeArgument countered : counterableArguments) {
                         for (TreeArgument child : countered.getChildren()) {
                             if (child.getState()==0) goodMoves.add(child);
@@ -230,7 +232,7 @@ public class GameController {
     // Check if the attempt is valid - if not, display a message
     private void passAttempt() {
         ArrayList<TreeArgument> possibleMoves = new ArrayList<>();
-        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getOfLayer(!isProTurn);
+        ArrayList<TreeArgument> counterableArguments = gameTree.getRoot().getInGameOfLayer(!isProTurn);
         for (TreeArgument countered : counterableArguments) {
             for (TreeArgument child : countered.getChildren()) {
                 if (child.getState()==0) possibleMoves.add(child);
@@ -243,7 +245,7 @@ public class GameController {
             // There are still possible moves
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Pass not possible");
-            alert.setHeaderText("There are still possible moves!");
+            alert.setHeaderText("There are still " + possibleMoves.size() + " possible moves!");
             alert.setContentText("You may only pass when no moves are possible, under the current ruleset!");
             alert.setHeight(400);
             alert.show();

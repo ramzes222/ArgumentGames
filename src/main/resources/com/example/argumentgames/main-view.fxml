@@ -198,7 +198,7 @@
                      </Separator>
                      <Button fx:id="passButton" mnemonicParsing="false" prefHeight="26.0" text="Pass" visible="false">
                         <padding>
-                           <Insets left="4.0" />
+                           <Insets left="5.0" right="5.0" />
                         </padding>
                      </Button>
                   </children></HBox>
