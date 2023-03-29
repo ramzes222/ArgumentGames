@@ -56,7 +56,7 @@ public class GraphMetaArrow extends QuadCurve implements GraphNode {
         toBack();
 
         // Set up the arrow tip
-        double[] shape = new double[] { 20,0,60,20,60,-20 };
+        double[] shape = new double[] { 5,0,35,15,35,-15 };
         arrow = new Polygon(shape);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
         arrow.layoutYProperty().bind(endNode.layoutYProperty());
