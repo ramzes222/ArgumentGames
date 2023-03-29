@@ -86,7 +86,7 @@ public class GameController {
     // Advance to the next round
     // May pass null arg - that indicates a player passes
     private void moveArgument(TreeArgument movedArg) {
-        String text = "";
+        String text;
         if (movedArg != null) {
             // Player did not pass - move argument
             // Display a message in the gameLabel

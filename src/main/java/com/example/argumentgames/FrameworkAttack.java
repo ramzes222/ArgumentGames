@@ -1,11 +1,9 @@
 package com.example.argumentgames;
 
-import java.util.ArrayList;
-
 public class FrameworkAttack {
 
     double prefControlX = 0,prefControlY = 0;
-    private FrameworkArgument from, to;
+    private final FrameworkArgument from, to;
 
     public FrameworkAttack(FrameworkArgument from, FrameworkArgument to) {
         this.from = from;

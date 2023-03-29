@@ -80,22 +80,15 @@ public class Framework {
         }
         return null;
     }
-    public FrameworkAttack getAttack(String fromName, String toName) {
-        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
-        if (from!=null && to!=null) {
-            for (FrameworkAttack att: attacks) {
-                if (att.getTo() == to && att.getFrom() == from) return att;
-            }
-        }
-        return null;
-    }
-
-    public void addAttack(FrameworkArgument from, FrameworkArgument to) {
-        FrameworkAttack att = new FrameworkAttack(from, to);
-        from.addToAttacks(att);
-        to.addToAttacks(att);
-        attacks.add(att);
-    }
+//    public FrameworkAttack getAttack(String fromName, String toName) {
+//        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
+//        if (from!=null && to!=null) {
+//            for (FrameworkAttack att: attacks) {
+//                if (att.getTo() == to && att.getFrom() == from) return att;
+//            }
+//        }
+//        return null;
+//    }
 
     public void addAttack(String fromName, String toName) {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
@@ -137,20 +130,8 @@ public class Framework {
     public boolean attackExists(String fromName, String toName) {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
         if (from!=null && to!=null) {
-            return from.getAttacks().contains(to);
+            return from.attackToExists(to);
         }
         return false;
-    }
-
-    public void setArgumentXY(String name, double x, double y) {
-        FrameworkArgument arg = getArgumentByName(name);
-        arg.prefX = x;
-        arg.prefY = y;
-    }
-
-    public void setAttackXY(String from, String to, double x, double y) {
-        FrameworkAttack att = getAttack(from, to);
-        att.prefControlX = x;
-        att.prefControlY = y;
     }
 }
