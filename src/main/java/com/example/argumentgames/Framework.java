@@ -237,9 +237,6 @@ public class Framework {
         if (from == null || to == null) return false;
         // Construct sets of all arguments connected to a and b via regular attacks
         ArrayList<FrameworkArgument> aRegion = getArgumentConnectedSet(from);
-
-        for (FrameworkArgument a : aRegion) System.out.println(a.getName());
-
         if (aRegion.contains(to.getFrom())) return false;
         // a and b are in two different regions - make sure there are no meta attacks going the opposite direction
         ArrayList<FrameworkArgument> bRegion = getArgumentConnectedSet(to.getFrom());
