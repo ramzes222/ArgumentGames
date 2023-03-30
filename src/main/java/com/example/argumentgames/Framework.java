@@ -193,4 +193,59 @@ public class Framework {
         }
         return res;
     }
+
+    public ArrayList<FrameworkArgument> getAdjacent(FrameworkArgument arg) {
+        ArrayList<FrameworkArgument> res = new ArrayList<>();
+        for (FrameworkAttack att: attacks) {
+            if (att.getTo() == arg) res.add(att.getFrom());
+            else if (att.getFrom() == arg) res.add(att.getTo());
+        }
+        return res;
+    }
+
+    // Returns the set of all arguments connected to the parameter via regular attacks
+    public ArrayList<FrameworkArgument> getArgumentConnectedSet(FrameworkArgument source) {
+        ArrayList<FrameworkArgument> nextSet = new ArrayList<>(), connectedSet = new ArrayList<>();
+        nextSet.add(source); connectedSet.add(source);
+        boolean continueLoop = true;
+        while (continueLoop) {
+            continueLoop = false;
+            ArrayList<FrameworkArgument> nextRound = new ArrayList<>();
+            for (FrameworkArgument nextArg: nextSet) {
+                ArrayList<FrameworkArgument> adjacentSet = getAdjacent(nextArg);
+                for (FrameworkArgument adjArg: adjacentSet) {
+                    if (!connectedSet.contains(adjArg)) {
+                        // Not yet tracked - add
+                        connectedSet.add(adjArg);
+                        nextRound.add(adjArg);
+                        continueLoop = true;
+                    }
+                }
+            }
+            nextSet = nextRound;
+        }
+        return connectedSet;
+    }
+
+    // Checks whether adding a new Meta Attack would keep the framework stratified
+    // The parameters:
+    //      a - The from argument of the new Meta Attack
+    //      b - Any of the sides of the attack attacked by the meta attack
+    public boolean isMetaAttackAllowed(String fromName, String toAttackName) {
+        FrameworkArgument from = getArgumentByName(fromName);
+        FrameworkAttack to = getAttackByName(toAttackName);
+        if (from == null || to == null) return false;
+        // Construct sets of all arguments connected to a and b via regular attacks
+        ArrayList<FrameworkArgument> aRegion = getArgumentConnectedSet(from);
+
+        for (FrameworkArgument a : aRegion) System.out.println(a.getName());
+
+        if (aRegion.contains(to.getFrom())) return false;
+        // a and b are in two different regions - make sure there are no meta attacks going the opposite direction
+        ArrayList<FrameworkArgument> bRegion = getArgumentConnectedSet(to.getFrom());
+        for (FrameworkMetaAttack metAt: metaAttacks) {
+            if (bRegion.contains(metAt.getFrom()) && aRegion.contains(metAt.getTo().getFrom())) return false;
+        }
+        return true;
+    }
 }

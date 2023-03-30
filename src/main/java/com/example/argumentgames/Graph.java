@@ -416,8 +416,16 @@ public class Graph {
             for (GraphArrow toGArrow: gArrows) { toGArrow.setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     if (!currFramework.metaAttackExists(fromGCircle.getName(), toGArrow.getName())) {
-                        addGMetaArrow(fromGCircle, toGArrow);
-                        currFramework.addMetaAttack(fromGCircle.getName(), toGArrow.getName());
+                        // Check if the result is still stratified
+                        if (currFramework.isMetaAttackAllowed(fromGCircle.getName(), toGArrow.getName())) {
+                            addGMetaArrow(fromGCircle, toGArrow);
+                            currFramework.addMetaAttack(fromGCircle.getName(), toGArrow.getName());
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Meta attack not allowed!");
+                            alert.setContentText("This meta attack would make the framework non-stratified! \nNon-stratified frameworks are not allowed in the current version.");
+                            alert.showAndWait();
+                        }
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Meta attack already exists");
