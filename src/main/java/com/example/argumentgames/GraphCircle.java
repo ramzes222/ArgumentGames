@@ -105,6 +105,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     public void removeArrow(GraphArrow arr) { connectedArrows.remove(arr); }
     public void removeMetaArrow(GraphMetaArrow arr) { connectedMetaArrows.remove(arr); }
     public ArrayList<GraphArrow> getConnectedArrows() { return connectedArrows; }
+    public ArrayList<GraphMetaArrow> getConnectedMetaArrows() { return connectedMetaArrows; }
     public void rotateArrows() {
         for (GraphArrow arrow: connectedArrows) { arrow.rotateArrowShape(); }
         for (GraphMetaArrow mArrow: connectedMetaArrows) { mArrow.rotateArrowShape(); }

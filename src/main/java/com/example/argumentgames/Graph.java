@@ -91,6 +91,8 @@ public class Graph {
             GraphArrow a = addGArrow( getGCircle(att.getFrom().getName()), getGCircle(att.getTo().getName()) );
             if (a!=null) a.setControlPointXY(att.prefControlX, att.prefControlY);
         }
+        setSelectModeButton.fire();
+        setInteractMode(InteractMode.SELECT_MODE);
     }
     private void setUpInteractModeButton(RadioButton b, InteractMode i) {
         b.getStyleClass().remove("radio-button");
@@ -263,6 +265,7 @@ public class Graph {
             // Save the new argument to the framework
             currFramework.addArgument(name);
             addGCircle(name);
+            setInteractMode(interactMode);
         });
     }
 
@@ -271,18 +274,6 @@ public class Graph {
     private GraphCircle addGCircle(String name) {
         GraphCircle n = new GraphCircle(name, gCircleRadius, colorLookup);
         n.setXY(200, 300);
-        // Implement selection
-        if (interactMode == InteractMode.SELECT_MODE) {
-            n.setOnMouseClicked(e -> {
-                if (selected == n) {
-                    selected.deselect();
-                    selected = null;
-                } else {
-                    if (selected != null) selected.deselect();
-                    selected = n;
-                    selected.select();
-                }
-            });}
         graphPane.getChildren().add(n);
         gCircles.add(n);
         return n;
@@ -404,6 +395,7 @@ public class Graph {
                     if (!currFramework.attackExists(fromGCircle.getName(), toGCircle.getName())) {
                         addGArrow(fromGCircle, toGCircle);
                         currFramework.addAttack(fromGCircle.getName(), toGCircle.getName());
+                        setInteractMode(interactMode);
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Attack already exists");
@@ -424,6 +416,7 @@ public class Graph {
                         if (currFramework.isMetaAttackAllowed(fromGCircle.getName(), toGArrow.getName())) {
                             addGMetaArrow(fromGCircle, toGArrow);
                             currFramework.addMetaAttack(fromGCircle.getName(), toGArrow.getName());
+                            setInteractMode(interactMode);
                         } else {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("Meta attack not allowed!");
@@ -470,17 +463,6 @@ public class Graph {
             GraphArrow arrow = new GraphArrow(a, b, colorLookup);
             graphPane.getChildren().addAll(arrow, arrow.getArrowTip(), arrow.getControlPoint(), arrow.getMidPoint());
             gArrows.add(arrow);
-            arrow.setOnMouseClicked(e -> {
-                // OLD CONDITION: interactMode == InteractMode.SELECT_MODE
-                if (selected == arrow) {
-                    selected.deselect();
-                    selected = null;
-                } else {
-                    if (selected != null) selected.deselect();
-                    selected = arrow;
-                    selected.select();
-                }
-            });
             // Save arrow reference in the connected nodes
             a.addArrow(arrow);
             b.addArrow(arrow);
@@ -504,12 +486,10 @@ public class Graph {
                 selected.select();
             }
         });
+        a.toFront();
         // Save arrow reference in the connected nodes
         a.addMetaArrow(mArrow);
         b.addMetaArrow(mArrow);
-        a.toFront();
-        b.getMidPoint().setVisible(true);
-        b.getMidPoint().toFront();
         return mArrow;
     }
 
@@ -519,12 +499,21 @@ public class Graph {
             // Delete node
             GraphCircle nodeToDelete = (GraphCircle) selected;
             selected = null;
+            // Delete connected arrows
             ArrayList<GraphArrow> arrowsToDelete = (ArrayList<GraphArrow>) nodeToDelete.getConnectedArrows().clone();
             for (GraphArrow a: arrowsToDelete) {
                 a.delete();
                 gArrows.remove(a);
-                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint());
+                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint(), a.getMidPoint());
                 currFramework.removeAttack(a.getFromName(), a.getToName());
+            }
+            // Delete connected meta arrows
+            ArrayList<GraphMetaArrow> metaArrowsToDelete = (ArrayList<GraphMetaArrow>) nodeToDelete.getConnectedMetaArrows().clone();
+            for (GraphMetaArrow a: metaArrowsToDelete) {
+                a.delete();
+                gMetaArrows.remove(a);
+                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint());
+                currFramework.removeMetaAttack(a.getFromName(), a.getToName());
             }
             gCircles.remove(nodeToDelete);
             graphPane.getChildren().removeAll(nodeToDelete);

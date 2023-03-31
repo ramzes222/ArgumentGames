@@ -234,8 +234,8 @@ public class MainController {
             for (FrameworkArgument arg : currentFramework.getArguments()) {
                 GraphCircle c = frameworkGraph.getGCircle(arg.getName());
                 if (c!=null) {
-                    arg.prefX = c.getLayoutX();
-                    arg.prefY = c.getLayoutY(); }
+                    arg.prefX = Math.round(c.getLayoutX());
+                    arg.prefY = Math.round(c.getLayoutY()); }
                 if (savePos) {
                     bw.write(arg.getName() + "," + arg.prefX + "," + arg.prefY + System.getProperty("line.separator"));
                 } else {
@@ -247,8 +247,8 @@ public class MainController {
             for (FrameworkAttack att : currentFramework.getAttacks()) {
                 GraphArrow a = frameworkGraph.getGArrow(att.getFrom().getName(), att.getTo().getName());
                 if (a!=null) {
-                    att.prefControlX = a.getControlX();
-                    att.prefControlY = a.getControlY(); }
+                    att.prefControlX = Math.round(a.getControlX());
+                    att.prefControlY = Math.round(a.getControlY()); }
                 if (savePos) {
                     bw.write(att.getFrom().getName() + "," + att.getTo().getName() + "," + att.prefControlX + "," + att.prefControlY + System.getProperty("line.separator"));
                 } else {

@@ -175,8 +175,15 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     public String getFromName() {return startNode.getName(); }
     public String getToName() {return endNode.getName(); }
 
-    public void addMetaArrow(GraphMetaArrow arr) {connectedMetaArrows.add(arr);}
-    public void removeMetaArrow(GraphMetaArrow arr) {connectedMetaArrows.remove(arr);}
+    public void addMetaArrow(GraphMetaArrow arr) {
+        connectedMetaArrows.add(arr);
+        midPoint.setVisible(true);
+        midPoint.toFront();
+    }
+    public void removeMetaArrow(GraphMetaArrow arr) {
+        connectedMetaArrows.remove(arr);
+        if (connectedMetaArrows.size()==0) midPoint.setVisible(false);
+    }
 
     public void delete() {
         startNode.removeArrow(this);
