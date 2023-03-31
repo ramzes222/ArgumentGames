@@ -69,6 +69,7 @@ public class Framework {
 
     public ArrayList<FrameworkArgument> getArguments() { return arguments; }
     public ArrayList<FrameworkAttack> getAttacks() { return attacks; }
+    public ArrayList<FrameworkMetaAttack> getMetaAttacks() { return metaAttacks; }
 
     public FrameworkArgument getArgumentByName(String name) {
         for (FrameworkArgument arg : arguments) { if (arg.getName().equals(name)) return arg; }
@@ -244,5 +245,48 @@ public class Framework {
             if (bRegion.contains(metAt.getFrom()) && aRegion.contains(metAt.getTo().getFrom())) return false;
         }
         return true;
+    }
+
+    public boolean isMeta() { return metaAttacks.size() > 0; }
+
+    // Turn this framework into a "flattened" version of the Meta Framework parameter
+    public void generateFromMeta(Framework f) {
+        clear();
+        // Three steps:
+        // 1. For each argument, turn it into j(arg) and r(arg). Add attack from j to r
+        for (FrameworkArgument x: f.getArguments()) {
+            FrameworkArgument justifiedX = new FrameworkArgument("j(" + x.getName() + ")");
+            FrameworkArgument rejectedX = new FrameworkArgument("r(" + x.getName() + ")");
+            arguments.add( justifiedX );
+            arguments.add( rejectedX );
+
+            FrameworkAttack attackX = new FrameworkAttack(justifiedX, rejectedX);
+            attacks.add(attackX);
+        }
+        // 2. For each attack, turn it into an argument x->y. Add attacks between it, r(x), and j(y)
+        for (FrameworkAttack att: f.getAttacks()) {
+            FrameworkArgument attackXtoY = new FrameworkArgument(att.getFrom().getName() + "->" + att.getTo().getName());
+            arguments.add( attackXtoY );
+
+            FrameworkAttack attackRejX = new FrameworkAttack( getArgumentByName( "r(" + att.getFrom().getName() + ")" ),
+                    attackXtoY );
+            attacks.add(attackRejX);
+            FrameworkAttack attackJustY = new FrameworkAttack( attackXtoY,
+                    getArgumentByName( "j(" + att.getTo().getName() + ")" ) );
+            attacks.add(attackJustY);
+        }
+        // 3. For each meta attack, turn it into an argument z->(x->y). Add attacks between it, r(z), and x->y
+        for (FrameworkMetaAttack mAtt: f.getMetaAttacks()) {
+            FrameworkArgument metaAttackArgument = new FrameworkArgument(
+                    mAtt.getFrom().getName() + "->(" + mAtt.getTo().getName() + ")");
+            arguments.add( metaAttackArgument );
+
+            FrameworkAttack attackRejZ = new FrameworkAttack( getArgumentByName( "r(" + mAtt.getFrom().getName() + ")" ),
+                    metaAttackArgument );
+            attacks.add(attackRejZ);
+            FrameworkAttack attackAttack = new FrameworkAttack( metaAttackArgument,
+                    getArgumentByName( mAtt.getTo().getName() ) );
+            attacks.add(attackAttack);
+        }
     }
 }

@@ -1,4 +1,5 @@
 savePositionToFile=true
+allowMetaArguments=true
 argumentBaseColor=0xfff8dcff
 selectionColor=0xffff00ff
 attackArrowColor=0x228b22ff

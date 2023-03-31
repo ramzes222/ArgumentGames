@@ -25,6 +25,7 @@ public class Graph {
     private final ToggleGroup tg = new ToggleGroup();
     private EventHandler<MouseEvent> graphWideEvent;
     private final HashMap<String, Color> colorLookup;
+    private final HashMap<String, Boolean> booleanLookup;
 
     private Framework currFramework;
     enum InteractMode {
@@ -35,7 +36,7 @@ public class Graph {
     }
     private InteractMode interactMode = InteractMode.SELECT_MODE;
 
-    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button deleteButton, Button cleanupButton, HashMap<String, Color> colorLookup) {
+    public Graph(Pane graphPane, RadioButton setSelectModeButton, RadioButton setMoveModeButton, RadioButton setPanModeButton, Button addGCircleButton, Button addGArrowButton, Button deleteButton, Button cleanupButton, HashMap<String, Color> colorLookup, HashMap<String, Boolean> booleanLookup) {
         // Save variables
         this.setSelectModeButton = setSelectModeButton;
         this.setMoveModeButton = setMoveModeButton;
@@ -46,6 +47,7 @@ public class Graph {
         this.deleteButton = deleteButton;
         this.cleanupButton = cleanupButton;
         this.colorLookup = colorLookup;
+        this.booleanLookup = booleanLookup;
         //
         // Setup interact mode buttons
         setUpInteractModeButton(setMoveModeButton, InteractMode.MOVE_MODE);
@@ -241,12 +243,12 @@ public class Graph {
         Optional<String> newName = dialog.showAndWait();
         newName.ifPresent(name -> {
             // Check if the name only contains letters, numbers, or spaces
-            Pattern acceptedSymbols = Pattern.compile("[^a-zA-Z0-9 ]");
+            Pattern acceptedSymbols = Pattern.compile("[^a-zA-Z0-9()_<>\\- ]");
             Matcher m = acceptedSymbols.matcher(name);
             if (m.find()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Unallowed symbol in name");
-                alert.setContentText("You entered '" + name + "'. Only letters, numbers, and spaces can be used.");
+                alert.setContentText("You entered '" + name + "'. Only letters, numbers, spaces, and the following special characters: ()<>-_ can be used.");
                 alert.showAndWait();
                 return;
             }
@@ -374,6 +376,7 @@ public class Graph {
     }
 
     public void beginManualAddGArrow() {
+        boolean metaAllowed = booleanLookup.get("allowMetaArguments");
         // Check which Node (GCircle) is currently selected
         // It will be the origin of the edge
         if (selected != null && selected.getClass() == GraphCircle.class) {
@@ -412,7 +415,8 @@ public class Graph {
                     graphPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, graphWideEvent);
                 }
             }); }
-            // Add event to all arrows
+            // Add event to all arrows, if meta attacks are allowed
+            if (!metaAllowed) return;
             for (GraphArrow toGArrow: gArrows) { toGArrow.setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     if (!currFramework.metaAttackExists(fromGCircle.getName(), toGArrow.getName())) {

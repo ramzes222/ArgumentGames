@@ -34,7 +34,7 @@
       </Pane>
       <Pane layoutY="60.0" prefHeight="60.0" prefWidth="600.0">
          <children>
-            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Argument Games">
+            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Meta Argument Frameworks">
                <padding>
                   <Insets left="15.0" />
                </padding>
@@ -48,8 +48,8 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <CheckBox fx:id="playAgainstComputer" disable="true" mnemonicParsing="false" text="Play against the computer">
-                      <tooltip><Tooltip text="${'If true, in argument games, the proponent will be controlled by the computer. \n\nIf false, both players will be controlled by the user'}" /></tooltip>
+                  <CheckBox fx:id="allowMetaArguments" mnemonicParsing="false" text="Allow stratified meta argument frameworks">
+                      <tooltip><Tooltip text="${'When enabled, allows the user to add meta attacks that attack other attacks. \nAny frameworks created must follow the stratification rules.'}" /></tooltip>
                       <padding>
                         <Insets bottom="10.0" left="20.0" top="10.0" />
                      </padding>

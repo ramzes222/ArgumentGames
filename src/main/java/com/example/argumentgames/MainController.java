@@ -29,7 +29,7 @@ public class MainController {
     @FXML
     Menu fileMenu, editMenu;
     @FXML
-    MenuItem prefGameTreeButton, groundGameTreeButton;
+    MenuItem prefGameTreeButton, groundGameTreeButton, turnToDungButton;
 
     Framework currentFramework;
 
@@ -48,7 +48,7 @@ public class MainController {
     public void initialize() {
         // Set up the two Graphs
         currentFramework = new Framework();
-        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton, colorLookup);
+        frameworkGraph = new Graph(leftGraphPane, leftSelectButton, leftMoveButton, leftPanButton, leftAddNodeButton, leftAddEdgeButton, leftDeleteButton, leftCleanupButton, colorLookup, booleanLookup);
         frameworkGraph.loadFramework(currentFramework);
         gameTree = new TreeGraph(rightGraphPane, rightSelectButton, rightMoveButton, rightPanButton, colorLookup);
 
@@ -105,6 +105,7 @@ public class MainController {
 
     private void restoreDefaults() {
         booleanLookup.put("savePositionToFile",true);
+        booleanLookup.put("allowMetaArguments",false);
 
         colorLookup.put("argumentBaseColor", Color.CORNSILK);
         colorLookup.put("selectionColor", Color.YELLOW);
@@ -385,5 +386,25 @@ public class MainController {
     private void openSettings() {
         SettingsController settingsController = new SettingsController(this);
         settingsController.showWindow();
+    }
+
+    // Modify the framework to turn it into a Dung framework
+    @FXML
+    private void turnToDung() {
+        if (!currentFramework.isMeta()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("No changes made");
+            alert.setContentText("No meta attacks currently exist, the current framework is already a Dung framework. Nothing was changed.");
+            alert.showAndWait();
+            return;
+        }
+        Framework newDung = new Framework();
+        newDung.generateFromMeta(currentFramework);
+        currentFramework = newDung;
+        frameworkGraph.loadFramework(currentFramework);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Success");
+        alert.setContentText("Successfully turned the meta framework into a Dung Framework");
+        alert.showAndWait();
     }
 }

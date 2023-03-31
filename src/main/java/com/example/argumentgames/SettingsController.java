@@ -8,28 +8,25 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.Set;
 
 public class SettingsController {
 
     private Stage settingsStage;
     MainController mainController;
     @FXML
-    CheckBox savePositionToFile, playAgainstComputer;
+    CheckBox savePositionToFile, allowMetaArguments;
     @FXML
     ColorPicker attackControlColor, attackArrowColor, argumentBaseColor, selectionColor, proponentArgColor, opponentArgColor,
             attackedArgColor, attackingArgColor;
     @FXML
     Button saveButton, restoreDefaultsButton, cancelButton;
 
-    private HashMap<String, Node> stringToNode = new HashMap<>();
+    private final HashMap<String, Node> stringToNode = new HashMap<>();
     public SettingsController(MainController mainController) {
         this.mainController = mainController;
         try {
@@ -51,7 +48,6 @@ public class SettingsController {
 
     @FXML
     private void initialize() {
-
         saveButton.setOnAction(e -> {saveToFile(); settingsStage.hide(); mainController.loadSettings();});
         restoreDefaultsButton.setOnAction(e -> restoreDefaults());
         cancelButton.setOnAction(e-> {
@@ -70,6 +66,7 @@ public class SettingsController {
 
         // Setup the HashMap
         stringToNode.put("savePositionToFile", savePositionToFile);
+        stringToNode.put("allowMetaArguments", allowMetaArguments);
         stringToNode.put("argumentBaseColor", argumentBaseColor);
         stringToNode.put("selectionColor", selectionColor);
         stringToNode.put("attackArrowColor", attackArrowColor);
@@ -99,7 +96,7 @@ public class SettingsController {
                     } else {
                         // Read Boolean
                         CheckBox setCheckbox = (CheckBox) stringToNode.get(words[0]);
-                        if (setCheckbox.isSelected() != (boolean) Boolean.parseBoolean(words[1])) return true;
+                        if (setCheckbox.isSelected() != Boolean.parseBoolean(words[1])) return true;
                     }
                 }
             } catch (Exception exception) {
@@ -135,7 +132,7 @@ public class SettingsController {
             } catch (Exception exception) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Cannot read settings file");
-                alert.setContentText("The saved settings cannot be read. Restoring default settings... \n\nError: " + exception.toString());
+                alert.setContentText("The saved settings cannot be read. Restoring default settings... \n\nError: " + exception);
                 alert.showAndWait();
                 restoreDefaults();
                 saveToFile();
@@ -161,8 +158,8 @@ public class SettingsController {
             // Start writing Settings
             // savePositionToFile
             bw.write("savePositionToFile=" + savePositionToFile.isSelected() + System.getProperty("line.separator"));
-            // playAgainstComputer
-            //bw.write("playAgainstComputer=" + playAgainstComputer.isSelected() + System.getProperty("line.separator"));
+            // allowMetaArguments
+            bw.write("allowMetaArguments=" + allowMetaArguments.isSelected() + System.getProperty("line.separator"));
 
 
             // argumentBaseColor
@@ -195,6 +192,7 @@ public class SettingsController {
 
     private void restoreDefaults() {
         savePositionToFile.setSelected(true);
+        allowMetaArguments.setSelected(false);
 
         argumentBaseColor.setValue(Color.CORNSILK);
         selectionColor.setValue(Color.YELLOW);

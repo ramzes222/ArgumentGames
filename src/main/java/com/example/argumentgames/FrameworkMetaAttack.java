@@ -18,6 +18,6 @@ public class FrameworkMetaAttack {
 
     public FrameworkAttack getTo() { return to; }
     public FrameworkArgument getFrom() { return from; }
-    public String getName() { return  from.getName() + "attacks " + to.getName(); }
+    public String getName() { return  from.getName() + "->(" + to.getName() + ")"; }
 
 }

@@ -26,6 +26,8 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                      <MenuItem fx:id="prefGameTreeButton" mnemonicParsing="false" text="Show Preferred Game Tree" />
                      <MenuItem fx:id="groundGameTreeButton" mnemonicParsing="false" text="Show Grounded Game Tree" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                     <MenuItem fx:id="turnToDungButton" onAction="#turnToDung" mnemonicParsing="false" text="Transform Meta Framework to Dung Framework" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

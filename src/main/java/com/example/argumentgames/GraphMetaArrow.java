@@ -157,7 +157,7 @@ public class GraphMetaArrow extends QuadCurve implements GraphNode {
     public Circle getControlPoint() { return controlPoint; }
     @Override
     public boolean isCircle() { return false; }
-    public String getName() { return null; }
+    public String getName() { return  startNode.getName() + "->(" + attackedArrow.getName() + ")"; }
     public String getFromName() {return startNode.getName(); }
     public String getToName() {return attackedArrow.getName(); }
 

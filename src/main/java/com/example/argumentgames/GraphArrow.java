@@ -171,7 +171,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
     public Circle getMidPoint() { return midPoint; }
     @Override
     public boolean isCircle() { return false; }
-    public String getName() { return  "(" + startNode.getName() + " attacks " + endNode.getName() + ")"; }
+    public String getName() { return  startNode.getName() + "->" + endNode.getName(); }
     public String getFromName() {return startNode.getName(); }
     public String getToName() {return endNode.getName(); }
 
