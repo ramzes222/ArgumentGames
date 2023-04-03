@@ -652,6 +652,7 @@ public class Graph {
                 double newY = e.getSceneY() - dragOriginY;
                 node.getCenterYProperty().set(newY);
                 node.setLayoutY(newY);
+                if (booleanLookup.get("straightLineAttacks")) node.straightenArrows();
                 node.rotateArrows();
             }
         });

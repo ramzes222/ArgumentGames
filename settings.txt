@@ -1,4 +1,5 @@
 savePositionToFile=true
+straightLineAttacks=true
 allowMetaArguments=true
 argumentBaseColor=0xb3b3b3ff
 selectionColor=0xffff00ff

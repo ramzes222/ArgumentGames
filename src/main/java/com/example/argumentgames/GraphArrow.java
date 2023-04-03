@@ -113,6 +113,11 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         setControlPointXY( (startXProperty().get() + endXProperty().get()) / 2 , (startYProperty().get() + endYProperty().get()) / 2 );
     }
 
+    public void centerSelfAndConnected() {
+        centerControlPoint();
+        for (GraphMetaArrow metArr: connectedMetaArrows) metArr.centerControlPoint();
+    }
+
     public void setCenterPoint() {
         double centerX = 0.25*startXProperty().get() + 0.5*controlPoint.getLayoutX() + 0.25*endXProperty().get();
         double centerY = 0.25*startYProperty().get() + 0.5*controlPoint.getLayoutY() + 0.25*endYProperty().get();

@@ -105,6 +105,7 @@ public class MainController {
 
     private void restoreDefaults() {
         booleanLookup.put("savePositionToFile",true);
+        booleanLookup.put("straightLineAttacks",false);
         booleanLookup.put("allowMetaArguments",false);
 
         colorLookup.put("argumentBaseColor", Color.CORNSILK);

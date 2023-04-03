@@ -19,7 +19,7 @@ public class SettingsController {
     private Stage settingsStage;
     MainController mainController;
     @FXML
-    CheckBox savePositionToFile, allowMetaArguments;
+    CheckBox savePositionToFile, allowMetaArguments, straightLineAttacks;
     @FXML
     ColorPicker attackControlColor, attackArrowColor, argumentBaseColor, selectionColor, proponentArgColor, opponentArgColor,
             attackedArgColor, attackingArgColor;
@@ -66,6 +66,7 @@ public class SettingsController {
 
         // Setup the HashMap
         stringToNode.put("savePositionToFile", savePositionToFile);
+        stringToNode.put("straightLineAttacks", straightLineAttacks);
         stringToNode.put("allowMetaArguments", allowMetaArguments);
         stringToNode.put("argumentBaseColor", argumentBaseColor);
         stringToNode.put("selectionColor", selectionColor);
@@ -158,6 +159,8 @@ public class SettingsController {
             // Start writing Settings
             // savePositionToFile
             bw.write("savePositionToFile=" + savePositionToFile.isSelected() + System.getProperty("line.separator"));
+            // straightLineAttacks
+            bw.write("straightLineAttacks=" + straightLineAttacks.isSelected() + System.getProperty("line.separator"));
             // allowMetaArguments
             bw.write("allowMetaArguments=" + allowMetaArguments.isSelected() + System.getProperty("line.separator"));
 
@@ -192,6 +195,7 @@ public class SettingsController {
 
     private void restoreDefaults() {
         savePositionToFile.setSelected(true);
+        straightLineAttacks.setSelected(false);
         allowMetaArguments.setSelected(false);
 
         argumentBaseColor.setValue(Color.CORNSILK);

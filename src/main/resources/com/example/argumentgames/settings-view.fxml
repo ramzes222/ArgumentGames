@@ -34,7 +34,7 @@
       </Pane>
       <Pane layoutY="60.0" prefHeight="60.0" prefWidth="600.0">
          <children>
-            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Meta Argument Frameworks">
+            <Label prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: lightgray;" text="Argument Frameworks">
                <padding>
                   <Insets left="15.0" />
                </padding>
@@ -48,7 +48,13 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <CheckBox fx:id="allowMetaArguments" mnemonicParsing="false" text="Allow stratified meta argument frameworks">
+                   <CheckBox fx:id="straightLineAttacks" mnemonicParsing="false" text="Keep attacks straight">
+                       <tooltip><Tooltip text="${'When enabled, upon moving an argument, all attacks connected will become straight lines. \nLater adjustments with control points will still be possible.'}" /></tooltip>
+                       <padding>
+                           <Insets bottom="10.0" left="20.0" top="10.0" />
+                       </padding>
+                   </CheckBox>
+                  <CheckBox fx:id="allowMetaArguments" mnemonicParsing="false" text="Allow stratified meta argument frameworks" GridPane.columnIndex="1">
                       <tooltip><Tooltip text="${'When enabled, allows the user to add meta attacks that attack other attacks. \nAny frameworks created must follow the stratification rules.'}" /></tooltip>
                       <padding>
                         <Insets bottom="10.0" left="20.0" top="10.0" />

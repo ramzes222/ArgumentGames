@@ -111,6 +111,12 @@ public class GraphCircle extends StackPane implements GraphNode {
         for (GraphMetaArrow mArrow: connectedMetaArrows) { mArrow.rotateArrowShape(); }
     }
 
+    // Moves the control points of all adjacent arrows so that they are straight
+    public void straightenArrows() {
+        for (GraphArrow arr: connectedArrows) arr.centerSelfAndConnected();
+        for (GraphMetaArrow metArr: connectedMetaArrows) metArr.centerControlPoint();
+    }
+
     public String getName() { return name; }
     public DoubleProperty getCenterXProperty() { return circle.centerXProperty(); }
     public DoubleProperty getCenterYProperty() { return circle.centerYProperty(); }
