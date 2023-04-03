@@ -31,7 +31,7 @@ public class GraphArrow extends QuadCurve implements GraphNode {
         midPoint = new Circle();
         midPoint.setRadius(10);
         midPoint.setVisible(false);
-        midPoint.setFill(Color.TURQUOISE);
+        midPoint.setFill(colorLookup.get("attackControlColor"));
 
         //make the Control Node draggable
         controlPoint.setOnMousePressed(e -> {
