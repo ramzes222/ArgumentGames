@@ -270,8 +270,12 @@ public class Graph {
             }
             // Save the new argument to the framework
             currFramework.addArgument(name);
-            addGCircle(name);
+            GraphCircle c = addGCircle(name);
             setInteractMode(interactMode);
+            // Select the newly created circle
+            if (selected != null) selected.deselect();
+            selected = c;
+            c.select();
         });
     }
 
@@ -414,9 +418,14 @@ public class Graph {
             for (GraphCircle toGCircle: gCircles) { toGCircle.setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     if (!currFramework.attackExists(fromGCircle.getName(), toGCircle.getName())) {
-                        addGArrow(fromGCircle, toGCircle);
+                        GraphArrow arr = addGArrow(fromGCircle, toGCircle);
+                        if (arr==null) return;
                         currFramework.addAttack(fromGCircle.getName(), toGCircle.getName());
                         setInteractMode(interactMode);
+                        // Select the newly created arrow
+                        if (selected != null) selected.deselect();
+                        selected = arr;
+                        arr.select();
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Attack already exists");
@@ -435,9 +444,13 @@ public class Graph {
                     if (!currFramework.metaAttackExists(fromGCircle.getName(), toGArrow.getName())) {
                         // Check if the result is still stratified
                         if (currFramework.isMetaAttackAllowed(fromGCircle.getName(), toGArrow.getName())) {
-                            addGMetaArrow(fromGCircle, toGArrow);
+                            GraphMetaArrow arr = addGMetaArrow(fromGCircle, toGArrow);
                             currFramework.addMetaAttack(fromGCircle.getName(), toGArrow.getName());
                             setInteractMode(interactMode);
+                            // Select the newly created arrow
+                            if (selected != null) selected.deselect();
+                            selected = arr;
+                            arr.select();
                         } else {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("Meta attack not allowed!");
