@@ -99,7 +99,7 @@ public class GraphCircle extends StackPane implements GraphNode {
     }
     public void highlight(Color c) {circle.setStroke(c);}
     public void select() { setVisual("selected");}
-    public void deselect() { circle.setStroke(Color.TRANSPARENT); }
+    public void deselect() { setVisual("base"); }
     public void disable() { circle.setFill(Color.LIGHTGRAY); circle.setStroke(Color.DARKGRAY); text.setFill(Color.DARKGRAY);}
     public void enable() { setVisual("base"); text.setFill(Color.BLACK);}
 

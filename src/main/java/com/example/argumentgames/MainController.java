@@ -235,19 +235,22 @@ public class MainController {
                 }
 
             }
-            // Write Meta Edges
-            bw.write("MetaEdges:" + System.getProperty("line.separator"));
-            for (FrameworkMetaAttack mAtt : currentFramework.getMetaAttacks()) {
-                GraphMetaArrow a = frameworkGraph.getGMetaArrow(mAtt.getFrom().getName(), mAtt.getTo().getName());
-                if (a!=null) {
-                    mAtt.prefControlX = Math.round(a.getControlX());
-                    mAtt.prefControlY = Math.round(a.getControlY()); }
-                if (savePos) {
-                    bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + "," + mAtt.prefControlX + "," + mAtt.prefControlY + System.getProperty("line.separator"));
-                } else {
-                    bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + System.getProperty("line.separator"));
-                }
+            if (!currentFramework.getMetaAttacks().isEmpty()) {
+                // Write Meta Edges
+                bw.write("MetaEdges:" + System.getProperty("line.separator"));
+                for (FrameworkMetaAttack mAtt : currentFramework.getMetaAttacks()) {
+                    GraphMetaArrow a = frameworkGraph.getGMetaArrow(mAtt.getFrom().getName(), mAtt.getTo().getName());
+                    if (a != null) {
+                        mAtt.prefControlX = Math.round(a.getControlX());
+                        mAtt.prefControlY = Math.round(a.getControlY());
+                    }
+                    if (savePos) {
+                        bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + "," + mAtt.prefControlX + "," + mAtt.prefControlY + System.getProperty("line.separator"));
+                    } else {
+                        bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + System.getProperty("line.separator"));
+                    }
 
+                }
             }
         } catch (IOException ex){
             ex.printStackTrace();
@@ -308,6 +311,7 @@ public class MainController {
                     }
                 }
             }
+            gameTree.clear();
             frameworkGraph.loadFramework(currentFramework);
             if (requiresCleanUp) frameworkGraph.cleanUp();
         } catch (Exception exception) {

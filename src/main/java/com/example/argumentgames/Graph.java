@@ -79,6 +79,7 @@ public class Graph {
         graphPane.getChildren().clear();
         gCircles.clear();
         gArrows.clear();
+        selected = null;
         currFramework = framework;
         ArrayList<FrameworkArgument> argList = framework.getArguments();
         // Add visual representations of Arguments
