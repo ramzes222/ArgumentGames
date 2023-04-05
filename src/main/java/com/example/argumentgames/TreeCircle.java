@@ -5,6 +5,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,11 @@ public class TreeCircle extends StackPane {
         circle.setRadius(radius);
         setVisual("base");
         circle.setStrokeWidth(5);
-        Text text = new Text(name);
+        Text text = new Text(name);;
+        text.setFill(Color.BLACK);
+        text.setStyle("-fx-font: 20 arial;");
+        text.setWrappingWidth(80);
+        text.setTextAlignment(TextAlignment.CENTER);
         //
         // Prepare the stack (self)
         setId(name);

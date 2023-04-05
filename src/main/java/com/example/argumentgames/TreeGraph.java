@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class TreeGraph {
     private final double moveAwayStep = 10;
-    private double dragOriginY = 0, dragOriginX = 0, tCircleRadius = 30;
+    private double dragOriginY = 0, dragOriginX = 0, tCircleRadius = 40;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<TreeCircle> tCircles = new ArrayList<>();
     private final ArrayList<TreeArrow> tArrows = new ArrayList<>();

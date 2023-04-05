@@ -32,7 +32,7 @@ public class TreeArrow extends Line {
         toBack();
 
         // Setup the arrow tip
-        double[] shape = new double[] { 15,0,40,15,40,-15 };
+        double[] shape = new double[] { 30,0,55,15,55,-15 };
         arrow = new Polygon(shape);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
         arrow.layoutYProperty().bind(endNode.layoutYProperty());
