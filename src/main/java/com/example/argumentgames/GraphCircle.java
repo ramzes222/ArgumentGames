@@ -31,7 +31,7 @@ public class GraphCircle extends StackPane implements GraphNode {
         text = new Text(name);
         text.setFill(Color.BLACK);
         text.setStyle("-fx-font: 20 arial;");
-        text.setWrappingWidth(80);
+        text.setWrappingWidth(85);
         text.setTextAlignment(TextAlignment.CENTER);
         //
         // Prepare the stack (self)

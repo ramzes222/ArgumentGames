@@ -517,45 +517,49 @@ public class Graph {
     private void deleteSelected() {
         if (selected == null) return;
         if (selected.getClass() == GraphCircle.class) {
-            // Delete node
-            GraphCircle nodeToDelete = (GraphCircle) selected;
+            deleteCircle( (GraphCircle) selected);
             selected = null;
-            // Delete connected arrows
-            ArrayList<GraphArrow> arrowsToDelete = (ArrayList<GraphArrow>) nodeToDelete.getConnectedArrows().clone();
-            for (GraphArrow a: arrowsToDelete) {
-                a.delete();
-                gArrows.remove(a);
-                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint(), a.getMidPoint());
-                currFramework.removeAttack(a.getFromName(), a.getToName());
-            }
-            // Delete connected meta arrows
-            ArrayList<GraphMetaArrow> metaArrowsToDelete = (ArrayList<GraphMetaArrow>) nodeToDelete.getConnectedMetaArrows().clone();
-            for (GraphMetaArrow a: metaArrowsToDelete) {
-                a.delete();
-                gMetaArrows.remove(a);
-                graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint());
-                currFramework.removeMetaAttack(a.getFromName(), a.getToName());
-            }
-            gCircles.remove(nodeToDelete);
-            graphPane.getChildren().removeAll(nodeToDelete);
-            currFramework.removeArgument(nodeToDelete.getName());
         } else if (selected.getClass() == GraphArrow.class) {
-            // Delete edge
-            GraphArrow edgeToDelete = (GraphArrow) selected;
+            deleteArrow( (GraphArrow) selected);
             selected = null;
-            edgeToDelete.delete();
-            gArrows.remove(edgeToDelete);
-            graphPane.getChildren().removeAll(edgeToDelete, edgeToDelete.getArrowTip(), edgeToDelete.getControlPoint(), edgeToDelete.getMidPoint());
-            currFramework.removeAttack(edgeToDelete.getFromName(), edgeToDelete.getToName());
         } else {
-            // Delete meta arrow
-            GraphMetaArrow metaEdgeToDelete = (GraphMetaArrow) selected;
+            deleteMetaArrow( (GraphMetaArrow) selected);
             selected = null;
-            metaEdgeToDelete.delete();
-            gMetaArrows.remove(metaEdgeToDelete);
-            graphPane.getChildren().removeAll(metaEdgeToDelete, metaEdgeToDelete.getArrowTip(), metaEdgeToDelete.getControlPoint());
-            currFramework.removeMetaAttack(metaEdgeToDelete.getFromName(), metaEdgeToDelete.getToName());
         }
+    }
+
+    private void deleteCircle(GraphCircle n) {
+
+        // Delete connected meta arrows
+        ArrayList<GraphMetaArrow> metaArrowsToDelete = (ArrayList<GraphMetaArrow>) n.getConnectedMetaArrows().clone();
+        for (GraphMetaArrow mA: metaArrowsToDelete) { deleteMetaArrow(mA); }
+
+        // Delete connected arrows
+        ArrayList<GraphArrow> arrowsToDelete = (ArrayList<GraphArrow>) n.getConnectedArrows().clone();
+        for (GraphArrow a: arrowsToDelete) { deleteArrow(a); }
+
+        gCircles.remove(n);
+        graphPane.getChildren().removeAll(n);
+        currFramework.removeArgument(n.getName());
+    }
+
+    private void deleteArrow(GraphArrow a) {
+
+        // Delete connected meta arrows
+        ArrayList<GraphMetaArrow> metaArrowsToDelete = (ArrayList<GraphMetaArrow>) a.getConnectedMetaArrows().clone();
+        for (GraphMetaArrow mA: metaArrowsToDelete) { deleteMetaArrow(mA); }
+
+        a.delete();
+        gArrows.remove(a);
+        graphPane.getChildren().removeAll(a, a.getArrowTip(), a.getControlPoint(), a.getMidPoint());
+        currFramework.removeAttack(a.getFromName(), a.getToName());
+    }
+
+    private void deleteMetaArrow(GraphMetaArrow mA) {
+        mA.delete();
+        gMetaArrows.remove(mA);
+        graphPane.getChildren().removeAll(mA, mA.getArrowTip(), mA.getControlPoint());
+        currFramework.removeMetaAttack(mA.getFromName(), mA.getToName());
     }
 
     // Changes the appearance of all nodes and arrows to make them grayed out
