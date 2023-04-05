@@ -1,10 +1,7 @@
 package com.example.argumentgames;
 
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -13,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TreeGraph {
-    private final double moveAwayStep = 10;
     private double dragOriginY = 0, dragOriginX = 0, tCircleRadius = 40;
     private final RadioButton setSelectModeButton, setMoveModeButton, setPanModeButton;
     private final ArrayList<TreeCircle> tCircles = new ArrayList<>();
@@ -27,7 +23,6 @@ public class TreeGraph {
 
     private TreeArgument root;
 
-    private EventHandler<MouseEvent> graphWideEvent;
     enum InteractMode {
         SELECT_MODE,
         MOVE_MODE,
@@ -65,7 +60,7 @@ public class TreeGraph {
     }
 
     // Creates a boundary for the area
-    // Only the nodes inside of the area will be visible - anything outside will be cut
+    // Only the nodes inside the area will be visible - anything outside will be cut
     private void setUpClip() {
         final Rectangle outputClip = new Rectangle();
         outputClip.setArcWidth(5);
@@ -84,9 +79,7 @@ public class TreeGraph {
     private void setUpInteractModeButton(RadioButton b, TreeGraph.InteractMode i) {
         b.getStyleClass().remove("radio-button");
         b.setToggleGroup(this.tg);
-        b.setOnAction(e -> {
-            setInteractMode(i);
-        });
+        b.setOnAction(e -> setInteractMode(i));
     }
 
     // Changes the interact mode for the tree
@@ -249,67 +242,52 @@ public class TreeGraph {
         if (children.isEmpty()) return;
         double distance = (xRight - xLeft) / root.getWidth();
         double currRightX = xLeft, currLeftX = xLeft;
-        //if (children.size() == root.getWidth()) {
-        if (false) {
-            // Special case - all children are leaves
-            for (TreeArgument arg: children) {
+        /* For each child:
+            Step 1: Take the first argument. If it's a leaf, save it in a collection and move on
+            Step 2: If it's not a leaf, take its width and place it in its "box"
+            Step 3: Save the locations of free spaces - leaves will slot into them later
+         */
+        ArrayList<TreeArgument> leaves = new ArrayList<>();
+        ArrayList<Double> emptySpots = new ArrayList<>();
+        for (TreeArgument arg: children) {
+            if (arg.isLeaf()) {leaves.add(arg); }
+            else {
+                int width = arg.getWidth();
+                // Create the node
+                currRightX += distance * width;
+                // TotalPositions is the width rounded down to an odd number
+                int totalPositions = width; if (width%2 == 0) totalPositions -= 1;
+                // Position is the middle number among all positions
+                int position = (int) Math.ceil(width/2.0);
+                // NEW CIRCLE
+                addTCircle(arg, getEvenDivision(currLeftX, currRightX, position, totalPositions),
+                        yLevel, root.getVisualTCircle());
+                // Build the subtree of this branch
+                buildBranch(arg, yLevel + (tCircleRadius * 3), currLeftX, currRightX);
+                // Save the empty slots
+                for (int i = 1; i <= totalPositions; i++) {
+                    if (i != position) emptySpots.add( getEvenDivision(currLeftX, currRightX, i, totalPositions) );
+                }
+                currLeftX += distance*width;
+            }
+        }
+        // We have placed all branches - time for slotting leaves into the saved empty slots
+        for (TreeArgument leaf: leaves) {
+            if (emptySpots.size() > 0) {
+                // Slot into save slot
+                double xSlot = emptySpots.remove(0);
+                // NEW CIRCLE
+                addTCircle(leaf, xSlot,
+                        yLevel, root.getVisualTCircle());
+            } else {
+                // Add with width 1
                 // Create the node
                 // NEW CIRCLE
-                addTCircle(arg, currRightX + (distance/2),
+                addTCircle(leaf, currRightX + (distance/2),
                         yLevel, root.getVisualTCircle());
-                // If it's a branch, build the subtree
-                if (!arg.isLeaf()) buildBranch(arg, yLevel + (tCircleRadius * 3), currRightX, currRightX + distance);
                 // Increase the currLeftX
                 currRightX += distance;
-            }
-        } else {
-            /* For each child:
-                Step 1: Take the first argument. If it's a leaf, save it in a collection and move on
-                Step 2: If it's not a leaf, take its width and place it in its "box"
-                Step 3: Save the locations of free spaces - leaves will slot into them later
-             */
-            ArrayList<TreeArgument> leaves = new ArrayList<>();
-            ArrayList<Double> emptySpots = new ArrayList<>();
-            for (TreeArgument arg: children) {
-                if (arg.isLeaf()) {leaves.add(arg); }
-                else {
-                    int width = arg.getWidth();
-                    // Create the node
-                    currRightX += distance * width;
-                    // TotalPositions is the width rounded down to an odd number
-                    int totalPositions = width; if (width%2 == 0) totalPositions -= 1;
-                    // Position is the middle number among all positions
-                    int position = (int) Math.ceil(width/2.0);
-                    // NEW CIRCLE
-                    addTCircle(arg, getEvenDivision(currLeftX, currRightX, position, totalPositions),
-                            yLevel, root.getVisualTCircle());
-                    // Build the subtree of this branch
-                    buildBranch(arg, yLevel + (tCircleRadius * 3), currLeftX, currRightX);
-                    // Save the empty slots
-                    for (int i = 1; i <= totalPositions; i++) {
-                        if (i != position) emptySpots.add( getEvenDivision(currLeftX, currRightX, i, totalPositions) );
-                    }
-                    currLeftX += distance*width;
-                }
-            }
-            // We have placed all branches - time for slotting leaves into the saved empty slots
-            for (TreeArgument leaf: leaves) {
-                if (emptySpots.size() > 0) {
-                    // Slot into save slot
-                    double xSlot = emptySpots.remove(0);
-                    // NEW CIRCLE
-                    addTCircle(leaf, xSlot,
-                            yLevel, root.getVisualTCircle());
-                } else {
-                    // Add with width 1
-                    // Create the node
-                    // NEW CIRCLE
-                    addTCircle(leaf, currRightX + (distance/2),
-                            yLevel, root.getVisualTCircle());
-                    // Increase the currLeftX
-                    currRightX += distance;
 
-                }
             }
         }
     }

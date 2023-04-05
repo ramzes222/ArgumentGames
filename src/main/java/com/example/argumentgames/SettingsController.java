@@ -64,7 +64,7 @@ public class SettingsController {
             } else {settingsStage.hide(); }
         });
 
-        // Setup the HashMap
+        // Set up the HashMap
         stringToNode.put("savePositionToFile", savePositionToFile);
         stringToNode.put("straightLineAttacks", straightLineAttacks);
         stringToNode.put("allowMetaArguments", allowMetaArguments);

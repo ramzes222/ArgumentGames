@@ -126,7 +126,6 @@ public class TreeArgument {
         return false;
     }
     public String getName() {return name; }
-    public TreeArgument getParent() {return parent; }
     public int getWidth() { return width; }
     public boolean isLeaf() { return children.size() == 0; }
 
@@ -138,18 +137,21 @@ public class TreeArgument {
     public void updateWinningStrategy() {
         // Is it pro turn argument?
         if (isPro) {
-            if (children.isEmpty()) {
-                isInWinningStrategy = true;
-            } else {
+            if (!children.isEmpty()) {
                 // Update the children
-                for (TreeArgument childArg : children) { childArg.updateWinningStrategy(); }
+                for (TreeArgument childArg : children) {
+                    childArg.updateWinningStrategy();
+                }
                 // If any of the children are not inStrat, this has to be out
                 for (TreeArgument childArg : children) {
-                    if (!childArg.isInWinningStrategy) { cutOffStrategyBranch(); return; }
+                    if (!childArg.isInWinningStrategy) {
+                        cutOffStrategyBranch();
+                        return;
+                    }
                 }
                 // All children are inStrat - so this has to be in strat
-                isInWinningStrategy = true;
             }
+            isInWinningStrategy = true;
         } else {
             // Easiest case - if opp turn and no children, it's always out
             if (children.isEmpty()) {

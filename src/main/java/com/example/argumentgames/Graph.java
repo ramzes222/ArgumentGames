@@ -95,7 +95,7 @@ public class Graph {
         // Add meta attacks
         for (FrameworkMetaAttack mAtt : framework.getMetaAttacks()) {
             GraphMetaArrow a = addGMetaArrow( getGCircle(mAtt.getFrom().getName()), getGArrowByName(mAtt.getTo().getName()) );
-            if (a!=null) a.setControlPointXY(mAtt.prefControlX, mAtt.prefControlY);
+            a.setControlPointXY(mAtt.prefControlX, mAtt.prefControlY);
         }
         setSelectModeButton.fire();
         setInteractMode(InteractMode.SELECT_MODE);

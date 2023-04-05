@@ -131,8 +131,10 @@ public class MainController {
         if (response.get() == ButtonType.OK){
             currentlyUsedFile = null;
             currentFramework.clear();
+            frameworkGraph.loadFramework(currentFramework);
             gameTree.clear();
-            displayCurrentFileAsHeader();
+            Stage thisStage = (Stage) leftGraphPane.getScene().getWindow();
+            thisStage.setTitle("Argument Games v1.0");
         }
     }
 
@@ -276,37 +278,39 @@ public class MainController {
             int loadingType = 1;
             boolean requiresCleanUp = false;
             while ((nextLine = br.readLine()) != null) {
-                if (nextLine.equals("Nodes:")) loadingType = 1;
-                else if (nextLine.equals("Edges:")) loadingType = 2;
-                else if (nextLine.equals("MetaEdges:")) loadingType = 3;
-                else {
-                    String[] words = nextLine.split(",");
-                    if (loadingType == 1) {
-                        // Interpret the data as a node
-                        // If the positions are not provided, use default values
-                        if (words.length < 3) {
-                            currentFramework.addArgument(words[0], 200, 200);
-                            requiresCleanUp = true;
+                switch (nextLine) {
+                    case "Nodes:" -> loadingType = 1;
+                    case "Edges:" -> loadingType = 2;
+                    case "MetaEdges:" -> loadingType = 3;
+                    default -> {
+                        String[] words = nextLine.split(",");
+                        if (loadingType == 1) {
+                            // Interpret the data as a node
+                            // If the positions are not provided, use default values
+                            if (words.length < 3) {
+                                currentFramework.addArgument(words[0], 200, 200);
+                                requiresCleanUp = true;
+                            } else {
+                                currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
+                            }
+                        } else if (loadingType == 2) {
+                            // Interpret the data as an edge
+                            // If the positions are not provided, use default values
+                            if (words.length < 4) {
+                                currentFramework.addAttack(words[0], words[1], 300.0, 300.0);
+                                requiresCleanUp = true;
+                            } else {
+                                currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                            }
                         } else {
-                            currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
-                        }
-                    } else if (loadingType == 2) {
-                        // Interpret the data as an edge
-                        // If the positions are not provided, use default values
-                        if (words.length < 4) {
-                            currentFramework.addAttack(words[0], words[1], 300.0, 300.0);
-                            requiresCleanUp = true;
-                        } else {
-                            currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
-                        }
-                    } else {
-                        // Interpret the data as a meta edge
-                        // If the positions are not provided, use default values
-                        if (words.length < 4) {
-                            currentFramework.addMetaAttack(words[0], words[1], 300.0, 300.0);
-                            requiresCleanUp = true;
-                        } else {
-                            currentFramework.addMetaAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                            // Interpret the data as a meta edge
+                            // If the positions are not provided, use default values
+                            if (words.length < 4) {
+                                currentFramework.addMetaAttack(words[0], words[1], 300.0, 300.0);
+                                requiresCleanUp = true;
+                            } else {
+                                currentFramework.addMetaAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                            }
                         }
                     }
                 }

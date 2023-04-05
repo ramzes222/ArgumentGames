@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.util.Optional;
-
 
 public class StartGameController {
     MainController mainController;
@@ -17,7 +15,7 @@ public class StartGameController {
     @FXML
     Button startGameButton, cancelButton;
     @FXML
-    ChoiceBox gameTypeChoiceBox, rulesetChoiceBox;
+    ChoiceBox<String> gameTypeChoiceBox, rulesetChoiceBox;
     @FXML
     CheckBox computerPlayerCheckbox;
 
@@ -46,9 +44,7 @@ public class StartGameController {
             startGameStage.hide();
             mainController.startGame(computerPlayerCheckbox.isSelected(), isGrounded, isBaseRuleset);
         });
-        cancelButton.setOnAction(e-> {
-            startGameStage.hide();
-        });
+        cancelButton.setOnAction(e-> startGameStage.hide());
     }
 
     public void showWindow() {

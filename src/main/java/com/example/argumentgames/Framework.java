@@ -93,15 +93,6 @@ public class Framework {
         }
         return null;
     }
-//    public FrameworkAttack getAttack(String fromName, String toName) {
-//        FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);
-//        if (from!=null && to!=null) {
-//            for (FrameworkAttack att: attacks) {
-//                if (att.getTo() == to && att.getFrom() == from) return att;
-//            }
-//        }
-//        return null;
-//    }
 
     public void addAttack(String fromName, String toName) {
         FrameworkArgument from = getArgumentByName(fromName), to = getArgumentByName(toName);

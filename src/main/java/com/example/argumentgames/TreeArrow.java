@@ -11,10 +11,9 @@ public class TreeArrow extends Line {
     // Due to the layers of the tree, there's no need for curved arrows
     final TreeCircle startNode, endNode;
     private final Polygon arrow;
-    private double dragOriginX, dragOriginY;
     private final Rotate arrowRotate;
 
-    private HashMap<String, Color> colorLookup = new HashMap<>();
+    private final HashMap<String, Color> colorLookup;
     private String currVisual;
 
     public TreeArrow(TreeCircle a, TreeCircle b, HashMap<String, Color> colorLookup) {
@@ -22,7 +21,7 @@ public class TreeArrow extends Line {
         endNode = b;
         this.colorLookup = colorLookup;
 
-        // Setup the line
+        // Set up the line
         startXProperty().bind(startNode.layoutXProperty());
         startYProperty().bind(startNode.layoutYProperty());
         endXProperty().bind(endNode.layoutXProperty());
@@ -31,7 +30,7 @@ public class TreeArrow extends Line {
         setStrokeLineCap(StrokeLineCap.ROUND);
         toBack();
 
-        // Setup the arrow tip
+        // Set up the arrow tip
         double[] shape = new double[] { 30,0,55,15,55,-15 };
         arrow = new Polygon(shape);
         arrow.layoutXProperty().bind(endNode.layoutXProperty());
@@ -54,15 +53,15 @@ public class TreeArrow extends Line {
     // Sets the visual style of the circle, according to the color lookup table
     public void setVisual(String s) {
         currVisual = s;
-        switch (s){
-            case "base":
+        switch (s) {
+            case "base" -> {
                 setStroke(colorLookup.get("attackArrowColor"));
                 arrow.setFill(colorLookup.get("attackArrowColor"));
-                break;
-            case "selected":
+            }
+            case "selected" -> {
                 setStroke(colorLookup.get("selectionColor"));
                 arrow.setFill(colorLookup.get("selectionColor"));
-                break;
+            }
         }
     }
 

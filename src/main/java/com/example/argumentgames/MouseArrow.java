@@ -12,7 +12,7 @@ public class MouseArrow {
     private final Line arrowLine;
     private final Polygon arrowPointer;
     private final Rotate arrowRotate;
-    private Pane graphPane;
+    private final Pane graphPane;
 
     public MouseArrow(double originX, double originY, Pane graphPane) {
         this.graphPane = graphPane;

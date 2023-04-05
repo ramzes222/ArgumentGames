@@ -31,7 +31,7 @@ public class TreeCircle extends StackPane {
         circle.setRadius(radius);
         setVisual("base");
         circle.setStrokeWidth(5);
-        Text text = new Text(name);;
+        Text text = new Text(name);
         text.setFill(Color.BLACK);
         text.setStyle("-fx-font: 20 arial;");
         text.setWrappingWidth(80);
