@@ -414,6 +414,7 @@ public class MainController {
         newDung.generateFromMeta(currentFramework);
         currentFramework = newDung;
         frameworkGraph.loadFramework(currentFramework);
+        frameworkGraph.cleanUp();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Success");
         alert.setContentText("Successfully turned the meta framework into a Dung Framework");

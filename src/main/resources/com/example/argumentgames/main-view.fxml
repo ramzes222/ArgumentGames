@@ -6,248 +6,246 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.argumentgames.MainController">
-   <children>
-      <HBox minHeight="30.0" prefHeight="40.0" prefWidth="900.0">
-         <children>
-            <MenuBar>
-              <menus>
-                <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
-                  <items>
-                     <MenuItem mnemonicParsing="false" onAction="#newData" text="New" />
-                     <MenuItem mnemonicParsing="false" onAction="#saveToCurrentlyUsedFile" text="Save" />
-                     <MenuItem mnemonicParsing="false" onAction="#saveAsFileData" text="Save As" />
-                     <MenuItem mnemonicParsing="false" onAction="#loadData" text="Load" />
-                  </items>
-                </Menu>
-                <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                     <MenuItem fx:id="prefGameTreeButton" mnemonicParsing="false" text="Show Preferred Game Tree" />
-                     <MenuItem fx:id="groundGameTreeButton" mnemonicParsing="false" text="Show Grounded Game Tree" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                     <MenuItem fx:id="turnToDungButton" mnemonicParsing="false" onAction="#turnToDung" text="Transform Meta Framework to Dung Framework" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-         </children></HBox>
-      <GridPane maxHeight="Infinity">
-         <children>
-            <VBox fx:id="leftGraphBox" prefHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">
-               <HBox prefHeight="37.0" prefWidth="298.0">
-                  <children>
-                     <RadioButton fx:id="leftSelectButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Select Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/Select.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="leftMoveButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Move Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/MoveNodes.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="leftPanButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Pan Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/MoveCamera.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <Separator orientation="VERTICAL" prefHeight="200.0">
-                        <HBox.margin>
-                           <Insets left="8.0" right="6.0" />
-                        </HBox.margin></Separator>
-                     <Button fx:id="leftAddNodeButton" mnemonicParsing="false">
-                        <tooltip><Tooltip text="Add an argument" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/New Node.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                     </Button>
-                     <Button fx:id="leftAddEdgeButton" mnemonicParsing="false">
-                        <tooltip><Tooltip text="Add an edge" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/New Edge.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </Button>
-                     <Button fx:id="leftDeleteButton" mnemonicParsing="false">
-                        <tooltip><Tooltip text="Delete selected" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/Delete.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </Button>
-                     <Separator orientation="VERTICAL" prefHeight="200.0">
-                        <HBox.margin>
-                           <Insets left="8.0" right="6.0" />
-                        </HBox.margin></Separator>
-                     <Button fx:id="leftCleanupButton" mnemonicParsing="false">
-                        <tooltip><Tooltip text="Cleanup the graph" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/Cleanup.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </Button>
-                     <Label alignment="CENTER_RIGHT" prefWidth="1000.0" text="Framework" textAlignment="RIGHT" HBox.hgrow="ALWAYS">
-                        <padding>
-                           <Insets right="10.0" />
-                        </padding>
-                        <font>
-                           <Font size="18.0" />
-                        </font>
-                     </Label>
-                  </children></HBox>
-               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; overflow:hidden">
-                  <children>
-                     <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0" style="-fx-background-color: lightgray;" />
-                  </children>
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin>
-               </StackPane>
-            </VBox>
-            <VBox fx:id="centerPane" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
-               <children>
-                  <Button fx:id="gameButton" mnemonicParsing="false" onAction="#gameButtonPress">
-                     <tooltip><Tooltip text="Start/Stop the game" /></tooltip>
-                     <graphic>
-                        <ImageView fx:id="gameButtonImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@img/Start Game.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children></VBox>
-            <VBox fx:id="rightGraphBox" GridPane.columnIndex="2" GridPane.rowIndex="0">
-               <HBox prefHeight="37.0" prefWidth="298.0">
-                  <children>
-                     <RadioButton fx:id="rightSelectButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Select Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/Select.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="rightMoveButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Move Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/Move.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="4.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="rightPanButton" mnemonicParsing="false" styleClass="toggle-button">
-                        <tooltip><Tooltip text="Pan Mode" /></tooltip>
-                        <graphic>
-                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@img/MoveCamera.png" />
-                              </image>
-                           </ImageView>
-                        </graphic>
-                        <HBox.margin>
-                           <Insets left="5.0" />
-                        </HBox.margin>
-                     </RadioButton>
-                     <Separator orientation="VERTICAL" prefHeight="200.0">
-                        <HBox.margin>
-                           <Insets left="8.0" right="6.0" />
-                        </HBox.margin>
-                     </Separator>
-                     <Button fx:id="passButton" mnemonicParsing="false" prefHeight="26.0" text="Pass" visible="false">
-                        <padding>
-                           <Insets left="5.0" right="5.0" />
-                        </padding>
-                     </Button>
-                     <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="1000.0" text="Game Tree" textAlignment="CENTER" HBox.hgrow="ALWAYS">
-                        <padding>
-                           <Insets right="10.0" />
-                        </padding>
-                        <font>
-                           <Font size="18.0" />
-                        </font>
-                     </Label>
-                  </children></HBox>
-               <StackPane maxHeight="2000.0" prefHeight="2000.0" style="-fx-border-color: gray; -fx-border-radius: 5; overflow: hidden; -fx-border-width: 5; ">
-                  <children>
-                     <Label fx:id="gameLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxWidth="Infinity" style="-fx-background-color: goldenrod;" text="Label" textAlignment="CENTER" visible="false" StackPane.alignment="TOP_CENTER">
-                        <font>
-                           <Font size="14.0" />
-                        </font></Label>
-                     <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0" style="-fx-background-color: lightgray;" />
-                  </children>
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin>
-               </StackPane>
-            </VBox>
-         </children>
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0" prefWidth="80.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="2000.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-      </GridPane>
-   </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+      prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.argumentgames.MainController">
+   <HBox minHeight="30.0" prefHeight="40.0" prefWidth="900.0">
+      <MenuBar>
+         <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+            <MenuItem mnemonicParsing="false" onAction="#newData" text="New"/>
+            <MenuItem mnemonicParsing="false" onAction="#saveToCurrentlyUsedFile" text="Save"/>
+            <MenuItem mnemonicParsing="false" onAction="#saveAsFileData" text="Save As"/>
+            <MenuItem mnemonicParsing="false" onAction="#loadData" text="Load"/>
+         </Menu>
+         <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
+            <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem fx:id="prefGameTreeButton" mnemonicParsing="false" text="Show Preferred Game Tree"/>
+            <MenuItem fx:id="groundGameTreeButton" mnemonicParsing="false" text="Show Grounded Game Tree"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem fx:id="turnToDungButton" mnemonicParsing="false" onAction="#turnToDung"
+                      text="Transform Meta Framework to Dung Framework"/>
+         </Menu>
+      </MenuBar>
+   </HBox>
+   <GridPane maxHeight="Infinity">
+      <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0"/>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0" prefWidth="80.0"/>
+         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="47.0" prefWidth="100.0"/>
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="2000.0" vgrow="SOMETIMES"/>
+      </rowConstraints>
+      <VBox prefHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">
+         <HBox prefHeight="37.0" prefWidth="298.0">
+            <RadioButton fx:id="leftSelectButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Select Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/Select.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="leftMoveButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Move Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/MoveNodes.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="leftPanButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Pan Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/MoveCamera.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets left="8.0" right="6.0"/>
+               </HBox.margin>
+            </Separator>
+            <Button fx:id="leftAddNodeButton" mnemonicParsing="false">
+               <tooltip>
+                  <Tooltip text="Add an argument"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/New Node.png"/>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="leftAddEdgeButton" mnemonicParsing="false">
+               <tooltip>
+                  <Tooltip text="Add an edge"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/New Edge.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </Button>
+            <Button fx:id="leftDeleteButton" mnemonicParsing="false">
+               <tooltip>
+                  <Tooltip text="Delete selected"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/Delete.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets left="8.0" right="6.0"/>
+               </HBox.margin>
+            </Separator>
+            <Button fx:id="leftCleanupButton" mnemonicParsing="false">
+               <tooltip>
+                  <Tooltip text="Cleanup the graph"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/Cleanup.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </Button>
+            <Label alignment="CENTER_RIGHT" prefWidth="1000.0" text="Framework" textAlignment="RIGHT"
+                   HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets right="10.0"/>
+               </padding>
+               <font>
+                  <Font size="18.0"/>
+               </font>
+            </Label>
+         </HBox>
+         <StackPane maxHeight="2000.0" prefHeight="2000.0"
+                    style="-fx-border-color: gray; -fx-border-radius: 5; -fx-border-width: 5; overflow:hidden">
+            <VBox.margin>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </VBox.margin>
+            <Pane fx:id="leftGraphPane" maxHeight="2000.0" prefHeight="2000.0"
+                  style="-fx-background-color: lightgray;"/>
+         </StackPane>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
+         <Button fx:id="gameButton" mnemonicParsing="false" onAction="#gameButtonPress">
+            <tooltip>
+               <Tooltip text="Start/Stop the game"/>
+            </tooltip>
+            <graphic>
+               <ImageView fx:id="gameButtonImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true"
+                          preserveRatio="true">
+                  <Image url="@img/Start Game.png"/>
+               </ImageView>
+            </graphic>
+         </Button>
+      </VBox>
+      <VBox GridPane.columnIndex="2" GridPane.rowIndex="0">
+         <HBox prefHeight="37.0" prefWidth="298.0">
+            <RadioButton fx:id="rightSelectButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Select Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/Select.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="rightMoveButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Move Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/Move.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="4.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="rightPanButton" mnemonicParsing="false" styleClass="toggle-button">
+               <tooltip>
+                  <Tooltip text="Pan Mode"/>
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@img/MoveCamera.png"/>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="5.0"/>
+               </HBox.margin>
+            </RadioButton>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets left="8.0" right="6.0"/>
+               </HBox.margin>
+            </Separator>
+            <Button fx:id="passButton" minWidth="45.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="45.0"
+                    text="Pass" visible="false">
+               <padding>
+                  <Insets left="5.0" right="5.0"/>
+               </padding>
+            </Button>
+            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="1000.0"
+                   text="Game Tree" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets right="10.0"/>
+               </padding>
+               <font>
+                  <Font size="18.0"/>
+               </font>
+            </Label>
+         </HBox>
+         <StackPane maxHeight="2000.0" prefHeight="2000.0"
+                    style="-fx-border-color: gray; -fx-border-radius: 5; overflow: hidden; -fx-border-width: 5; ">
+            <VBox.margin>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </VBox.margin>
+            <Label fx:id="gameLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxWidth="Infinity"
+                   style="-fx-background-color: goldenrod;" text="Label" textAlignment="CENTER" visible="false"
+                   StackPane.alignment="TOP_CENTER">
+               <font>
+                  <Font size="14.0"/>
+               </font>
+            </Label>
+            <Pane fx:id="rightGraphPane" maxHeight="2000.0" prefHeight="2000.0" prefWidth="88.0"
+                  style="-fx-background-color: lightgray;"/>
+         </StackPane>
+      </VBox>
+   </GridPane>
 </VBox>
