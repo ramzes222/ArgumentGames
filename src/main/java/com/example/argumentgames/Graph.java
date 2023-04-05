@@ -91,6 +91,11 @@ public class Graph {
             GraphArrow a = addGArrow( getGCircle(att.getFrom().getName()), getGCircle(att.getTo().getName()) );
             if (a!=null) a.setControlPointXY(att.prefControlX, att.prefControlY);
         }
+        // Add meta attacks
+        for (FrameworkMetaAttack mAtt : framework.getMetaAttacks()) {
+            GraphMetaArrow a = addGMetaArrow( getGCircle(mAtt.getFrom().getName()), getGArrowByName(mAtt.getTo().getName()) );
+            if (a!=null) a.setControlPointXY(mAtt.prefControlX, mAtt.prefControlY);
+        }
         setSelectModeButton.fire();
         setInteractMode(InteractMode.SELECT_MODE);
     }
@@ -195,6 +200,7 @@ public class Graph {
                         dragOriginY = e.getSceneY();
                         for (GraphArrow a: gArrows) { a.translateControlPointXY(xDrag, yDrag); }
                         for (GraphCircle c: gCircles) { c.translateXY(xDrag, yDrag); }
+                        for (GraphMetaArrow a: gMetaArrows) { a.translateControlPointXY(xDrag, yDrag); }
                     }
                 });
             }
@@ -288,6 +294,21 @@ public class Graph {
 
     public GraphArrow getGArrow(String from, String to) {
         for (GraphArrow a: gArrows) {
+            if (a.getFromName().equals(from) && a.getToName().equals(to)) return a;
+        }
+        return null;
+    }
+
+    public GraphArrow getGArrowByName(String name) {
+        for (GraphArrow a: gArrows) {
+            if (a.getName().equals(name)) return a;
+        }
+        return null;
+    }
+
+
+    public GraphMetaArrow getGMetaArrow(String from, String to) {
+        for (GraphMetaArrow a: gMetaArrows) {
             if (a.getFromName().equals(from) && a.getToName().equals(to)) return a;
         }
         return null;

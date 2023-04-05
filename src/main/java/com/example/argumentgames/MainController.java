@@ -129,32 +129,10 @@ public class MainController {
         Optional<ButtonType> response = alert.showAndWait();
 
         if (response.get() == ButtonType.OK){
-            FileChooser fc = new FileChooser();
-            // Set FileChooser settings
-            fc.getExtensionFilters().add( new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-            // Set the directory that the dialogue opens to
-            File initialDirectory = new File(System.getProperty("user.home"));
-            if (!initialDirectory.canRead()) { initialDirectory = new File("c:/"); }
-            fc.setInitialDirectory(initialDirectory);
-
-            File selectedFile = fc.showSaveDialog(leftGraphPane.getScene().getWindow());
-            if (selectedFile != null && ( selectedFile.exists() == selectedFile.canWrite() )) {
-                String extension = selectedFile.getPath().substring( selectedFile.getPath().lastIndexOf(".") + 1 );
-                if (extension.equals("txt")) {
-                    // Remember the file, then save
-                    currentFramework.clear();
-                    frameworkGraph.loadFramework(currentFramework);
-                    gameTree.clear();
-                    currentlyUsedFile = selectedFile;
-                    displayCurrentFileAsHeader();
-                    saveToCurrentlyUsedFile();
-                } else {
-                    Alert alert2 = new Alert(Alert.AlertType.ERROR);
-                    alert2.setTitle("Files must be saved as .txt");
-                    alert2.setContentText("Please select a file with a .txt extension!");
-                    alert2.showAndWait();
-                }
-            }
+            currentlyUsedFile = null;
+            currentFramework.clear();
+            gameTree.clear();
+            displayCurrentFileAsHeader();
         }
     }
 
@@ -257,6 +235,20 @@ public class MainController {
                 }
 
             }
+            // Write Meta Edges
+            bw.write("MetaEdges:" + System.getProperty("line.separator"));
+            for (FrameworkMetaAttack mAtt : currentFramework.getMetaAttacks()) {
+                GraphMetaArrow a = frameworkGraph.getGMetaArrow(mAtt.getFrom().getName(), mAtt.getTo().getName());
+                if (a!=null) {
+                    mAtt.prefControlX = Math.round(a.getControlX());
+                    mAtt.prefControlY = Math.round(a.getControlY()); }
+                if (savePos) {
+                    bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + "," + mAtt.prefControlX + "," + mAtt.prefControlY + System.getProperty("line.separator"));
+                } else {
+                    bw.write(mAtt.getFrom().getName() + "," + mAtt.getTo().getName() + System.getProperty("line.separator"));
+                }
+
+            }
         } catch (IOException ex){
             ex.printStackTrace();
         } finally {
@@ -277,14 +269,16 @@ public class MainController {
             FileReader fr = new FileReader(currentlyUsedFile);
             BufferedReader br = new BufferedReader(fr);
             String nextLine;
-            boolean loadingNodes = true;
+            // Three loading types: 1-nodes 2-edges 3-metaedges
+            int loadingType = 1;
             boolean requiresCleanUp = false;
             while ((nextLine = br.readLine()) != null) {
-                if (nextLine.equals("Nodes:")) loadingNodes = true;
-                else if (nextLine.equals("Edges:")) loadingNodes = false;
+                if (nextLine.equals("Nodes:")) loadingType = 1;
+                else if (nextLine.equals("Edges:")) loadingType = 2;
+                else if (nextLine.equals("MetaEdges:")) loadingType = 3;
                 else {
                     String[] words = nextLine.split(",");
-                    if (loadingNodes) {
+                    if (loadingType == 1) {
                         // Interpret the data as a node
                         // If the positions are not provided, use default values
                         if (words.length < 3) {
@@ -293,7 +287,7 @@ public class MainController {
                         } else {
                             currentFramework.addArgument(words[0], Double.parseDouble(words[1]), Double.parseDouble(words[2]));
                         }
-                    } else {
+                    } else if (loadingType == 2) {
                         // Interpret the data as an edge
                         // If the positions are not provided, use default values
                         if (words.length < 4) {
@@ -301,6 +295,15 @@ public class MainController {
                             requiresCleanUp = true;
                         } else {
                             currentFramework.addAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
+                        }
+                    } else {
+                        // Interpret the data as a meta edge
+                        // If the positions are not provided, use default values
+                        if (words.length < 4) {
+                            currentFramework.addMetaAttack(words[0], words[1], 300.0, 300.0);
+                            requiresCleanUp = true;
+                        } else {
+                            currentFramework.addMetaAttack(words[0], words[1], Double.parseDouble(words[2]), Double.parseDouble(words[3]));
                         }
                     }
                 }
