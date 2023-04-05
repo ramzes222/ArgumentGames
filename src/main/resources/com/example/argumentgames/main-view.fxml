@@ -30,11 +30,6 @@
                      <MenuItem fx:id="turnToDungButton" mnemonicParsing="false" onAction="#turnToDung" text="Transform Meta Framework to Dung Framework" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
               </menus>
             </MenuBar>
          </children></HBox>
@@ -44,6 +39,7 @@
                <HBox prefHeight="37.0" prefWidth="298.0">
                   <children>
                      <RadioButton fx:id="leftSelectButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Select Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -56,6 +52,7 @@
                         </HBox.margin>
                      </RadioButton>
                      <RadioButton fx:id="leftMoveButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Move Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -68,6 +65,7 @@
                         </HBox.margin>
                      </RadioButton>
                      <RadioButton fx:id="leftPanButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Pan Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -84,6 +82,7 @@
                            <Insets left="8.0" right="6.0" />
                         </HBox.margin></Separator>
                      <Button fx:id="leftAddNodeButton" mnemonicParsing="false">
+                        <tooltip><Tooltip text="Add an argument" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -93,6 +92,7 @@
                         </graphic>
                      </Button>
                      <Button fx:id="leftAddEdgeButton" mnemonicParsing="false">
+                        <tooltip><Tooltip text="Add an edge" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -105,6 +105,7 @@
                         </HBox.margin>
                      </Button>
                      <Button fx:id="leftDeleteButton" mnemonicParsing="false">
+                        <tooltip><Tooltip text="Delete selected" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -121,6 +122,7 @@
                            <Insets left="8.0" right="6.0" />
                         </HBox.margin></Separator>
                      <Button fx:id="leftCleanupButton" mnemonicParsing="false">
+                        <tooltip><Tooltip text="Cleanup the graph" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -153,6 +155,7 @@
             <VBox fx:id="centerPane" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <children>
                   <Button fx:id="gameButton" mnemonicParsing="false" onAction="#gameButtonPress">
+                     <tooltip><Tooltip text="Start/Stop the game" /></tooltip>
                      <graphic>
                         <ImageView fx:id="gameButtonImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -166,6 +169,7 @@
                <HBox prefHeight="37.0" prefWidth="298.0">
                   <children>
                      <RadioButton fx:id="rightSelectButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Select Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -178,6 +182,7 @@
                         </HBox.margin>
                      </RadioButton>
                      <RadioButton fx:id="rightMoveButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Move Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
@@ -190,6 +195,7 @@
                         </HBox.margin>
                      </RadioButton>
                      <RadioButton fx:id="rightPanButton" mnemonicParsing="false" styleClass="toggle-button">
+                        <tooltip><Tooltip text="Pan Mode" /></tooltip>
                         <graphic>
                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                               <image>
